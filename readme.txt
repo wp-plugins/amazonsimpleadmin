@@ -5,20 +5,20 @@ Requires at least: 1.5
 Tested up to: 2.3
 Stable Tag: 0.9.1
 
-Let's you easily embed amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5!
+Let's you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5!
 
 == Description ==
 
-AmazonSimpleAdmin let’s you easily integrate amazon products into your wordpress pages.
+AmazonSimpleAdmin lets you easily integrate Amazon products into your wordpress pages.
 By using the template feature, you can present the products in different styles on different pages. All by typing simple BBCode tags.
 AmazonSimpleAdmin requires `PHP5`.
 
 Features:
 
 * Ease of use with **BBCode** tags
-* Let’s you design your own product **templates**
-* Supports all amazon webservice **country codes**: CA, DE, FR, JP, UK, US
-* Use your amazon **tracking ID** for making money
+* Lets you design your own product **templates**
+* Supports all Amazon webservice **country codes**: CA, DE, FR, JP, UK, US
+* Use your Amazon **tracking ID** for making money
 * Features **collections**. You can define and mangage sets of products as a collection an show them on a page with only one BBCode tag or just the latest added product in your sidebar
 * Supports product **preview layers** (for US, UK and DE so far)
 
