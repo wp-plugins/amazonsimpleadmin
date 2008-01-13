@@ -3,7 +3,7 @@ Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 1.5
 Tested up to: 2.3
-Stable Tag: 0.9.0
+Stable Tag: 0.9.1
 
 Let's you easily embed amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5!
 
