@@ -46,6 +46,11 @@ Here you can find a detailed documentation:
 
 http://www.ichdigital.de/amazonsimpleadmin-documentation/
 
+== Change Log ==
+
+0.9.1
+* Added a PHP Version checker. If plugin gets activated under PHP 4 it will be reversed.
+
 == Info ==
 
 This is the first public version. I have used this plugin for several weeks now and it works fine so far. If you find any bugs please send me a mail (info@NOSPAM_ichdigital.de, remove the NOSPAM_) or use the comments on the [plugin's homepage](http://www.ichdigital.de/amazonsimpleadmin/). Please also contact me for feature requests and ideas how to improve this plugin. Any other reactions are welcome too of course.
