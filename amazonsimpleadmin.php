@@ -1,12 +1,11 @@
 <?php
 /*
 Plugin Name: AmazonSimpleAdmin
-Plugin URI: http://www.ichdigital.de/AmazonSimpleAdmin
+Plugin URI: http://www.ichdigital.de/amazonsimpleadmin/
 Description: Let's you easily embed amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5!
 Version: 0.9.1
 Author: Timo Reith
 Author URI: http://www.ichdigital.de
-Plugin URI: http://www.ichdigital.de/amazonsimpleadmin/
 */
 
 /*  Copyright 2007  Timo Reith (email : info@ichdigital.de)
