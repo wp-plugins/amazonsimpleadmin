@@ -6,6 +6,7 @@ Description: Let's you easily embed amazon products into your posts by use of [a
 Version: 0.9.0
 Author: Timo Reith
 Author URI: http://www.ichdigital.de
+Plugin URI: http://www.ichdigital.de/amazonsimpleadmin/
 */
 
 /*  Copyright 2007  Timo Reith (email : info@ichdigital.de)
