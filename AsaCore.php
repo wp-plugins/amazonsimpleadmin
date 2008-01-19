@@ -830,15 +830,18 @@ class AmazonSimpleAdmin {
 			}
 			
 			$replace = array(
-				$item->SmallImage->Url->getUri(),
-				$item->SmallImage->Width,
-				$item->SmallImage->Height,
-				$item->MediumImage->Url->getUri(),
-				$item->MediumImage->Width,
-				$item->MediumImage->Height,
-				$item->LargeImage->Url->getUri(),
-				$item->LargeImage->Width,
-				$item->LargeImage->Height,
+				($item->SmallImage != null) ? $item->SmallImage->Url->getUri() : 
+					get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_image.gif',
+				($item->SmallImage != null) ? $item->SmallImage->Width : 60,
+				($item->SmallImage != null) ? $item->SmallImage->Height : 60,
+				($item->MediumImage != null) ? $item->MediumImage->Url->getUri() :
+					get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_image.gif',
+				($item->MediumImage != null) ? $item->MediumImage->Width : 60,
+				($item->MediumImage != null) ? $item->MediumImage->Height : 60,
+				($item->LargeImage != null) ? $item->LargeImage->Url->getUri() :
+					get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_image.gif',
+				($item->LargeImage != null) ? $item->LargeImage->Width : 60,
+				($item->LargeImage != null) ? $item->LargeImage->Height : 60,
 				$item->Label,
 				$item->Manufacturer,
 				$item->Publisher,
