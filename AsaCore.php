@@ -34,6 +34,7 @@ class AmazonSimpleAdmin {
 	 * available template placeholders
 	 */
 	protected $tpl_placeholder = array(
+		'ASIN',
 		'SmallImageUrl',
 		'SmallImageWidth',
 		'SmallImageHeight',
@@ -46,6 +47,7 @@ class AmazonSimpleAdmin {
 		'Label',
 		'Manufacturer',
 		'Publisher',
+		'Studio',
 		'Title',
 		'AmazonUrl',
 		'TotalOffers',
@@ -57,7 +59,15 @@ class AmazonSimpleAdmin {
 		'AmazonLogoSmallUrl',
 		'AmazonLogoLargeUrl',
 		'DetailPageURL',
-		'Platform'
+		'Platform',
+		'ISBN',
+		'EAN',
+		'NumberOfPages',
+		'ReleaseDate',
+		'Binding',
+		'Author',
+		'Creator',
+		'Edition'
 	);
 	
 	/**
@@ -830,6 +840,7 @@ class AmazonSimpleAdmin {
 			}
 			
 			$replace = array(
+				$item->ASIN,
 				($item->SmallImage != null) ? $item->SmallImage->Url->getUri() : 
 					get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_image.gif',
 				($item->SmallImage != null) ? $item->SmallImage->Width : 60,
@@ -845,6 +856,7 @@ class AmazonSimpleAdmin {
 				$item->Label,
 				$item->Manufacturer,
 				$item->Publisher,
+				$item->Studio,
 				$item->Title,
 				$amazon_url,
 				empty($totalOffers) ? '0' : $totalOffers,
@@ -858,7 +870,15 @@ class AmazonSimpleAdmin {
 				get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_' . 
 					(empty($this->amazon_country_code) ? 'US' : $this->amazon_country_code) .'.gif', 
 				$item->DetailPageURL,
-				$platform
+				$platform,
+				$item->ISBN,
+				$item->EAN,
+				$item->NumberOfPages,
+				$item->ReleaseDate,
+				$item->Binding,
+				isset($item->Author) ? implode(', ', $item->Author) : '',
+				isset($item->Creator) ? implode(', ', $item->Creator) : '',
+				$item->Edition
 			);
 			
 			return preg_replace($search, $replace, $tpl);									
