@@ -505,14 +505,16 @@ class AmazonSimpleAdmin {
 					$tr_class = ' class="alternate"';
 				}
 				
+				$title = str_replace("'", "\'", $item->Title);
+				
 				$table .= '<tr id="collection_item_'. $row->collection_item_id .'"'.$tr_class.'>';
 				
 				$table .= '<td width="[thumb_width]"><a href="'. $item->DetailPageURL .'" target="_blank"><img src="'. $item->SmallImage->Url->getUri() .'" /></a></td>';
 				$table .= '<td width="120">'. $row->collection_item_asin .'</td>';
 				$table .= '<td><span id="">'. $item->Title .'</span></td>';
 				$table .= '<td width="160">'. date(str_replace(' \<\b\r \/\>', ',', __('Y-m-d \<\b\r \/\> g:i:s a')), $row->timestamp) .'</td>';				
-				$table .= '<td><a href="'. $this->plugin_url .'&task=collections&update_timestamp='. $row->collection_item_id .'&select_manage_collection='. $collection_id .'" class="edit" onclick="return asa_set_latest('. $row->collection_item_id .', \'Set timestamp of &quot;'. htmlspecialchars($item->Title) .'&quot; to actual time?\');" title="update timestamp">latest</a></td>';
-				$table .= '<td><a href="javascript:void(0);" class="delete" onclick="asa_deleteSomething(\'collection_item\', '. $row->collection_item_id .', \'delete &quot;'. htmlspecialchars($item->Title) .'&quot; from collection?\');">delete</a></td>';
+				$table .= '<td><a href="'. $this->plugin_url .'&task=collections&update_timestamp='. $row->collection_item_id .'&select_manage_collection='. $collection_id .'" class="edit" onclick="return asa_set_latest('. $row->collection_item_id .', \'Set timestamp of &quot;'. $title .'&quot; to actual time?\');" title="update timestamp">latest</a></td>';
+				$table .= '<td><a href="javascript:void(0);" class="delete" onclick="asa_deleteSomething(\'collection_item\', '. $row->collection_item_id .', \'delete &quot;'. $title .'&quot; from collection?\');">delete</a></td>';
 				$table .= '</tr>';
 				
 				$thumb_max_width[] = $item->SmallImage->Width;
