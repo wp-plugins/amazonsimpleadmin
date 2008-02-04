@@ -67,7 +67,10 @@ class AmazonSimpleAdmin {
 		'Binding',
 		'Author',
 		'Creator',
-		'Edition'
+		'Edition',
+		'AverageRating',
+		'TotalReviews',
+		'RatingStars'
 	);
 	
 	/**
@@ -878,9 +881,13 @@ class AmazonSimpleAdmin {
 				$item->NumberOfPages,
 				$item->ReleaseDate,
 				$item->Binding,
-				isset($item->Author) ? implode(', ', $item->Author) : '',
-				isset($item->Creator) ? implode(', ', $item->Creator) : '',
-				$item->Edition
+				is_array($item->Author) ? implode(', ', $item->Author) : $item->Author,
+				is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
+				$item->Edition,
+				$item->AverageRating,
+				$item->TotalReviews,
+				($item->AverageRating != null) ? 
+					'<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $item->AverageRating .'.gif" class="asa_rating_stars" />' : ''			
 			);
 			
 			return preg_replace($search, $replace, $tpl);									
@@ -897,7 +904,7 @@ class AmazonSimpleAdmin {
 	{
 		try {
 			$item = $this->amazon->itemLookup($asin, array(
-				'ResponseGroup' => 'ItemAttributes,Images,Offers'));
+				'ResponseGroup' => 'ItemAttributes,Images,Offers,Reviews'));
 			return $item;
 		} catch (Exception $e) {			
 			return null;
