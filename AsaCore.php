@@ -878,8 +878,8 @@ class AmazonSimpleAdmin {
 				$item->NumberOfPages,
 				$item->ReleaseDate,
 				$item->Binding,
-				isset($item->Author) ? implode(', ', $item->Author) : '',
-				isset($item->Creator) ? implode(', ', $item->Creator) : '',
+				is_array($item->Author) ? implode(', ', $item->Author) : $item->Author,
+				is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
 				$item->Edition
 			);
 			
