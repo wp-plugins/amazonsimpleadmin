@@ -885,7 +885,7 @@ class AmazonSimpleAdmin {
 				is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
 				$item->Edition,
 				$item->AverageRating,
-				$item->TotalReviews,
+				!empty($item->TotalReviews) ? $item->TotalReviews : '0',
 				($item->AverageRating != null) ? 
 					'<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $item->AverageRating .'.gif" class="asa_rating_stars" />' : ''			
 			);
