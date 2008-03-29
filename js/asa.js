@@ -66,8 +66,13 @@ var AsaListExtension = {
 		});
 		ajaxDel.addOnWPError( function(transport) { tempObj.restore(actionId, true); });
 		ajaxDel.options.parameters = $H(ajaxDel.options.parameters).merge({action: action, id: id}).merge(this.inputData.toQueryParams());
-		//ajaxDel.request(ajaxDel.url);
-		ajaxDel.request('http://localhost/ichdigital/wp-content/plugins/amazonsimpleadmin/AsaAjax.php');
+        
+        var dest_url = new String(ajaxDel.defaultUrl);
+        dest_url = dest_url.substr(0, dest_url.indexOf('wp-admin/admin-ajax.php'));
+        dest_url = dest_url + 'wp-content/plugins/amazonsimpleadmin/AsaAjax.php';
+
+        ajaxDel.request(dest_url);
+        
 		this.store(actionId, idName);
 		tempObj.removeListItem( idName );
 		return false;
