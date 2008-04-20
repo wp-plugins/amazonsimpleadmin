@@ -70,7 +70,12 @@ class AmazonSimpleAdmin {
 		'Edition',
 		'AverageRating',
 		'TotalReviews',
-		'RatingStars'
+		'RatingStars',
+	    'Director',
+	    'Actors',
+	    'RunningTime',
+	    'Format',
+	    'Studio'
 	);
 	
 	/**
@@ -229,11 +234,14 @@ class AmazonSimpleAdmin {
 	 */
 	public function createOptionsPage () 
 	{	
+		echo '<div class="wrap">';
 		echo '<h2>AmazonSimpleAdmin</h2>';
 				
 		echo $this->getTabMenu($this->task);
-		
+		#echo '<div style="clear: both"></div>';
+		echo '<div id="asa_content">';
 		$this->_displayDispatcher($this->task);
+		echo '</div>';
 	}
 	
 	/**
@@ -241,7 +249,7 @@ class AmazonSimpleAdmin {
 	 */
 	protected function getTabMenu ($task)
 	{
-		
+      
 		$nav  = '<ul id="asa_navigation">';
 		$nav .= '<li><a href="'. $this->plugin_url .'"'. (($task == null) ? 'class="active"' : '') .'>Setup</a></li>';
 		$nav .= '<li><a href="'. $this->plugin_url .'&task=collections"'. (($task == 'collections') ? 'class="active"' : '') .'>Collections</a></li>';
@@ -265,6 +273,17 @@ class AmazonSimpleAdmin {
 				$this->collection = new AsaCollection($this->db);
 
 				$params = array();
+				
+				
+				
+				if (isset($_POST['deleteit_collection_item'])) {
+					$delete_items = $_POST['delete_collection_item'];
+					if (count($delete_items) > 0) {
+						foreach ($delete_items as $item) {
+						   $this->collection->deleteAsin($item);
+						}
+					}
+				}
 				
 				if (isset($_POST['submit_new_asin'])) {
 					
@@ -426,8 +445,8 @@ class AmazonSimpleAdmin {
 		<label for="new_collection">New collection:</label>
 		<input type="text" name="new_collection" id="new_collection" />
 		
-		<p class="submit" style="margin:0; display: inline;">
-			<input type="submit" name="submit_new_collection" value="save" />
+		<p style="margin:0; display: inline;">
+			<input type="submit" name="submit_new_collection" value="save" class="button" />
 		</p>
 		</form>
 		
@@ -445,11 +464,11 @@ class AmazonSimpleAdmin {
 		<label for="collection">to collection:</label>
 		
 		<?php
-		echo $this->collection->getSelectField('collection', $collection_id);
+		echo $this->collection->getSelectField('collection', $collection_id);		
 		?>
 		
-		<p class="submit" style="margin:0; display: inline;">
-			<input type="submit" name="submit_new_asin" value="save" />
+		<p style="margin:0; display: inline;">
+			<input type="submit" name="submit_new_asin" value="save" class="button" />
 		</p>
 		</form>
 		
@@ -469,25 +488,35 @@ class AmazonSimpleAdmin {
 		echo $this->collection->getSelectField('select_manage_collection', $collection_id);
 		?>
 
-		<p class="submit" style="margin:0; display: inline;">
-			<input type="submit" name="submit_manage_collection" value="browse" />
+		<p style="margin:0; display: inline;">
+			<input type="submit" name="submit_manage_collection" value="browse" class="button" />
 		</p>
-		<p class="submit" style="margin:0; display: inline;">
-			<input type="submit" name="submit_delete_collection" value="delete" onclick="return asa_confirm_delete_collection();" />
+		<p style="margin:0; display: inline;">
+			<input type="submit" name="submit_delete_collection" value="delete collection" onclick="return asa_deleteCollection();" class="button" />
 		</p>
 		</form>
 		
 		<?php
 		if ($collection_items) {
-			
+
 			$table = '';
+			$table .= '<form id="collection-filter" action="'.$this->plugin_url .'&task=collections" method="post">';
 			
+			$table .= '<div class="tablenav">
+                <div class="alignleft">
+                <input type="submit" class="button-secondary delete" name="deleteit_collection_item" value="delete selected" onclick="return asa_deleteCollectionItems(\'delete selected collection items from collection?\');"/>
+                <input type="hidden" name="submit_manage_collection" value="1" />   
+                <input type="hidden" name="select_manage_collection" value="'. $collection_id .'" />             
+                </div>              
+                <br class="clear"/>
+                </div>';
+			         
 			$table .= '<table class="widefat"><thead><tr>';
+			$table .= '<th scope="col" style="text-align: center"><input type="checkbox" onclick="asa_checkAll();"/></th>';
 			$table .= '<th scope="col" width="[thumb_width]"></th>';
 			$table .= '<th scope="col" width="120">ASIN</th>';
 			$table .= '<th scope="col">'. __('Title') .'</th>';
 			$table .= '<th scope="col" width="160">'. __('Timestamp') . '</th>';
-			$table .= '<th scope="col"></th>';
 			$table .= '<th scope="col"></th>';
 			$table .= '</tr></thead>';
 			$table .= '<tbody id="the-list">';
@@ -512,12 +541,12 @@ class AmazonSimpleAdmin {
 				
 				$table .= '<tr id="collection_item_'. $row->collection_item_id .'"'.$tr_class.'>';
 				
+				$table .= '<th class="check-column" scope="row" style="text-align: center"><input type="checkbox" value="'. $row->collection_item_id .'" name="delete_collection_item[]"/></th>';
 				$table .= '<td width="[thumb_width]"><a href="'. $item->DetailPageURL .'" target="_blank"><img src="'. $item->SmallImage->Url->getUri() .'" /></a></td>';
 				$table .= '<td width="120">'. $row->collection_item_asin .'</td>';
 				$table .= '<td><span id="">'. $item->Title .'</span></td>';
 				$table .= '<td width="160">'. date(str_replace(' \<\b\r \/\>', ',', __('Y-m-d \<\b\r \/\> g:i:s a')), $row->timestamp) .'</td>';				
 				$table .= '<td><a href="'. $this->plugin_url .'&task=collections&update_timestamp='. $row->collection_item_id .'&select_manage_collection='. $collection_id .'" class="edit" onclick="return asa_set_latest('. $row->collection_item_id .', \'Set timestamp of &quot;'. $title .'&quot; to actual time?\');" title="update timestamp">latest</a></td>';
-				$table .= '<td><a href="javascript:void(0);" class="delete" onclick="asa_deleteSomething(\'collection_item\', '. $row->collection_item_id .', \'delete &quot;'. $title .'&quot; from collection?\');">delete</a></td>';
 				$table .= '</tr>';
 				
 				$thumb_max_width[] = $item->SmallImage->Width;
@@ -525,7 +554,7 @@ class AmazonSimpleAdmin {
 			
 			rsort($thumb_max_width);			
 									
-			$table .= '</tbody></table>';
+			$table .= '</tbody></table></form>';
 			
 			$search = array(
 				'/\[thumb_width\]/',
@@ -887,9 +916,15 @@ class AmazonSimpleAdmin {
 				$item->AverageRating,
 				!empty($item->TotalReviews) ? $item->TotalReviews : '0',
 				($item->AverageRating != null) ? 
-					'<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $item->AverageRating .'.gif" class="asa_rating_stars" />' : ''			
+					'<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $item->AverageRating .'.gif" class="asa_rating_stars" />' : '',
+				is_array($item->Director) ? implode(', ', $item->Director) : $item->Director,
+				is_array($item->Actor) ? implode(', ', $item->Actor) : $item->Actor,
+				$item->RunningTime,
+				is_array($item->Format) ? implode(', ', $item->Format) : $item->Format,
+				$item->Studio
+				
 			);
-			
+
 			return preg_replace($search, $replace, $tpl);									
 		}
 	}

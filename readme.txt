@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 1.5
-Tested up to: 2.3
-Stable Tag: 0.9.3.1
+Tested up to: 2.5
+Stable Tag: 0.9.4
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5!
 
@@ -47,6 +47,11 @@ Here you can find a detailed documentation:
 http://www.ichdigital.de/amazonsimpleadmin-documentation/
 
 == Change Log ==
+
+0.9.4
+* Adapated to wordpress version 2.5
+* Added some new DVD related placehoders (Director, Actors, RunningTime, Format, Studio)
+* Added an exemplary dvd template
 
 0.9.3.1
 * Bugfix: Fixed error in deleting collection items
