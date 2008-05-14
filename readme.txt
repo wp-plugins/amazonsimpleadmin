@@ -11,7 +11,7 @@ Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] 
 
 AmazonSimpleAdmin lets you easily integrate Amazon products into your wordpress pages.
 By using the template feature, you can present the products in different styles on different pages. All by typing simple BBCode tags.
-AmazonSimpleAdmin requires `PHP5`.
+AmazonSimpleAdmin requires `PHP 5.1.4` at least.
 
 Features:
 
@@ -36,7 +36,7 @@ http://www.ichdigital.de/amazonsimpleadmin-documentation/
 Just unpack the `amazonsimpleadmin` folder into your plugins directory and activate it on your wordpress plugins page.
 Then you will have the option `AmazonSimpleAdmin` on your wordpress options page.
 
-AmazonSimpleAdmin requires `PHP5`!
+AmazonSimpleAdmin requires `PHP 5.1.4` at least!
 
 == Configuration ==
 
