@@ -5,7 +5,7 @@ Requires at least: 1.5
 Tested up to: 2.5
 Stable Tag: 0.9.4
 
-Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5!
+Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
 
 == Description ==
 
@@ -36,7 +36,7 @@ http://www.ichdigital.de/amazonsimpleadmin-documentation/
 Just unpack the `amazonsimpleadmin` folder into your plugins directory and activate it on your wordpress plugins page.
 Then you will have the option `AmazonSimpleAdmin` on your wordpress options page.
 
-AmazonSimpleAdmin requires `PHP5`!
+AmazonSimpleAdmin requires `PHP 5.1.4` at least!
 
 == Configuration ==
 
