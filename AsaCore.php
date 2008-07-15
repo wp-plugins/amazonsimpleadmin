@@ -908,6 +908,12 @@ class AmazonSimpleAdmin {
 			$platform = $item->Platform;
 			if (is_array($platform)) {
 				$platform = implode(', ', $platform);
+			}			
+			
+			if (strstr($item->AverageRating, ',')) {
+			    $averageRating = str_replace(',', '.', $item->AverageRating);	
+			} else {
+				$averageRating = $item->AverageRating;
 			}
 			
 			$replace = array(
@@ -950,10 +956,10 @@ class AmazonSimpleAdmin {
 				is_array($item->Author) ? implode(', ', $item->Author) : $item->Author,
 				is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
 				$item->Edition,
-				$item->AverageRating,
+				$averageRating,
 				!empty($item->TotalReviews) ? $item->TotalReviews : '0',
-				($item->AverageRating != null) ? 
-					'<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $item->AverageRating .'.gif" class="asa_rating_stars" />' : '',
+				($averageRating != null) ? 
+					'<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $averageRating .'.gif" class="asa_rating_stars" />' : '',
 				is_array($item->Director) ? implode(', ', $item->Director) : $item->Director,
 				is_array($item->Actor) ? implode(', ', $item->Actor) : $item->Actor,
 				$item->RunningTime,
