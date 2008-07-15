@@ -3,7 +3,7 @@ Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 1.5
 Tested up to: 2.5
-Stable Tag: 0.9.4
+Stable Tag: 0.9.4.1
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
 
@@ -47,6 +47,11 @@ Here you can find a detailed documentation:
 http://www.ichdigital.de/amazonsimpleadmin-documentation/
 
 == Change Log ==
+
+0.9.4.1
+* Fixed: Installation of collections (form for installation was not displayed)
+* Added function asa_item for use in PHP code everywhere eg sidebar: <?php asa_item('B000TKHBDK'); ?>
+* (User request) Added placeholder "CustomRating" which can be used like this [asa custom_rating=3.5]0316015849[/asa] 
 
 0.9.4
 * Adapated to wordpress version 2.5

@@ -75,7 +75,8 @@ class AmazonSimpleAdmin {
 	    'Actors',
 	    'RunningTime',
 	    'Format',
-	    'Studio'
+	    'Studio',
+	    'CustomRating'
 	);
 	
 	/**
@@ -256,6 +257,17 @@ class AmazonSimpleAdmin {
 		$nav .= '<li><a href="'. $this->plugin_url .'&task=usage"'. (($task == 'usage') ? 'class="active"' : '') .'>Usage</a></li>';
 		$nav .= '</ul>';
 		
+		$nav .= '<div style="clear: both"></div>';
+		
+		
+		$nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" style="padding: 0 10px; background: #ededed;">';
+		$nav .= '<p style="margin: 0">If you like my plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates... :-)</p>';
+        $nav .= '<input type="hidden" name="cmd" value="_s-xclick">
+            <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal.">
+            <img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+            <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+            </form>';
+		
 		return $nav;
 	}
 	
@@ -359,7 +371,7 @@ class AmazonSimpleAdmin {
 				}
 				
 				//var_dump($this->db->get_var("SHOW TABLES LIKE '%asa_collection%'"));
-				if ($this->db->get_var("SHOW TABLES LIKE '%asa_collection%'") === null) {
+				if ($this->db->get_var("SHOW TABLES LIKE '%asa_collection%'") === null) {				
 					$this->_displayCollectionsSetup();
 				} else {
 					$this->_displayCollectionsPage($params);
@@ -415,6 +427,10 @@ class AmazonSimpleAdmin {
 			<input type="submit" name="submit_collection_init" value="activate" />
 		</p>
 		</form>
+		</fieldset>
+		</div>
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
 		
 		<?php
 	}
@@ -601,13 +617,19 @@ class AmazonSimpleAdmin {
 			
 		<h3>Functions</h3>
 		
-		<p><?php _e('AmazonSimpleAdmin features the following functions, which can be used in your sidebar file:') ?></p>
+		<p><?php _e('AmazonSimpleAdmin features the following functions, which can be used in your sidebar file or everywhere else in PHP code:') ?></p>
 		<ul>
-		<li>string <strong>asa_collection</strong> ($label [, string [$type], string [$tpl]])<br />
+		<li>string <strong>asa_collection</strong> ($label [, string [$type], string [$tpl]])<br /><br />
+		Displays one or more collection items<br /><br />
 		<em>label</em> is mandatory and stands for the collection label<br />
 		<em>type</em> is optional. "all" lists all collection items sorted by time of adding whereas "latest" only displays the latest added item. Default is "all"<br />
-		<em>tpl</em>  is optional. Here you can define your own template file. Default is "collection_sidebar_default".
+		<em>tpl</em> is optional. Here you can define your own template file. Default is "collection_sidebar_default"<br />
+		
 		</li>
+		<li>string <strong>asa_item</strong> ($asin [, string [$tpl]])<br /><br />
+		Displays one item defined by $asin<br /><br />
+		<em>asin</em> is mandatory and stands for the amazon ASIN<br />
+		<em>tpl</em> is optional. Here you can define your own template file. Default is "sidebar_item"
 		</ul>
 		
 		<h3>Templates</h3>
@@ -742,19 +764,34 @@ class AmazonSimpleAdmin {
 			for ($i=0; $i<count($matches[0]); $i++) {
 				
 				$match 		= $matches[0][$i];
-				$tpl_file	= strip_tags(trim($matches[1][$i]));
-				$asin 		= $matches[2][$i];
+								
+				//$tpl_file	= strip_tags(trim($matches[1][$i]));
+				$asin           = $matches[2][$i];      
+				$params	        = explode(',', strip_tags(trim($matches[1][$i])));
+				$params         = array_map('trim', $params);
+				$parse_params   = array();
 				
-				$tpl 		= $tpl_src;
+				if (!empty($params[0])) {
+				    foreach ($params as $param) {
+                        if (!strstr($param, '=')) {
+                        	$tpl_file = $param;
+                        } else {
+                            $tp = explode('=', $param);
+                            $parse_params[$tp[0]] = $tp[1];	
+                        }
+				    }
+				}			
 
 				if (!empty($tpl_file) && 
 					file_exists(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm')) {
 					$tpl = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm');	
+				} else {
+				    $tpl = $tpl_src;	
 				}
 				
 				if (!empty($asin)) {
 									
-					$content = str_replace($match, $this->_parseTpl($asin, $tpl), $content);
+					$content = str_replace($match, $this->_parseTpl($asin, $tpl, $parse_params), $content);
 				}				
 			}
 		}
@@ -784,7 +821,7 @@ class AmazonSimpleAdmin {
 					$this->collection = new AsaCollection($this->db);
 					
 					$collection_id = $this->collection->getId($coll_label);
-					
+
 					$coll_items = $this->collection->getItems($collection_id);
 					if (count($coll_items) == 0) {
 						$content = str_replace($match, '', $content);
@@ -811,7 +848,7 @@ class AmazonSimpleAdmin {
 	 * 
 	 * @return 	string		the parsed template
 	 */
-	protected function _parseTpl ($asin, $tpl)
+	protected function _parseTpl ($asin, $tpl, $parse_params=null)
 	{
 		// get the item data
 		$item = $this->_getItem($asin);
@@ -921,8 +958,8 @@ class AmazonSimpleAdmin {
 				is_array($item->Actor) ? implode(', ', $item->Actor) : $item->Actor,
 				$item->RunningTime,
 				is_array($item->Format) ? implode(', ', $item->Format) : $item->Format,
-				$item->Studio
-				
+				$item->Studio,
+				!empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',			
 			);
 
 			return preg_replace($search, $replace, $tpl);									
@@ -1129,7 +1166,7 @@ class AmazonSimpleAdmin {
 		if ($type == false) {
 			$type = 'all';	
 		}
-		
+
 		$tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl .'.htm');
 		
 		switch ($type) {
@@ -1148,15 +1185,45 @@ class AmazonSimpleAdmin {
 		
 		return $collection_html;
 	}
+	
+    /**
+     * 
+     */
+    public function getItem ($asin, $tpl=false)
+    {   
+        $item_html = '';
+        
+        if ($tpl == false) {
+            $tpl = 'sidebar_item';
+        }
+        
+        $tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl .'.htm');
+        
+        $item_html .= $this->_parseTpl(trim($asin), $tpl_src);
+        
+        return $item_html;
+    }
 }
 
 
 $asa = new AmazonSimpleAdmin($wpdb);
 
 
+/**
+ * displays a collection
+ */
 function asa_collection ($label, $type=false, $tpl=false)
 {
 	global $asa;
 	echo $asa->getCollection($label, $type, $tpl);
+}
+
+/**
+ * displays one item, can be used everywhere in php code, eg sidebar
+ */
+function asa_item ($asin, $tpl=false)
+{
+    global $asa;
+    echo $asa->getItem($asin, $tpl);
 }
 ?>
