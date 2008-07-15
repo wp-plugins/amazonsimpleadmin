@@ -261,7 +261,7 @@ class AmazonSimpleAdmin {
 		
 		
 		$nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" style="padding: 0 10px; background: #ededed;">';
-		$nav .= '<p style="margin: 0">If you like my plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates... :-)</p>';
+		$nav .= '<p style="margin: 0">If you like this plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates... :-)</p>';
         $nav .= '<input type="hidden" name="cmd" value="_s-xclick">
             <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal.">
             <img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
