@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 1.5
-Tested up to: 2.6
-Stable Tag: 0.9.4.1
+Tested up to: 2.6.3
+Stable Tag: 0.9.5
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
 
@@ -21,6 +21,7 @@ Features:
 * Use your Amazon **tracking ID** for making money
 * Features **collections**. You can define and mangage sets of products as a collection an show them on a page with only one BBCode tag or just the latest added product in your sidebar
 * Supports product **preview layers** (for US, UK and DE so far)
+* New with version 0.9.5: **Caching** Speeds up your blog when adding many products to your posts!
 
 
 For the latest information visit my website:
@@ -47,6 +48,11 @@ Here you can find a detailed documentation:
 http://www.ichdigital.de/amazonsimpleadmin-documentation/
 
 == Change Log ==
+
+0.9.5
+* Added: Caching
+* Added new placeholders: ProductDescription, AmazonDescription, Artist
+* Bugfix: Template parsing bug fixed
 
 0.9.4.1
 * Fixed: Installation of collections (form for installation was not displayed)

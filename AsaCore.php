@@ -76,7 +76,10 @@ class AmazonSimpleAdmin {
 	    'RunningTime',
 	    'Format',
 	    'Studio',
-	    'CustomRating'
+	    'CustomRating',
+	    'ProductDescription',
+	    'AmazonDescription',
+	    'Artist'
 	);
 	
 	/**
@@ -154,7 +157,11 @@ class AmazonSimpleAdmin {
 	 */
 	protected $amazon;
 	
-	
+    /**
+     * the cache object
+     */
+    protected $cache;
+    	
 	
 	/**
 	 * constructor
@@ -170,7 +177,20 @@ class AmazonSimpleAdmin {
 		
 		$this->db = $wpdb;
 		
+		$this->cache = $this->_initCache();
+		
 		require_once 'Zend/Service/Amazon.php';
+		require_once 'Zend/Service/Amazon/Accessories.php';
+		require_once 'Zend/Service/Amazon/CustomerReview.php';
+		require_once 'Zend/Service/Amazon/EditorialReview.php';
+		require_once 'Zend/Service/Amazon/Image.php';
+		require_once 'Zend/Service/Amazon/Item.php';		
+		require_once 'Zend/Service/Amazon/ListmaniaList.php';		
+		require_once 'Zend/Service/Amazon/Offer.php';
+		require_once 'Zend/Service/Amazon/OfferSet.php';
+		require_once 'Zend/Service/Amazon/Query.php';
+		require_once 'Zend/Service/Amazon/ResultSet.php';
+		require_once 'Zend/Service/Amazon/SimilarProduct.php';
 		
 		// Hook for adding admin menus
 		add_action('admin_menu', array($this, 'createAdminMenu'));
@@ -218,6 +238,43 @@ class AmazonSimpleAdmin {
 	}
 	
 	/**
+	 * 
+	 */
+	protected function _initCache ()
+	{
+		$_asa_cache_active    = get_option('_asa_cache_active');
+		if (empty($_asa_cache_active)) {
+			return null;
+		}
+		
+		try {	
+			
+			require_once 'Zend/Cache.php';
+			
+			$_asa_cache_lifetime  = get_option('_asa_cache_lifetime');
+			$_asa_cache_dir       = get_option('_asa_cache_dir');
+			
+            $current_cache_dir    = (!empty($_asa_cache_dir) ? $_asa_cache_dir : 'cache');
+			
+			$frontendOptions = array(
+			   'lifetime' => !empty($_asa_cache_lifetime) ? $_asa_cache_lifetime : 7200, // cache lifetime in seconds
+			   'automatic_serialization' => true
+			);
+			
+			$backendOptions = array(
+			    'cache_dir' => dirname(__FILE__) . DIRECTORY_SEPARATOR . $current_cache_dir
+			);
+			
+			// getting a Zend_Cache_Core object
+			$cache = Zend_Cache::factory('Core', 'File', $frontendOptions,
+			                             $backendOptions);			                             
+		   return $cache;
+	   } catch (Exception $e) {
+	   	   return null;
+	   }
+	}
+	
+	/**
 	 * action function for above hook
 	 *
 	 */
@@ -255,15 +312,16 @@ class AmazonSimpleAdmin {
 		$nav .= '<li><a href="'. $this->plugin_url .'"'. (($task == null) ? 'class="active"' : '') .'>Setup</a></li>';
 		$nav .= '<li><a href="'. $this->plugin_url .'&task=collections"'. (($task == 'collections') ? 'class="active"' : '') .'>Collections</a></li>';
 		$nav .= '<li><a href="'. $this->plugin_url .'&task=usage"'. (($task == 'usage') ? 'class="active"' : '') .'>Usage</a></li>';
+		$nav .= '<li><a href="'. $this->plugin_url .'&task=cache"'. (($task == 'cache') ? 'class="active"' : '') .'>Cache</a></li>';
 		$nav .= '</ul>';
 		
 		$nav .= '<div style="clear: both"></div>';
 		
 		
-		$nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" style="padding: 0 10px; background: #ededed;">';
-		$nav .= '<p style="margin: 0">If you like this plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates... :-)</p>';
+		$nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" style="padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;">';
+		$nav .= '<p style="margin: 0">If you like this plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates! :-)</p>';
         $nav .= '<input type="hidden" name="cmd" value="_s-xclick">
-            <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal.">
+            <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal." style="vertical-align: middle">&nbsp;(Thank you!)
             <img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
             <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----MIIHPwYJKoZIhvcNAQcEoIIHMDCCBywCAQExggEwMIIBLAIBADCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwDQYJKoZIhvcNAQEBBQAEgYB4Gn/43sh7ivqcAZVoHAy0CR/W5URzhpr2X6s7UtG+LCSfECwRre+GVUnEjyK5VTEvXXOAusxprqMg3OO8hJm0zinh8IKLndybsWVdDnN/RQL/ddHffvY/znBzYZ3dHBCTjWjvnQDqfEqe0ixIdGeR/NixexTjOL2Je3aD585qWTELMAkGBSsOAwIaBQAwgbwGCSqGSIb3DQEHATAUBggqhkiG9w0DBwQIObfY9R61a/+AgZj1X57ukmmHlspczXa/l2mM0yZZLYRVU7c7vrPIi1ExGQB+aSeXODq3EK50qT8OlLdhMUSewL4q1wF0jxvZd5Pxlf4UOnM8SKQVrQNrvaV/BALdABuTFHaoAxPP/kDIRUgOduVzsQaEDxwOe6boPaXi4shwfliXMpXG2R1t+eWCTSRNKe/fexBqTdXBH5ewyym3ANA24e2SP6CCA4cwggODMIIC7KADAgECAgEAMA0GCSqGSIb3DQEBBQUAMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbTAeFw0wNDAyMTMxMDEzMTVaFw0zNTAyMTMxMDEzMTVaMIGOMQswCQYDVQQGEwJVUzELMAkGA1UECBMCQ0ExFjAUBgNVBAcTDU1vdW50YWluIFZpZXcxFDASBgNVBAoTC1BheVBhbCBJbmMuMRMwEQYDVQQLFApsaXZlX2NlcnRzMREwDwYDVQQDFAhsaXZlX2FwaTEcMBoGCSqGSIb3DQEJARYNcmVAcGF5cGFsLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAwUdO3fxEzEtcnI7ZKZL412XvZPugoni7i7D7prCe0AtaHTc97CYgm7NsAtJyxNLixmhLV8pyIEaiHXWAh8fPKW+R017+EmXrr9EaquPmsVvTywAAE1PMNOKqo2kl4Gxiz9zZqIajOm1fZGWcGS0f5JQ2kBqNbvbg2/Za+GJ/qwUCAwEAAaOB7jCB6zAdBgNVHQ4EFgQUlp98u8ZvF71ZP1LXChvsENZklGswgbsGA1UdIwSBszCBsIAUlp98u8ZvF71ZP1LXChvsENZklGuhgZSkgZEwgY4xCzAJBgNVBAYTAlVTMQswCQYDVQQIEwJDQTEWMBQGA1UEBxMNTW91bnRhaW4gVmlldzEUMBIGA1UEChMLUGF5UGFsIEluYy4xEzARBgNVBAsUCmxpdmVfY2VydHMxETAPBgNVBAMUCGxpdmVfYXBpMRwwGgYJKoZIhvcNAQkBFg1yZUBwYXlwYWwuY29tggEAMAwGA1UdEwQFMAMBAf8wDQYJKoZIhvcNAQEFBQADgYEAgV86VpqAWuXvX6Oro4qJ1tYVIT5DgWpE692Ag422H7yRIr/9j/iKG4Thia/Oflx4TdL+IFJBAyPK9v6zZNZtBgPBynXb048hsP16l2vi0k5Q2JKiPDsEfBhGI+HnxLXEaUWAcVfCsQFvd2A1sxRr67ip5y2wwBelUecP3AjJ+YcxggGaMIIBlgIBATCBlDCBjjELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRYwFAYDVQQHEw1Nb3VudGFpbiBWaWV3MRQwEgYDVQQKEwtQYXlQYWwgSW5jLjETMBEGA1UECxQKbGl2ZV9jZXJ0czERMA8GA1UEAxQIbGl2ZV9hcGkxHDAaBgkqhkiG9w0BCQEWDXJlQHBheXBhbC5jb20CAQAwCQYFKw4DAhoFAKBdMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTA4MDcxNDIzNTgwMFowIwYJKoZIhvcNAQkEMRYEFCXPG5S8+/tzHiooWJRCCARE/wlpMA0GCSqGSIb3DQEBAQUABIGAf7Eq7s7pIllabW7cb8hIe0IGLPIlx6QuLtOXj6iMqkzjY7IOE8r1P8xA+JqMA4GBv8ZyX0Ljm+TAx6lk1NvHYvvxJHUWkDmwtFs+BK8wMMtDTC8Msa0148jZQvL8IEMYaZEID1nm3qUy1pdwODUcMDomZFQfCyZRH0CRWpGS+UY=-----END PKCS7-----">
             </form>';
@@ -382,6 +440,32 @@ class AmazonSimpleAdmin {
 				
 				$this->_displayUsagePage();
 				break;
+				
+            case 'cache':
+                
+            	if ($_POST['clean_cache']) {
+            		
+            		if (empty($this->cache)) {
+            			$this->error['submit_cache'] = 'Cache not activated!';
+            		} else {
+	            		$this->cache->clean(Zend_Cache::CLEANING_MODE_ALL);
+	            		$this->success['submit_cache'] = 'Cache cleaned up!';
+            		}
+            		
+            	} else if (count($_POST) > 0) {
+            		
+            		$_asa_cache_lifetime      = strip_tags($_POST['_asa_cache_lifetime']);
+            		$_asa_cache_dir           = strip_tags($_POST['_asa_cache_dir']);
+            		$_asa_cache_active        = strip_tags($_POST['_asa_cache_active']);
+            		update_option('_asa_cache_lifetime', intval($_asa_cache_lifetime));
+            		update_option('_asa_cache_dir', $_asa_cache_dir);
+            		update_option('_asa_cache_active', intval($_asa_cache_active));
+            		
+            		$this->success['submit_cache'] = 'Cache options updated!';
+            	}
+            	
+            	$this->_displayCachePage();
+                break;				
 				
 			default:
 				
@@ -729,6 +813,63 @@ class AmazonSimpleAdmin {
 	}	
 	
 	/**
+	 * the cache options page content
+	 *
+	 */
+	protected function _displayCachePage () 
+	{	
+		$_asa_cache_lifetime  = get_option('_asa_cache_lifetime');
+		$_asa_cache_dir       = get_option('_asa_cache_dir');
+		$_asa_cache_active    = get_option('_asa_cache_active');
+		$current_cache_dir    = (!empty($_asa_cache_dir) ? $_asa_cache_dir : 'cache');
+		
+		?>
+        <div id="asa_cache" class="wrap">
+        <form method="post">
+        <fieldset class="options">
+        <h2><?php _e('Cache') ?></h2>
+                       
+        <?php
+        if ($this->error['submit_cache']) {
+            $this->_displayError($this->error['submit_cache']);    
+        } else if ($this->success['submit_cache']) {
+            $this->_displaySuccess($this->success['submit_cache']);    
+        }
+        ?>
+        
+        <label for="_asa_cache_active"><?php _e('Activate cache:') ?></label>
+        <input type="checkbox" name="_asa_cache_active" id="_asa_cache_active" value="1" <?php echo (!empty($_asa_cache_active)) ? 'checked="checked"' : ''; ?> />  
+        <br />       
+        <label for="_asa_cache_lifetime"><?php _e('Cache Lifetime (in seconds):') ?></label>
+        <input type="text" name="_asa_cache_lifetime" id="_asa_cache_lifetime" value="<?php echo (!empty($_asa_cache_lifetime)) ? $_asa_cache_lifetime : '7200'; ?>" />
+        <br />  
+        <label for="_asa_cache_dir"><?php _e('Cache directory:') ?></label>
+        <input type="text" name="_asa_cache_dir" id="_asa_cache_dir" value="<?php echo $current_cache_dir; ?>" />(within asa plugin directory / default = "cache" / must be <strong>writable</strong>!)
+        <br />
+        <div style="border: 1px solid #EDEDED; padding: 4px; background: #F8F8F8;">
+		<?php
+		echo dirname(__FILE__) . DIRECTORY_SEPARATOR . $current_cache_dir . ' is ';
+        if (is_writable(dirname(__FILE__) . '/' . $current_cache_dir)) {
+            echo '<strong style="color:#177B31">writable</strong>';	
+        } else {
+            echo '<strong style="color:#B41216">not writable</strong>';	
+        }
+        ?>
+        </div>
+        <br />        
+    
+        <p class="submit">
+        <input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
+        <input type="submit" name="clean_cache" value="<?php _e('Clean Cache') ?> &raquo;" />
+        </p>
+        
+        </fieldset>
+        </form>
+        </div>      
+        <?php
+	}	
+	
+	/**
 	 * 
 	 */
 	protected function _displayError ($error) 
@@ -765,7 +906,7 @@ class AmazonSimpleAdmin {
 				
 				$match 		= $matches[0][$i];
 								
-				//$tpl_file	= strip_tags(trim($matches[1][$i]));
+				$tpl_file	    = null;
 				$asin           = $matches[2][$i];      
 				$params	        = explode(',', strip_tags(trim($matches[1][$i])));
 				$params         = array_map('trim', $params);
@@ -780,7 +921,7 @@ class AmazonSimpleAdmin {
                             $parse_params[$tp[0]] = $tp[1];	
                         }
 				    }
-				}			
+				}
 
 				if (!empty($tpl_file) && 
 					file_exists(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm')) {
@@ -965,7 +1106,10 @@ class AmazonSimpleAdmin {
 				$item->RunningTime,
 				is_array($item->Format) ? implode(', ', $item->Format) : $item->Format,
 				$item->Studio,
-				!empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',			
+				!empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',
+				$item->EditorialReviews[0]->Content,
+				!empty($item->EditorialReviews[1]) ? $item->EditorialReviews[1]->Content : '',
+				$item->Artist		
 			);
 
 			return preg_replace($search, $replace, $tpl);									
@@ -973,7 +1117,7 @@ class AmazonSimpleAdmin {
 	}
 	
 	/**
-	 * get item information from amazon webservice
+	 * get item information from amazon webservice or cache
 	 * 
 	 * @param		string		ASIN
 	 * @return 		object		Zend_Service_Amazon_Item object
@@ -981,13 +1125,37 @@ class AmazonSimpleAdmin {
 	protected function _getItem ($asin)
 	{
 		try {
-			$item = $this->amazon->itemLookup($asin, array(
-				'ResponseGroup' => 'ItemAttributes,Images,Offers,Reviews'));
+						
+			if ($this->cache == null) {
+				// if cache could not be initialized
+				$item = $this->_getItemLookup($asin);
+				
+			} else if (!$item = $this->cache->load($asin)) {
+				// if asin is not cached yet
+				$item = $this->_getItemLookup($asin);
+				
+				// put asin in cache now
+				$this->cache->save($item, $asin);
+			}
 			return $item;
+			
 		} catch (Exception $e) {			
 			return null;
-		}		
+		}
 	}
+	
+    /**
+     * get item information from amazon webservice
+     * 
+     * @param       string      ASIN
+     * @return      object      Zend_Service_Amazon_Item object
+     */ 	
+	protected function _getItemLookup ($asin)
+    {
+    	return $this->amazon->itemLookup($asin, array(
+                    'ResponseGroup' => 'ItemAttributes,Images,Offers,Reviews,EditorialReview'));
+    }
+    		
 	
 	/**
 	 * gets options from database options table
