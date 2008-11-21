@@ -1,0 +1,89 @@
+
+#asa_setup label {
+	width: 250px;
+	display: inline;
+	background: #E5F3FF;
+	padding: 3px;
+}
+
+#asa_setup #_asa_amazon_api_key, #asa_setup #_asa_amazon_tracking_id {
+	width: 300px;
+}
+
+#asa_setup #_asa_status_label {
+	font-size: 1.3em;
+}
+
+#asa_setup ._asa_status_ready, #asa_setup ._asa_status_not_ready {
+	font-size: 1.3em;
+}
+
+#asa_setup ._asa_status_ready {
+	color: #1D7100;
+}
+
+#asa_setup ._asa_status_not_ready {
+	color: #BF0005;
+}
+
+._asa_error_label {
+	color: #BF0005;
+	font-size: 1.3em;
+}
+
+._asa_success_label {
+	color: #1D7100;
+	font-size: 1.3em;
+}
+
+#asa_content {
+	clear: both;
+}
+
+#asa_content fieldset {
+    border: 0;  
+    padding: 0;
+}
+
+
+
+#asa_navigation {
+	list-style-image:none;
+	list-style-position:outside;
+	list-style-type:none;
+	margin:0pt;
+	padding:6px 0pt 3px;
+}
+#asa_navigation li {
+	font-size:14px;
+	float: left;
+	margin-right: 20px;
+}
+#asa_navigation li a {
+    display:            block;
+    text-decoration:    none;
+}
+/*
+#asa_navigation li {
+	float:				left;
+	margin: 			0 7px 0 5px;
+	text-align:			center;
+}
+
+#asa_navigation li a {
+	display:			block;
+	height:				20px;
+	padding:			0px 6px 0 6px;
+	width:				80px;
+	text-decoration: 	none;
+}
+*/
+/*
+#asa_navigation li a.active, #asa_navigation li a.active:hover {
+	background-color: 	#ddd;
+}
+
+#asa_navigation li a:hover {
+	background-color: 	#efefef;
+}
+*/
