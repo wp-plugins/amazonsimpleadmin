@@ -14,7 +14,7 @@ class AmazonSimpleAdmin {
 	/**
 	 * supported amazon country IDs
 	 */
-	protected $amazon_valid_country_codes = array(
+	protected $_amazon_valid_country_codes = array(
 		'CA', 'DE', 'FR', 'JP', 'UK', 'US'
 	);
 	
@@ -120,7 +120,13 @@ class AmazonSimpleAdmin {
 	/**
 	 * user's Amazon Access Key ID
 	 */
-	protected $amazon_api_key;
+	protected $_amazon_api_key;
+	
+	/**
+	 * user's Amazon Access Key ID
+	 * @var string
+	 */
+    protected $_amazon_api_secret_key = 'AgWI4lZbNiq1E0UKC5kCvg8zUEWv2xy290TgHTIE';	
 	
 	/**
 	 * user's Amazon Tracking ID
@@ -130,13 +136,24 @@ class AmazonSimpleAdmin {
 	/**
 	 * selected country code
 	 */
-	protected $amazon_country_code;
+	protected $_amazon_country_code = 'US';
+	
+    /**
+     * product preview status
+     * @var bool
+     */
+	protected $_product_preview = false;
 	
 	/**
 	 * product preview status
+	 * @var bool
 	 */
-	protected $product_preview;
+	protected $_parse_comments = false;
 	
+	/**
+	 * 
+	 * @var string
+	 */
 	protected $task;
 	
 	/**
@@ -171,6 +188,21 @@ class AmazonSimpleAdmin {
 		$libdir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib';
 		set_include_path(get_include_path() . PATH_SEPARATOR . $libdir);
 		
+        require_once 'Zend/Uri/Http.php';
+        require_once 'Zend/Service/Amazon.php';
+        require_once 'Zend/Service/Amazon/Accessories.php';
+        require_once 'Zend/Service/Amazon/CustomerReview.php';
+        require_once 'Zend/Service/Amazon/EditorialReview.php';
+        require_once 'Zend/Service/Amazon/Image.php';
+        require_once 'Zend/Service/Amazon/Item.php';        
+        require_once 'Zend/Service/Amazon/ListmaniaList.php';       
+        require_once 'Zend/Service/Amazon/Offer.php';
+        require_once 'Zend/Service/Amazon/OfferSet.php';
+        require_once 'Zend/Service/Amazon/Query.php';
+        require_once 'Zend/Service/Amazon/ResultSet.php';
+        require_once 'Zend/Service/Amazon/SimilarProduct.php';
+        		
+		
 		if (isset($_GET['task'])) {
 			$this->task = strip_tags($_GET['task']);
 		}
@@ -178,31 +210,24 @@ class AmazonSimpleAdmin {
 		$this->db = $wpdb;
 		
 		$this->cache = $this->_initCache();
-		
-		require_once 'Zend/Service/Amazon.php';
-		require_once 'Zend/Service/Amazon/Accessories.php';
-		require_once 'Zend/Service/Amazon/CustomerReview.php';
-		require_once 'Zend/Service/Amazon/EditorialReview.php';
-		require_once 'Zend/Service/Amazon/Image.php';
-		require_once 'Zend/Service/Amazon/Item.php';		
-		require_once 'Zend/Service/Amazon/ListmaniaList.php';		
-		require_once 'Zend/Service/Amazon/Offer.php';
-		require_once 'Zend/Service/Amazon/OfferSet.php';
-		require_once 'Zend/Service/Amazon/Query.php';
-		require_once 'Zend/Service/Amazon/ResultSet.php';
-		require_once 'Zend/Service/Amazon/SimilarProduct.php';
-		
+				
 		// Hook for adding admin menus
 		add_action('admin_menu', array($this, 'createAdminMenu'));
 		
 		// Hook for adding content filter
 		add_filter('the_content', array($this, 'parseContent'), 1);
 		
+        $this->_getAmazonUserData();
+        		
+		if ($this->_parse_comments == true) {
+		    // Hook for adding content filter for user comments
+		    // Feature request from Sebastian Steinfort
+            add_filter('comment_text', array($this, 'parseContent'), 1);
+		}
+		
 		//wp_enqueue_script( 'listman' );
-		
-		$this->_getAmazonUserData();
-		
-		if ($this->product_preview == '1') {
+				
+		if ($this->_product_preview == true) {
 			add_action('wp_footer', array($this, 'addProductPreview'));
 		}
 		
@@ -210,27 +235,18 @@ class AmazonSimpleAdmin {
 	}
 	
 	/**
-	 * connects the amazon webservice
+	 * trys to connect to the amazon webservice
 	 */
 	protected function connect ()
 	{
-		$amazon_api_key = $this->amazon_api_key_internal;
-		if (!empty($this->amazon_api_key)) {
-			$amazon_api_key = $this->amazon_api_key;
-		}
-		
-		$country_code = null;
-		if (!empty($this->amazon_country_code)) {
-			$country_code = $this->amazon_country_code;
-		}
-
-		try {							
-			if ($country_code !== null) {
-				$amazon = new Zend_Service_Amazon($amazon_api_key, $country_code);
-			} else {
-				$amazon = new Zend_Service_Amazon($amazon_api_key);
-			}					
-			return $amazon;		
+		try {						
+		    $amazon = new Zend_Service_Amazon (
+                $this->_amazon_api_key,
+                $this->_amazon_country_code, 
+                $this->_amazon_api_secret_key
+            );				
+			return $amazon;
+				
 		} catch (Exception $e) {			
 			//echo $e->getMessage();
 			return null;
@@ -472,12 +488,16 @@ class AmazonSimpleAdmin {
 				if (count($_POST) > 0) {
 			
 					$_asa_amazon_api_key 		= strip_tags($_POST['_asa_amazon_api_key']);
+					$_asa_amazon_api_secret_key	= base64_encode(strip_tags($_POST['_asa_amazon_api_secret_key']));
 					$_asa_amazon_tracking_id 	= strip_tags($_POST['_asa_amazon_tracking_id']);					
 					$_asa_product_preview		= strip_tags($_POST['_asa_product_preview']);
+					$_asa_parse_comments		= strip_tags($_POST['_asa_parse_comments']);
 		
 					update_option('_asa_amazon_api_key', $_asa_amazon_api_key);
+					update_option('_asa_amazon_api_secret_key', $_asa_amazon_api_secret_key);
 					update_option('_asa_amazon_tracking_id', $_asa_amazon_tracking_id);
 					update_option('_asa_product_preview', $_asa_product_preview);
+					update_option('_asa_parse_comments', $_asa_parse_comments);
 					
 					if (isset($_POST['_asa_amazon_country_code'])) {
 						$_asa_amazon_country_code 	= strip_tags($_POST['_asa_amazon_country_code']);						
@@ -642,7 +662,12 @@ class AmazonSimpleAdmin {
 				$table .= '<tr id="collection_item_'. $row->collection_item_id .'"'.$tr_class.'>';
 				
 				$table .= '<th class="check-column" scope="row" style="text-align: center"><input type="checkbox" value="'. $row->collection_item_id .'" name="delete_collection_item[]"/></th>';
-				$table .= '<td width="[thumb_width]"><a href="'. $item->DetailPageURL .'" target="_blank"><img src="'. $item->SmallImage->Url->getUri() .'" /></a></td>';
+				if ($item->SmallImage == null) {
+					$thumbnail = get_bloginfo('url') . $this->plugin_dir . '/img/no_image.gif';
+				} else {
+					$thumbnail = $item->SmallImage->Url->getUri();
+				}
+				$table .= '<td width="[thumb_width]"><a href="'. $item->DetailPageURL .'" target="_blank"><img src="'. $thumbnail .'" /></a></td>';
 				$table .= '<td width="120">'. $row->collection_item_asin .'</td>';
 				$table .= '<td><span id="">'. $item->Title .'</span></td>';
 				$table .= '<td width="160">'. date(str_replace(' \<\b\r \/\>', ',', __('Y-m-d \<\b\r \/\> g:i:s a')), $row->timestamp) .'</td>';				
@@ -772,16 +797,26 @@ class AmazonSimpleAdmin {
 			echo '<p><strong>Error:</strong> '. $_asa_error . '</p>';	
 		}
 		?>
-				
-		<label for="_asa_amazon_tracking_id"><?php _e('Your Amazon Tracking ID:') ?></label>
+		
+		<p><?php _e('Fields marked with * are mandatory:') ?></p>
+		
+        <label for="_asa_amazon_api_key"<?php if (empty($this->_amazon_api_key)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Amazon Access Key ID*:') ?></label>
+        <input type="text" name="_asa_amazon_api_key" id="_asa_amazon_api_key" value="<?php echo (!empty($this->_amazon_api_key)) ? $this->_amazon_api_key : ''; ?>" />
+        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/AboutAWSAccounts.html" target="_blank">How do I get one?</a>
+        <br />
+        <label for="_asa_amazon_api_secret_key"<?php if (empty($this->_amazon_api_secret_key)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Secret Access Key*:') ?></label>
+        <input type="password" name="_asa_amazon_api_secret_key" id="_asa_amazon_api_secret_key" value="<?php echo (!empty($this->_amazon_api_secret_key)) ? $this->_amazon_api_secret_key : ''; ?>" />
+        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/ViewingCredentials.html" target="_blank">What is this?</a>
+        <br />			
+		<label for="_asa_amazon_tracking_id"><?php _e('Your Amazon Tracking ID:') ?></label>		
 		<input type="text" name="_asa_amazon_tracking_id" id="_asa_amazon_tracking_id" value="<?php echo (!empty($this->amazon_tracking_id)) ? $this->amazon_tracking_id : ''; ?>" />
+		<a href="http://amazon.com/associates" target="_blank">Where do I get one?</a>
 		<br />	
 		<label for="_asa_amazon_country_code"><?php _e('Your Amazon Country Code:') ?></label>
 		<select name="_asa_amazon_country_code">
-			<option value="0">-select-</option>
 			<?php
-			foreach ($this->amazon_valid_country_codes as $code) {
-				if ($code == $this->amazon_country_code) {
+			foreach ($this->_amazon_valid_country_codes as $code) {
+				if ($code == $this->_amazon_country_code) {
 					$selected = ' selected="selected"'; 	
 				} else {
 					$selected = '';
@@ -789,18 +824,22 @@ class AmazonSimpleAdmin {
 				echo '<option value="'. $code .'"'.$selected.'>' . $code . '</option>';	
 			}
 			?>
-		</select> (Default: US)<br /><br />
+		</select> (Default: US)
 		
-		<p><?php _e('If you want you can use your own Amazon Access Key ID:') ?></p>
-		<label for="_asa_amazon_api_key"><?php _e('Your Amazon Access Key ID:') ?></label>
-		<input type="text" name="_asa_amazon_api_key" id="_asa_amazon_api_key" value="<?php echo (!empty($this->amazon_api_key)) ? $this->amazon_api_key : ''; ?>" />
-		<a href="http://aws.amazon.com/" target="_blank">get one</a>
+		<br />
+		<br />
 		
-		<br /><br />
-		<p>Product preview layers are only supported by US, UK and DE so far. This can effect the site to be loaded a bit slower due to link parsing.</p>
+		<h3>Options</h3>
+		
+		<label for="_asa_parse_comments"><?php _e('Allow parsing [asa] tags in user comments:') ?></label>
+        <input type="checkbox" name="_asa_parse_comments" id="_asa_parse_comments" value="1"<?php echo (($this->_parse_comments == true) ? 'checked="checked"' : '') ?> />
+        
+        <br /><br />
+		
 		<label for="_asa_product_preview"><?php _e('Enable product preview links:') ?></label>
-		<input type="checkbox" name="_asa_product_preview" id="_asa_product_preview" value="1"<?php echo (!empty($this->product_preview) ? 'checked="checked"' : '') ?> />
-		
+		<input type="checkbox" name="_asa_product_preview" id="_asa_product_preview" value="1"<?php echo (($this->_product_preview == true) ? 'checked="checked"' : '') ?> />
+		<p>Product preview layers are only supported by US, UK and DE so far. This can effect the site to be loaded a bit slower due to link parsing.</p>
+	
 	
 		<p class="submit">
 		<input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
@@ -860,7 +899,7 @@ class AmazonSimpleAdmin {
     
         <p class="submit">
         <input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
-        <input type="submit" name="clean_cache" value="<?php _e('Clean Cache') ?> &raquo;" />
+        <input type="submit" name="clean_cache" value="<?php _e('Clear Cache') ?> &raquo;" />
         </p>
         
         </fieldset>
@@ -1012,10 +1051,10 @@ class AmazonSimpleAdmin {
 				$tracking_id = $this->amazon_tracking_id;
 			} else {
 				// otherwise use mine (for all my good programming work :)
-				if (empty($this->amazon_country_code)) {
+				if (empty($this->_amazon_country_code)) {
 					$tracking_id = $this->my_tacking_id['US'];
 				} else {
-					$tracking_id = $this->my_tacking_id[$this->amazon_country_code];
+					$tracking_id = $this->my_tacking_id[$this->_amazon_country_code];
 				}
 			}
 			
@@ -1038,11 +1077,11 @@ class AmazonSimpleAdmin {
 			$totalOffers = $item->Offers->TotalNew + $item->Offers->TotalUsed + 
 				$item->Offers->TotalCollectible + $item->Offers->TotalRefurbished;
 				
-			if (empty($this->amazon_country_code)) {
+			if (empty($this->_amazon_country_code)) {
 				$amazon_url = sprintf($this->amazon_url['US'], 
 					$item->ASIN, $tracking_id);
 			} else {
-				$amazon_url = sprintf($this->amazon_url[$this->amazon_country_code], 
+				$amazon_url = sprintf($this->amazon_url[$this->_amazon_country_code], 
 					$item->ASIN, $tracking_id);
 			}
 			
@@ -1084,9 +1123,9 @@ class AmazonSimpleAdmin {
 				$item->Offers->Offers[0]->CurrencyCode,
 				$item->Offers->Offers[0]->Availability,
 				get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_' . 
-					(empty($this->amazon_country_code) ? 'US' : $this->amazon_country_code) .'_small.gif',
+					(empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'_small.gif',
 				get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_' . 
-					(empty($this->amazon_country_code) ? 'US' : $this->amazon_country_code) .'.gif', 
+					(empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'.gif', 
 				$item->DetailPageURL,
 				$platform,
 				$item->ISBN,
@@ -1109,7 +1148,8 @@ class AmazonSimpleAdmin {
 				!empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',
 				$item->EditorialReviews[0]->Content,
 				!empty($item->EditorialReviews[1]) ? $item->EditorialReviews[1]->Content : '',
-				$item->Artist		
+				is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist
+				
 			);
 
 			return preg_replace($search, $replace, $tpl);									
@@ -1162,10 +1202,28 @@ class AmazonSimpleAdmin {
 	 */
 	protected function _getAmazonUserData ()
 	{
-		$this->amazon_api_key 		= get_option('_asa_amazon_api_key');
-		$this->amazon_tracking_id 	= get_option('_asa_amazon_tracking_id');
-		$this->amazon_country_code 	= get_option('_asa_amazon_country_code');
-		$this->product_preview 		= get_option('_asa_product_preview');					
+		$this->_amazon_api_key            = get_option('_asa_amazon_api_key');
+		$this->_amazon_api_secret_key     = base64_decode(get_option('_asa_amazon_api_secret_key'));
+		$this->amazon_tracking_id 	      = get_option('_asa_amazon_tracking_id');
+		
+	    $_asa_product_preview = get_option('_asa_product_preview');
+        if (empty($_asa_product_preview)) {
+            $this->_product_preview = false;   
+        } else {
+            $this->_product_preview = true;
+        }
+        
+		$_asa_parse_comments = get_option('_asa_parse_comments');
+		if (empty($_asa_parse_comments)) {
+			$this->_parse_comments = false;   
+		} else {
+			$this->_parse_comments = true;
+		}
+					
+		$amazon_country_code = get_option('_asa_amazon_country_code');
+		if (!empty($amazon_country_code)) {
+		    $this->_amazon_country_code = $amazon_country_code;
+		}
 	}
 	
 	/**
@@ -1223,7 +1281,7 @@ class AmazonSimpleAdmin {
 			return $price;
 		}
 		
-		if ($this->amazon_country_code != 'JP') {
+		if ($this->_amazon_country_code != 'JP') {
 			$price = (float) substr_replace($price, '.', (strlen($price)-2), -2);
 		} else {
 			$price = intval($price);
@@ -1232,14 +1290,14 @@ class AmazonSimpleAdmin {
 		$dec_point 		= '.';
 		$thousands_sep 	= ',';
 		
-		if ($this->amazon_country_code == 'DE' ||
-			$this->amazon_country_code == 'FR') {
+		if ($this->_amazon_country_code == 'DE' ||
+			$this->_amazon_country_code == 'FR') {
 			// taken the amazon websites as example
 			$dec_point 		= ',';
 			$thousands_sep 	= '.';
 		}
 		
-		if ($this->amazon_country_code != 'JP') {
+		if ($this->_amazon_country_code != 'JP') {
 			$price = number_format($price, 2, $dec_point, $thousands_sep);
 		} else {
 			$price = number_format($price, 0, $dec_point, $thousands_sep);
@@ -1270,7 +1328,7 @@ class AmazonSimpleAdmin {
 			'/\[o_id\]/',
 		);		
 		
-		switch ($this->amazon_country_code) {
+		switch ($this->_amazon_country_code) {
 			
 			case 'DE':
 				$replace = array(

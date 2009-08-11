@@ -6,7 +6,7 @@
 	padding: 3px;
 }
 
-#asa_setup #_asa_amazon_api_key, #asa_setup #_asa_amazon_tracking_id {
+#asa_setup #_asa_amazon_api_key, #asa_setup #_asa_amazon_tracking_id, #asa_setup #_asa_amazon_api_secret_key {
 	width: 300px;
 }
 
