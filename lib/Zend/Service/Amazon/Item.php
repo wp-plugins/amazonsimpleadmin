@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Item.php 16211 2009-06-21 19:23:55Z thomas $
+ * @version    $Id: Item.php 21883 2010-04-16 14:57:07Z dragonbe $
  */
 
 
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_Item
@@ -112,13 +112,24 @@ class Zend_Service_Amazon_Item
     /**
      * Parse the given <Item> element
      *
-     * @param  DOMElement $dom
+     * @param  null|DOMElement $dom
      * @return void
+     * @throws	Zend_Service_Amazon_Exception
+     * 
+     * @group ZF-9547
      */
-    public function __construct(DOMElement $dom)
+    public function __construct($dom)
     {
+    	if (null === $dom) {
+    		require_once 'Zend/Service/Amazon/Exception.php';
+    		throw new Zend_Service_Amazon_Exception('Item element is empty');
+    	}
+    	if (!$dom instanceof DOMElement) {
+    		require_once 'Zend/Service/Amazon/Exception.php';
+    		throw new Zend_Service_Amazon_Exception('Item is not a valid DOM element');
+    	}
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2005-10-05');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
         $this->ASIN = $xpath->query('./az:ASIN/text()', $dom)->item(0)->data;
 
         $result = $xpath->query('./az:DetailPageURL/text()', $dom);
@@ -133,8 +144,10 @@ class Zend_Service_Amazon_Item
         }
 
         $result = $xpath->query('./az:ItemAttributes/az:*/text()', $dom);
+        
         if ($result->length >= 1) {
             foreach ($result as $v) {
+            	
                 if (isset($this->{$v->parentNode->tagName})) {
                     if (is_array($this->{$v->parentNode->tagName})) {
                         array_push($this->{$v->parentNode->tagName}, (string) $v->data);
@@ -163,19 +176,27 @@ class Zend_Service_Amazon_Item
             $this->SalesRank = (int) $result->item(0)->data;
         }
 
-        $result = $xpath->query('./az:CustomerReviews/az:Review', $dom);
-        if ($result->length >= 1) {
-            /**
-             * @see Zend_Service_Amazon_CustomerReview
-             */
-            require_once 'Zend/Service/Amazon/CustomerReview.php';
-            foreach ($result as $review) {
-                $this->CustomerReviews[] = new Zend_Service_Amazon_CustomerReview($review);
-            }
-            $this->AverageRating = (float) $xpath->query('./az:CustomerReviews/az:AverageRating/text()', $dom)->item(0)->data;
-            $this->TotalReviews = (int) $xpath->query('./az:CustomerReviews/az:TotalReviews/text()', $dom)->item(0)->data;
-        }
+        $result = $xpath->query('./az:CustomerReviews/az:IFrameURL', $dom);
+                        
+//        if ($result->length >= 1) { 	
+//        	
+//            /**
+//             * @see Zend_Service_Amazon_CustomerReview
+//             */
+//            require_once 'Zend/Service/Amazon/CustomerReview.php';
+//            foreach ($result as $review) {
+//                $this->CustomerReviews[] = new Zend_Service_Amazon_CustomerReview($review);
+//            }
+//            $this->AverageRating = (float) $xpath->query('./az:CustomerReviews/az:AverageRating/text()', $dom)->item(0)->data;
+//            $this->TotalReviews = (int) $xpath->query('./az:CustomerReviews/az:TotalReviews/text()', $dom)->item(0)->data;
+//        }
 
+        // custommization
+        $result = $xpath->query('./az:CustomerReviews/az:IFrameURL/text()', $dom);
+        if ($result->length == 1) {
+            $this->CustomerReviewsIFrameURL = $result->item(0)->data;            
+        }
+        
         $result = $xpath->query('./az:EditorialReviews/az:*', $dom);
         if ($result->length >= 1) {
             /**
@@ -231,7 +252,7 @@ class Zend_Service_Amazon_Item
              * @see Zend_Service_Amazon_OfferSet
              */
             require_once 'Zend/Service/Amazon/OfferSet.php';
-            $this->Offers = new Zend_Service_Amazon_OfferSet($dom);
+            $this->Offers = new Zend_Service_Amazon_OfferSet($dom);            
         }
 
         $result = $xpath->query('./az:Accessories/*', $dom);

@@ -2,10 +2,10 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 1.5
-Tested up to: 2.8.3
-Stable Tag: 0.9.6
+Tested up to: 3.0.1
+Stable Tag: 0.9.7
 
-Let's you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
+Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
 
 == Description ==
 
@@ -24,7 +24,7 @@ Features:
 * New with version 0.9.5: **Caching** Speeds up your blog when adding many products to your posts!
 * New with version 0.9.6: Parsing [asa] tags in user comments 
 * Since version 0.9.6 compatible with Amazons Product Advertising API changes by August 15, 2009 which require all requests to be authenticated using request signatures
-
+* Version 0.9.7 supports customer reviews again!
 
 For the latest information visit my website:
 
@@ -50,6 +50,12 @@ Here you can find a detailed documentation:
 http://www.ichdigital.de/amazonsimpleadmin-documentation/
 
 == Change Log ==
+0.9.7
+* Fixed: Customer reviews. Due to amazon api changes in November 2010 the customer reviews did not work any more.
+         The api now provides a url to an iframe where the reviews are generated for 24 hours. I implemented a way
+         to grab the 5-stars image and the total reviews so the old placeholders are still supported. I hope this 
+         way works. If you have any problems please let me know.
+* Added: News placeholders: LowestOfferCurrency, RatingStarsSrc (the url to the image file) 
 
 0.9.6
 * Added: Compatible with request authentification
@@ -89,7 +95,7 @@ http://www.ichdigital.de/amazonsimpleadmin-documentation/
 
 == Info ==
 
-This is the first public version. I have used this plugin for several weeks now and it works fine so far. If you find any bugs please send me a mail (info@NOSPAM_ichdigital.de, remove the NOSPAM_) or use the comments on the [plugin's homepage](http://www.ichdigital.de/amazonsimpleadmin/). Please also contact me for feature requests and ideas how to improve this plugin. Any other reactions are welcome too of course.
+If you find any bugs please send me a mail (info@NOSPAM_ichdigital.de, remove the NOSPAM_) or use the comments on the [plugin's homepage](http://www.ichdigital.de/amazonsimpleadmin/). Please also contact me for feature requests and ideas how to improve this plugin. Any other reactions are welcome too of course.
 
 == Frequently Asked Questions ==
 
