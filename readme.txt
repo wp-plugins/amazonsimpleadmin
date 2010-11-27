@@ -55,7 +55,7 @@ http://www.ichdigital.de/amazonsimpleadmin-documentation/
          The api now provides a url to an iframe where the reviews are generated for 24 hours. I implemented a way
          to grab the 5-stars image and the total reviews so the old placeholders are still supported. I hope this 
          way works. If you have any problems please let me know.
-* Added: News placeholders: LowestOfferCurrency, RatingStarsSrc (the url to the image file) 
+* Added: News placeholders: LowestOfferFormattedPrice, RatingStarsSrc (the url to the image file) 
 
 0.9.6
 * Added: Compatible with request authentification
