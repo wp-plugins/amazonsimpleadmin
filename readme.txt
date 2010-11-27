@@ -5,7 +5,7 @@ Requires at least: 1.5
 Tested up to: 2.8.3
 Stable Tag: 0.9.6
 
-Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
+Let's you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
 
 == Description ==
 
