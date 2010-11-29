@@ -105,8 +105,9 @@ class Zend_Service_Amazon_Item
      * @var Zend_Service_Amazon_ListmaniaLists[]
      */
     public $ListmaniaLists = array();
-
+    
     protected $_dom;
+    protected $_xpath;
 
 
     /**
@@ -130,6 +131,7 @@ class Zend_Service_Amazon_Item
     	}
         $xpath = new DOMXPath($dom->ownerDocument);
         $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $this->_xpath = $xpath;
         $this->ASIN = $xpath->query('./az:ASIN/text()', $dom)->item(0)->data;
 
         $result = $xpath->query('./az:DetailPageURL/text()', $dom);
@@ -264,9 +266,41 @@ class Zend_Service_Amazon_Item
             foreach ($result as $r) {
                 $this->Accessories[] = new Zend_Service_Amazon_Accessories($r);
             }
+        }    
+        
+        $this->_dom = $dom;
+    }
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param $name
+     */
+    public function __get ($name)
+    {
+    	if (isset($this->$name)) {
+    		return $this->$name;
+    	}
+    	
+        $result = $this->_xpath->query('.//az:'.$name.'/text()', $this->_dom);
+        if ($result->length == 1) {
+            return $result->item(0)->data;
+        } else {
+            $result = $this->_xpath->query('.//az:'.$name, $dom);
+            
+            $values = array();
+            foreach ($result as $item) {
+             
+                foreach ($this->_xpath->query('./*/text()', $item) as $t) {
+                    $values[] = (string) $t->data;
+                }
+            }
+            if (count($values)) {
+                $format = '<ul class="%s"><li>%s</li></ul>';
+                return sprintf($format, 'amazon_' . $name, implode('</li><li>', $values));
+            }
         }
 
-        $this->_dom = $dom;
     }
 
 

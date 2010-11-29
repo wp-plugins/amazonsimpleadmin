@@ -1220,7 +1220,34 @@ class AmazonSimpleAdmin {
 				is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist
 				
 			);
-			return preg_replace($search, $replace, $tpl);									
+			$result =  preg_replace($search, $replace, $tpl);
+
+			// check for unresolved
+			preg_match_all('/\{\$(.*)\}/', $result, $matches);
+			
+			$unresolved = $matches[1];
+			if (count($matches) > 0) {
+				
+				$unresolved_names        = $matches[1];
+				$unresolved_placeholders = $matches[0];
+				
+				$unresolved_search  = array();
+				$unresolved_replace = array();
+				
+				
+				for ($i=0; $i<count($unresolved_names);$i++) {
+
+					$value = $item->$unresolved_names[$i];
+					if (!empty($value)) {
+						$unresolved_search[]  = $this->TplPlaceholderToRegex($unresolved_placeholders[$i]);
+						$unresolved_replace[] = $value;
+					}
+				}
+				if (count($unresolved_search) > 0) {
+					$result =  preg_replace($unresolved_search, $unresolved_replace, $result);
+				}
+			}
+			return $result;
 		}
 	}
 	
