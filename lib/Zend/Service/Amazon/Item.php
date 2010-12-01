@@ -132,6 +132,8 @@ class Zend_Service_Amazon_Item
         $xpath = new DOMXPath($dom->ownerDocument);
         $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
         $this->_xpath = $xpath;
+        $this->_dom   = $dom;
+        
         $this->ASIN = $xpath->query('./az:ASIN/text()', $dom)->item(0)->data;
 
         $result = $xpath->query('./az:DetailPageURL/text()', $dom);
@@ -268,7 +270,7 @@ class Zend_Service_Amazon_Item
             }
         }    
         
-        $this->_dom = $dom;
+        
     }
     
     /**
@@ -286,7 +288,7 @@ class Zend_Service_Amazon_Item
         if ($result->length == 1) {
             return $result->item(0)->data;
         } else {
-            $result = $this->_xpath->query('.//az:'.$name, $dom);
+            $result = $this->_xpath->query('.//az:'.$name, $this->_dom);
             
             $values = array();
             foreach ($result as $item) {
