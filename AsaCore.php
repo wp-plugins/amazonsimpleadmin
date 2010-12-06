@@ -1226,7 +1226,8 @@ class AmazonSimpleAdmin {
 			preg_match_all('/\{\$(.*)\}/', $result, $matches);
 			
 			$unresolved = $matches[1];
-			if (count($matches) > 0) {
+			
+			if (count($unresolved) > 0) {
 				
 				$unresolved_names        = $matches[1];
 				$unresolved_placeholders = $matches[0];
@@ -1238,13 +1239,12 @@ class AmazonSimpleAdmin {
 				for ($i=0; $i<count($unresolved_names);$i++) {
 
 					$value = $item->$unresolved_names[$i];
-					if (!empty($value)) {
-						$unresolved_search[]  = $this->TplPlaceholderToRegex($unresolved_placeholders[$i]);
-						$unresolved_replace[] = $value;
-					}
+					
+					$unresolved_search[]  = $this->TplPlaceholderToRegex($unresolved_placeholders[$i]);
+					$unresolved_replace[] = $value;					
 				}
 				if (count($unresolved_search) > 0) {
-					$result =  preg_replace($unresolved_search, $unresolved_replace, $result);
+					$result = preg_replace($unresolved_search, $unresolved_replace, $result);
 				}
 			}
 			return $result;

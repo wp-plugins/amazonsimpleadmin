@@ -85,6 +85,11 @@ class Zend_Service_Amazon_Item
      * @var Zend_Service_Amazon_CustomerReview[]
      */
     public $CustomerReviews = array();
+    
+    /**
+     * @var Zend_Service_Amazon_EditorialReview[]
+     */
+    public $EditorialReviews = array();
 
     /**
      * @var Zend_Service_Amazon_SimilarProducts[]
@@ -108,6 +113,7 @@ class Zend_Service_Amazon_Item
     
     protected $_dom;
     protected $_xpath;
+    protected $_xml;
 
 
     /**
@@ -119,7 +125,7 @@ class Zend_Service_Amazon_Item
      * 
      * @group ZF-9547
      */
-    public function __construct($dom)
+    public function __construct($dom, $xml_response)
     {
     	if (null === $dom) {
     		require_once 'Zend/Service/Amazon/Exception.php';
@@ -129,6 +135,9 @@ class Zend_Service_Amazon_Item
     		require_once 'Zend/Service/Amazon/Exception.php';
     		throw new Zend_Service_Amazon_Exception('Item is not a valid DOM element');
     	}
+    	
+    	$this->_xml = str_replace('xmlns=', 'ns=', $xml_response);
+    	
         $xpath = new DOMXPath($dom->ownerDocument);
         $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
         $this->_xpath = $xpath;
@@ -180,7 +189,7 @@ class Zend_Service_Amazon_Item
             $this->SalesRank = (int) $result->item(0)->data;
         }
 
-        $result = $xpath->query('./az:CustomerReviews/az:IFrameURL', $dom);
+//        $result = $xpath->query('./az:CustomerReviews/az:IFrameURL', $dom);
                         
 //        if ($result->length >= 1) { 	
 //        	
@@ -202,14 +211,16 @@ class Zend_Service_Amazon_Item
         }
         
         $result = $xpath->query('./az:EditorialReviews/az:*', $dom);
+        
         if ($result->length >= 1) {
             /**
              * @see Zend_Service_Amazon_EditorialReview
              */
+        	
             require_once 'Zend/Service/Amazon/EditorialReview.php';
             foreach ($result as $r) {
-                $this->EditorialReviews[] = new Zend_Service_Amazon_EditorialReview($r);
-            }
+                $this->EditorialReviews[] = new Zend_Service_Amazon_EditorialReview($r);                
+            }            
         }
 
         $result = $xpath->query('./az:SimilarProducts/az:*', $dom);
@@ -280,30 +291,64 @@ class Zend_Service_Amazon_Item
      */
     public function __get ($name)
     {
-    	if (isset($this->$name)) {
-    		return $this->$name;
-    	}
-    	
-        $result = $this->_xpath->query('.//az:'.$name.'/text()', $this->_dom);
-        if ($result->length == 1) {
-            return $result->item(0)->data;
+    	if (in_array($name, array(
+            'ASIN', 'SmallImageUrl', 'SmallImageWidth', 'SmallImageHeight',
+            'MediumImageUrl', 'MediumImageWidth', 'MediumImageHeight',
+            'LargeImageUrl', 'LargeImageWidth', 'LargeImageHeight', 'Label',
+            'Manufacturer', 'Publisher', 'Studio', 'Title', 'AmazonUrl',
+            'TotalOffers', 'LowestOfferPrice', 'LowestOfferCurrency',
+            'LowestOfferFormattedPrice', 'AmazonPrice', 'AmazonCurrency',
+            'AmazonAvailability', 'AmazonLogoSmallUrl', 'AmazonLogoLargeUrl',
+            'DetailPageURL', 'Platform', 'ISBN', 'EAN', 'NumberOfPages',
+            'ReleaseDate', 'Binding', 'Author', 'Creator', 'Edition',
+            'AverageRating', 'TotalReviews', 'RatingStars', 'RatingStarsSrc',
+            'Director', 'Actors', 'Actor', 'RunningTime', 'Format', 'Studio',
+            'CustomRating', 'ProductDescription', 'AmazonDescription', 
+            'EditorialReviews', 'Artist'
+        ))) {
+	    	if (isset($this->$name)) {
+	    		return $this->$name;
+	    	}
         } else {
-            $result = $this->_xpath->query('.//az:'.$name, $this->_dom);
-            
-            $values = array();
-            foreach ($result as $item) {
-             
-                foreach ($this->_xpath->query('./*/text()', $item) as $t) {
-                    $values[] = (string) $t->data;
-                }
-            }
-            if (count($values)) {
-                $format = '<ul class="%s"><li>%s</li></ul>';
-                return sprintf($format, 'amazon_' . $name, implode('</li><li>', $values));
-            }
+        
+	        $itemXml = new SimpleXMLElement($this->_xml);
+	        $result = $this->_searchValue($itemXml, $name);
+        
+	        if (!empty($result)) {
+	            return $result;
+	        }
+	        
+	        return '';
         }
 
     }
+    
+    
+	protected function _searchValue ($itemXml, $s) 
+	{
+	    $result = $itemXml->xpath('//'.$s);
+	    
+	    if (count($result) == 1) {
+	        if (count($result[0]) > 0) {
+	            return $this->_showResultArray($result[0]);
+	        }
+	        return (string)$result[0];
+	    } else if (count($result) > 1) {
+	        return $this->_showResultArray($result);
+	    }   
+	}
+    
+	protected function _showResultArray ($a) 
+	{	    
+	    $show = '';
+	    foreach ($a as $k => $v) {
+	        if (is_string($k)) {
+	            $show .= $k .': ';
+	        }
+	        $show .= $v . ', ';
+	    }
+	    return substr(trim($show), 0, -1);
+	}    
 
 
     /**

@@ -170,6 +170,7 @@ class Zend_Service_Amazon
         }
 
         $dom = new DOMDocument();
+        $xml_response = $response->getBody();
         $dom->loadXML($response->getBody());
         self::_checkErrors($dom);
         $xpath = new DOMXPath($dom);
@@ -181,7 +182,7 @@ class Zend_Service_Amazon
              * @see Zend_Service_Amazon_Item
              */
             require_once 'Zend/Service/Amazon/Item.php';
-            return new Zend_Service_Amazon_Item($items->item(0));
+            return new Zend_Service_Amazon_Item($items->item(0), $xml_response);
         }
 
         /**
