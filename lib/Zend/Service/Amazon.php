@@ -171,7 +171,7 @@ class Zend_Service_Amazon
 
         $dom = new DOMDocument();
         $xml_response = $response->getBody();
-        $dom->loadXML($response->getBody());
+        $dom->loadXML($xml_response);
         self::_checkErrors($dom);
         $xpath = new DOMXPath($dom);
         $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
