@@ -15,7 +15,7 @@ class AmazonSimpleAdmin {
 	 * supported amazon country IDs
 	 */
 	protected $_amazon_valid_country_codes = array(
-		'CA', 'DE', 'FR', 'JP', 'UK', 'US'
+		'CA', 'DE', 'FR', 'JP', 'UK', 'US', 'IT'
 	);
 	
 	/**
@@ -28,6 +28,7 @@ class AmazonSimpleAdmin {
 		'JP'	=> 'http://www.amazon.jp/exec/obidos/ASIN/%s/%s',
 		'UK'	=> 'http://www.amazon.co.uk/exec/obidos/ASIN/%s/%s',
 		'US'	=> 'http://www.amazon.com/exec/obidos/ASIN/%s/%s',
+		'IT'	=> 'http://www.amazon.it/exec/obidos/ASIN/%s/%s',
 	);
 	
 	/**
@@ -1223,7 +1224,7 @@ class AmazonSimpleAdmin {
 			$result =  preg_replace($search, $replace, $tpl);
 
 			// check for unresolved
-			preg_match_all('/\{\$(.*)\}/', $result, $matches);
+			preg_match_all('/\{\$([a-z0-9\-\>]*)\}/i', $result, $matches);
 			
 			$unresolved = $matches[1];
 			
@@ -1350,13 +1351,17 @@ class AmazonSimpleAdmin {
 		$search = array(
 			'{',
 			'}',
-			'$'
+			'$',
+			'-',
+			'>'
 		);
 		
 		$replace = array(
 			'\{',
 			'\}',
-			'\$'
+			'\$',
+			'\-',
+			'\>'
 		);
 		
 		$ph = str_replace($search, $replace, $ph);

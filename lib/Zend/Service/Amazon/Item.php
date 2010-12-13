@@ -312,6 +312,9 @@ class Zend_Service_Amazon_Item
         } else {
         
 	        $itemXml = new SimpleXMLElement($this->_xml);
+	        if (strstr($name, '->')) {
+	        	$name = str_replace('->', '/', $name);
+	        }
 	        $result = $this->_searchValue($itemXml, $name);
         
 	        if (!empty($result)) {
