@@ -1031,10 +1031,26 @@ class AmazonSimpleAdmin {
 			for ($i=0; $i<count($matches_coll[0]); $i++) {
 				
 				$match 		= $matches_coll[0][$i];
-				$tpl_file	= strip_tags(trim($matches_coll[1][$i]));
 				$coll_label	= $matches_coll[2][$i];
 				
-				$tpl 		= $tpl_src;
+				$tpl_file	    = null;
+				$params	        = explode(',', strip_tags(trim($matches_coll[1][$i])));
+				$params         = array_map('trim', $params);
+				$coll_options   = array();
+
+				if (!empty($params[0])) {
+				    foreach ($params as $param) {
+                        if (!strstr($param, '=')) {
+                        	$tpl_file = $param;
+                        } else {
+                            $tp = explode('=', $param);
+                            $coll_options[$tp[0]] = $tp[1];	
+                        }
+				    }
+				}
+				
+				
+				$tpl = $tpl_src;
 
 				if (!empty($tpl_file) && 
 					file_exists(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm')) {
@@ -1049,11 +1065,15 @@ class AmazonSimpleAdmin {
 					$collection_id = $this->collection->getId($coll_label);
 
 					$coll_items = $this->collection->getItems($collection_id);
+					
 					if (count($coll_items) == 0) {
 						$content = str_replace($match, '', $content);
 					} else {
 						
 						$coll_html = '';
+						if (isset($coll_options['type']) && $coll_options['type'] == 'random') {
+							$coll_items = array($coll_items[rand(0, count($coll_items)-1)]);
+						}
 						foreach ($coll_items as $row) {
 							$coll_html .= $this->_parseTpl($row->collection_item_asin, $tpl);
 						}
