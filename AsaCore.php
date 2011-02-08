@@ -219,6 +219,7 @@ class AmazonSimpleAdmin {
 		
 		// Hook for adding content filter
 		add_filter('the_content', array($this, 'parseContent'), 1);
+		add_filter('the_excerpt', array($this, 'parseContent'), 1);
 		
         $this->_getAmazonUserData();
         		
