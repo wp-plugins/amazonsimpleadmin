@@ -51,17 +51,31 @@
 	list-style-image:none;
 	list-style-position:outside;
 	list-style-type:none;
-	margin:0pt;
-	padding:6px 0pt 3px;
+	margin: 10px 0 10px 0;
+	padding: 0;
+	border-bottom: 1px solid #ccc;
+	float: left;
+	width: 100%;
 }
 #asa_navigation li {
 	font-size:14px;
 	float: left;
-	margin-right: 20px;
+	margin: 0 0 0 20px;
 }
 #asa_navigation li a {
     display:            block;
     text-decoration:    none;
+    padding:            5px 20px;
+    border-top:             1px solid #ccc;
+    border-right:             1px solid #ccc;
+    border-left:             1px solid #ccc;
+}
+
+#asa_navigation li a.active {
+	background-color: #E5F3FF;
+}
+#asa_navigation li a:hover {
+	background-color: #fff;
 }
 /*
 #asa_navigation li {

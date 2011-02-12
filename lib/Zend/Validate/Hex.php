@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Zend Framework
  *
@@ -15,22 +14,20 @@
  *
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Hex.php 16223 2009-06-21 20:04:53Z thomas $
+ * @version    $Id: Hex.php 22668 2010-07-25 14:50:46Z thomas $
  */
-
 
 /**
  * @see Zend_Validate_Abstract
  */
 require_once 'Zend/Validate/Abstract.php';
 
-
 /**
  * @category   Zend
  * @package    Zend_Validate
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Validate_Hex extends Zend_Validate_Abstract
@@ -44,8 +41,8 @@ class Zend_Validate_Hex extends Zend_Validate_Abstract
      * @var array
      */
     protected $_messageTemplates = array(
-        self::INVALID => "Invalid type given, value should be a string",
-        self::NOT_HEX => "'%value%' has not only hexadecimal digit characters"
+        self::INVALID => "Invalid type given. String expected",
+        self::NOT_HEX => "'%value%' has not only hexadecimal digit characters",
     );
 
     /**
@@ -65,7 +62,7 @@ class Zend_Validate_Hex extends Zend_Validate_Abstract
 
         $this->_setValue($value);
         if (!ctype_xdigit((string) $value)) {
-            $this->_error();
+            $this->_error(self::NOT_HEX);
             return false;
         }
 

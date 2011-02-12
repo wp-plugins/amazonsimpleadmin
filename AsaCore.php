@@ -9,13 +9,13 @@ class AmazonSimpleAdmin {
 	 */
 	protected $plugin_dir = '/wp-content/plugins/amazonsimpleadmin';
 	
-	protected $plugin_url = 'options-general.php?page=amazonsimpleadmin.php';
+	protected $plugin_url = 'options-general.php?page=amazonsimpleadmin/amazonsimpleadmin.php';
 	
 	/**
 	 * supported amazon country IDs
 	 */
 	protected $_amazon_valid_country_codes = array(
-		'CA', 'DE', 'FR', 'JP', 'UK', 'US'
+		'CA', 'DE', 'FR', 'JP', 'UK', 'US', 'IT'
 	);
 	
 	/**
@@ -28,6 +28,7 @@ class AmazonSimpleAdmin {
 		'JP'	=> 'http://www.amazon.jp/exec/obidos/ASIN/%s/%s',
 		'UK'	=> 'http://www.amazon.co.uk/exec/obidos/ASIN/%s/%s',
 		'US'	=> 'http://www.amazon.com/exec/obidos/ASIN/%s/%s',
+		'IT'	=> 'http://www.amazon.it/exec/obidos/ASIN/%s/%s',
 	);
 	
 	/**
@@ -53,6 +54,7 @@ class AmazonSimpleAdmin {
 		'TotalOffers',
 		'LowestOfferPrice',
 		'LowestOfferCurrency',
+		'LowestOfferFormattedPrice',
 		'AmazonPrice',
 		'AmazonCurrency',
 		'AmazonAvailability',
@@ -71,6 +73,7 @@ class AmazonSimpleAdmin {
 		'AverageRating',
 		'TotalReviews',
 		'RatingStars',
+		'RatingStarsSrc',
 	    'Director',
 	    'Actors',
 	    'RunningTime',
@@ -186,12 +189,12 @@ class AmazonSimpleAdmin {
 	public function __construct ($wpdb) 
 	{
 		$libdir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib';
-		set_include_path(get_include_path() . PATH_SEPARATOR . $libdir);
+		set_include_path($libdir . PATH_SEPARATOR . get_include_path());
 		
         require_once 'Zend/Uri/Http.php';
         require_once 'Zend/Service/Amazon.php';
         require_once 'Zend/Service/Amazon/Accessories.php';
-        require_once 'Zend/Service/Amazon/CustomerReview.php';
+        //require_once 'Zend/Service/Amazon/CustomerReview.php';
         require_once 'Zend/Service/Amazon/EditorialReview.php';
         require_once 'Zend/Service/Amazon/Image.php';
         require_once 'Zend/Service/Amazon/Item.php';        
@@ -201,6 +204,7 @@ class AmazonSimpleAdmin {
         require_once 'Zend/Service/Amazon/Query.php';
         require_once 'Zend/Service/Amazon/ResultSet.php';
         require_once 'Zend/Service/Amazon/SimilarProduct.php';
+        
         		
 		
 		if (isset($_GET['task'])) {
@@ -216,6 +220,7 @@ class AmazonSimpleAdmin {
 		
 		// Hook for adding content filter
 		add_filter('the_content', array($this, 'parseContent'), 1);
+		add_filter('the_excerpt', array($this, 'parseContent'), 1);
 		
         $this->_getAmazonUserData();
         		
@@ -297,7 +302,7 @@ class AmazonSimpleAdmin {
 	public function createAdminMenu () 
 	{   		
 		// Add a new submenu under Options:
-	    add_options_page('AmazonSimpleAdmin', 'AmazonSimpleAdmin', 8, dirname(__FILE__), array($this, 'createOptionsPage'));
+	    add_options_page('AmazonSimpleAdmin', 'AmazonSimpleAdmin', 8, 'amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'createOptionsPage'));
 	    add_action('admin_head', array($this, 'getOptionsHead'));
 	    wp_enqueue_script( 'listman' );
 	}
@@ -322,27 +327,46 @@ class AmazonSimpleAdmin {
 	 * 
 	 */
 	protected function getTabMenu ($task)
-	{
-      
+	{     
 		$nav  = '<ul id="asa_navigation">';
-		$nav .= '<li><a href="'. $this->plugin_url .'"'. (($task == null) ? 'class="active"' : '') .'>Setup</a></li>';
+		$nav .= '<li><a href="'. $this->plugin_url .'"'. ((in_array($task, array(null, 'checkDonation'))) ? 'class="active"' : '') .'>Setup</a></li>';
 		$nav .= '<li><a href="'. $this->plugin_url .'&task=collections"'. (($task == 'collections') ? 'class="active"' : '') .'>Collections</a></li>';
 		$nav .= '<li><a href="'. $this->plugin_url .'&task=usage"'. (($task == 'usage') ? 'class="active"' : '') .'>Usage</a></li>';
 		$nav .= '<li><a href="'. $this->plugin_url .'&task=cache"'. (($task == 'cache') ? 'class="active"' : '') .'>Cache</a></li>';
-		$nav .= '</ul>';
-		
-		$nav .= '<div style="clear: both"></div>';
-		
-		
-		$nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank" style="padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;">';
-		$nav .= '<p style="margin: 0">If you like this plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates! :-)</p>';
-        $nav .= '<input type="hidden" name="cmd" value="_s-xclick">
-            <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal." style="vertical-align: middle">&nbsp;(Thank you!)
-            <img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
-            <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
-            </form>';
-		
+		$nav .= '</ul>';		
 		return $nav;
+	}
+	
+	/**
+	 * 
+	 * Enter description here ...
+	 * @param $task
+	 */
+	protected function _getSubMenu ($task)
+	{
+		$_asa_donated = get_option('_asa_donated');
+		
+	    $nav .= '<div style="clear: both"></div>';
+        
+        if (empty($_asa_donated)) {
+            $nav .= '<div style="padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;">';       
+            $nav .= '<p style="float: right; padding: 5px 10px;"><form action="'. $this->plugin_url .'&task=checkDonation" method="post" style="display: inline; float: right;"><input type="checkbox" name="asa_donated" id="asa_donated" value="1" />&nbsp;<label for="asa_donated">I donated already, please hide this box.</label><br /><input type="submit" value="send" /></form></p>';
+            $nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">';
+            $nav .= '<p style="margin: 0">If you like this plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates! :-)</p>';
+            $nav .= '<input type="hidden" name="cmd" value="_s-xclick">
+                <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal." style="vertical-align: middle">&nbsp;(Thank you!)
+                <img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+                <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
+                </form>';
+            $nav .= '<div style="clear:both"></div>';   
+            $nav .= '</div>';
+        }
+        
+        $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;"><p>Please visit the <a href="http://www.ichdigital.de/amazonsimpleadmin" target="_blank">AmazonSimpleAdmin-Homepage</a> to stay informed about the development and to give me feedback.</p></div>';
+        if (!get_option('_asa_cache_active')) {
+            $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #aa0000;"><p>It is highly recommended to activate the <a href="'. $this->plugin_url .'&task=cache">cache</a>!</p></div>';
+        }
+        return $nav;
 	}
 	
 	/**
@@ -351,8 +375,15 @@ class AmazonSimpleAdmin {
 	 */
 	protected function _displayDispatcher ($task) 
 	{
+		$_asa_donated = get_option('_asa_donated');
+		if ($task == 'checkDonation' && empty($_asa_donated)) {
+			$this->_checkDonated();
+		}
+				
+		
+		
 		switch ($task) {
-			
+				
 			case 'collections':
 				
 				require_once(dirname(__FILE__) . '/AsaCollection.php');
@@ -444,7 +475,8 @@ class AmazonSimpleAdmin {
 					$this->collection->initDB();
 				}
 				
-				//var_dump($this->db->get_var("SHOW TABLES LIKE '%asa_collection%'"));
+				echo $this->_getSubMenu($task);
+				
 				if ($this->db->get_var("SHOW TABLES LIKE '%asa_collection%'") === null) {				
 					$this->_displayCollectionsSetup();
 				} else {
@@ -453,6 +485,8 @@ class AmazonSimpleAdmin {
 				break;
 				
 			case 'usage':
+                
+				echo $this->_getSubMenu($task);
 				
 				$this->_displayUsagePage();
 				break;
@@ -480,13 +514,15 @@ class AmazonSimpleAdmin {
             		$this->success['submit_cache'] = 'Cache options updated!';
             	}
             	
+            	echo $this->_getSubMenu($task);
+            	
             	$this->_displayCachePage();
                 break;				
 				
 			default:
 				
-				if (count($_POST) > 0) {
-			
+				if (count($_POST) > 0 && isset($_POST['info_update'])) {
+					
 					$_asa_amazon_api_key 		= strip_tags($_POST['_asa_amazon_api_key']);
 					$_asa_amazon_api_secret_key	= base64_encode(strip_tags($_POST['_asa_amazon_api_secret_key']));
 					$_asa_amazon_tracking_id 	= strip_tags($_POST['_asa_amazon_tracking_id']);					
@@ -508,7 +544,19 @@ class AmazonSimpleAdmin {
 					}				
 				}
 				
+				echo $this->_getSubMenu($task);
+				
 				$this->_displaySetupPage();
+		}
+	}
+	
+	/**
+	 * check if user wants to hide the donation notice
+	 */
+	protected function _checkDonated () {
+		
+		if ($_POST['asa_donated'] == '1') {
+			update_option('_asa_donated', '1');			
 		}
 	}
 	
@@ -985,10 +1033,26 @@ class AmazonSimpleAdmin {
 			for ($i=0; $i<count($matches_coll[0]); $i++) {
 				
 				$match 		= $matches_coll[0][$i];
-				$tpl_file	= strip_tags(trim($matches_coll[1][$i]));
 				$coll_label	= $matches_coll[2][$i];
 				
-				$tpl 		= $tpl_src;
+				$tpl_file	    = null;
+				$params	        = explode(',', strip_tags(trim($matches_coll[1][$i])));
+				$params         = array_map('trim', $params);
+				$coll_options   = array();
+
+				if (!empty($params[0])) {
+				    foreach ($params as $param) {
+                        if (!strstr($param, '=')) {
+                        	$tpl_file = $param;
+                        } else {
+                            $tp = explode('=', $param);
+                            $coll_options[$tp[0]] = $tp[1];	
+                        }
+				    }
+				}
+				
+				
+				$tpl = $tpl_src;
 
 				if (!empty($tpl_file) && 
 					file_exists(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm')) {
@@ -1003,13 +1067,43 @@ class AmazonSimpleAdmin {
 					$collection_id = $this->collection->getId($coll_label);
 
 					$coll_items = $this->collection->getItems($collection_id);
+					
 					if (count($coll_items) == 0) {
 						$content = str_replace($match, '', $content);
 					} else {
 						
 						$coll_html = '';
+						if (isset($coll_options['type']) && $coll_options['type'] == 'random' && !isset($coll_options['items'])) {
+							// only one random collection item
+							$coll_items = array($coll_items[rand(0, count($coll_items)-1)]);
+						} else if (isset($coll_options['items']) && !isset($coll_options['type'])) {
+							// only get the defined number of the latest collection items 
+							$coll_items_limit = (int)$coll_options['items'];
+						} else if (isset($coll_options['items']) && isset($coll_options['type']) && $coll_options['type'] == 'random') {
+							// only get a limited number of random items							
+							$new_coll_items = array();
+							$items_limit = (int)$coll_options['items'];
+							if ($items_limit > count($coll_items)) {
+								$items_limit = count($coll_items);
+							}
+							while (count($new_coll_items) < $items_limit) {
+
+								$rand_item_index = rand(0, count($coll_items)-1);
+								
+								if (!isset($new_coll_items[$rand_item_index])) {
+									$new_coll_items[$rand_item_index] = $coll_items[$rand_item_index];
+								}
+							}
+							$coll_items = $new_coll_items;							
+						}
+						
+						$coll_items_counter = 1;
 						foreach ($coll_items as $row) {
 							$coll_html .= $this->_parseTpl($row->collection_item_asin, $tpl);
+							$coll_items_counter++;
+							if (isset($coll_items_limit) && $coll_items_counter > $coll_items_limit) {
+								break;
+							}
 						}
 						$content = str_replace($match, $coll_html, $content);
 					}					
@@ -1038,11 +1132,10 @@ class AmazonSimpleAdmin {
 			return '';
 		
 		} else {
-			
+						
 			$search = $this->_getTplPlaceholders(true);
 			
 			$lowestOfferPrice = null;
-			$amazonPrice = $item->Offers->Offers[0]->Price;
 			
 			$tracking_id 	= ''; 
 			
@@ -1058,21 +1151,49 @@ class AmazonSimpleAdmin {
 				}
 			}
 			
+			if ($item->CustomerReviewsIFrameURL != null) {
+				require_once(dirname(__FILE__) . '/AsaCustomerReviews.php');
+				$customerReviews = new AsaCustomerReviews($item->ASIN, $item->CustomerReviewsIFrameURL, $this->cache);
+				
+				$averageRating = $customerReviews->averageRating;
+				if (strstr($averageRating, ',')) {
+	                $averageRating = str_replace(',', '.', $averageRating);   
+	            }
+			} else {
+				$averageRating = '';
+			}
+			
 			if ($item->Offers->LowestUsedPrice && $item->Offers->LowestNewPrice) {
+				
 				$lowestOfferPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
 					$item->Offers->LowestUsedPrice : $item->Offers->LowestNewPrice;
 				$lowestOfferCurrency = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
 					$item->Offers->LowestUsedPriceCurrency : $item->Offers->LowestNewPriceCurrency;
+				$lowestOfferFormattedPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
+					$item->Offers->LowestUsedPriceFormattedPrice : $item->Offers->LowestNewPriceFormattedPrice;
+					
 			} else if ($item->Offers->LowestNewPrice) {
-				$lowestOfferPrice = $item->Offers->LowestNewPrice;
-				$lowestOfferCurrency = $item->Offers->LowestNewPriceCurrency;
+				
+				$lowestOfferPrice          = $item->Offers->LowestNewPrice;
+				$lowestOfferCurrency       = $item->Offers->LowestNewPriceCurrency;
+				$lowestOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
+				
 			} else if ($item->Offers->LowestUsedPrice) {
-				$lowestOfferPrice = $item->Offers->LowestUsedPrice;
-				$lowestOfferCurrency = $item->Offers->LowestUsedPriceCurrency;
+				
+				$lowestOfferPrice          = $item->Offers->LowestUsedPrice;
+				$lowestOfferCurrency       = $item->Offers->LowestUsedPriceCurrency;
+				$lowestOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
 			}
 			
 			$lowestOfferPrice = $this->_formatPrice($lowestOfferPrice);
-			$amazonPrice = $this->_formatPrice($amazonPrice);
+			
+		    if ($item->Offers->Offers[0]->Price != null) {
+                $amazonPrice = $item->Offers->Offers[0]->Price;
+                $amazonPrice = $this->_formatPrice($amazonPrice);
+            } else {
+                $amazonPrice = $lowestOfferFormattedPrice;
+            }
+			
 			
 			$totalOffers = $item->Offers->TotalNew + $item->Offers->TotalUsed + 
 				$item->Offers->TotalCollectible + $item->Offers->TotalRefurbished;
@@ -1090,11 +1211,7 @@ class AmazonSimpleAdmin {
 				$platform = implode(', ', $platform);
 			}			
 			
-			if (strstr($item->AverageRating, ',')) {
-			    $averageRating = str_replace(',', '.', $item->AverageRating);	
-			} else {
-				$averageRating = $item->AverageRating;
-			}
+
 			
 			$replace = array(
 				$item->ASIN,
@@ -1119,6 +1236,7 @@ class AmazonSimpleAdmin {
 				empty($totalOffers) ? '0' : $totalOffers,
 				empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
 				$lowestOfferCurrency,
+				$lowestOfferFormattedPrice,
 				empty($amazonPrice) ? '---' : $amazonPrice,
 				$item->Offers->Offers[0]->CurrencyCode,
 				$item->Offers->Offers[0]->Availability,
@@ -1137,9 +1255,9 @@ class AmazonSimpleAdmin {
 				is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
 				$item->Edition,
 				$averageRating,
-				!empty($item->TotalReviews) ? $item->TotalReviews : '0',
-				($averageRating != null) ? 
-					'<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $averageRating .'.gif" class="asa_rating_stars" />' : '',
+				($customerReviews->totalReviews != null) ? $customerReviews->totalReviews : '',
+				($customerReviews->imgTag != null) ? $customerReviews->imgTag : '',
+				($customerReviews->imgSrc != null) ? $customerReviews->imgSrc : get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_reviews.gif',
 				is_array($item->Director) ? implode(', ', $item->Director) : $item->Director,
 				is_array($item->Actor) ? implode(', ', $item->Actor) : $item->Actor,
 				$item->RunningTime,
@@ -1151,8 +1269,34 @@ class AmazonSimpleAdmin {
 				is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist
 				
 			);
+			$result =  preg_replace($search, $replace, $tpl);
 
-			return preg_replace($search, $replace, $tpl);									
+			// check for unresolved
+			preg_match_all('/\{\$([a-z0-9\-\>]*)\}/i', $result, $matches);
+			
+			$unresolved = $matches[1];
+			
+			if (count($unresolved) > 0) {
+				
+				$unresolved_names        = $matches[1];
+				$unresolved_placeholders = $matches[0];
+				
+				$unresolved_search  = array();
+				$unresolved_replace = array();
+				
+				
+				for ($i=0; $i<count($unresolved_names);$i++) {
+
+					$value = $item->$unresolved_names[$i];
+					
+					$unresolved_search[]  = $this->TplPlaceholderToRegex($unresolved_placeholders[$i]);
+					$unresolved_replace[] = $value;					
+				}
+				if (count($unresolved_search) > 0) {
+					$result = preg_replace($unresolved_search, $unresolved_replace, $result);
+				}
+			}
+			return $result;
 		}
 	}
 	
@@ -1255,13 +1399,17 @@ class AmazonSimpleAdmin {
 		$search = array(
 			'{',
 			'}',
-			'$'
+			'$',
+			'-',
+			'>'
 		);
 		
 		$replace = array(
 			'\{',
 			'\}',
-			'\$'
+			'\$',
+			'\-',
+			'\>'
 		);
 		
 		$ph = str_replace($search, $replace, $ph);

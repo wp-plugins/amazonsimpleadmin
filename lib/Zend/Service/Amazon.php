@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Amazon.php 17146 2009-07-26 13:25:34Z beberlei $
+ * @version    $Id: Amazon.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 /**
@@ -30,7 +30,7 @@ require_once 'Zend/Rest/Client.php';
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon
@@ -44,7 +44,7 @@ class Zend_Service_Amazon
 
     /**
      * @var string
-     */ 
+     */
     protected $_secretKey = null;
 
     /**
@@ -62,6 +62,7 @@ class Zend_Service_Amazon
                                     'DE' => 'http://webservices.amazon.de',
                                     'JP' => 'http://webservices.amazon.co.jp',
                                     'FR' => 'http://webservices.amazon.fr',
+                                    'IT' => 'http://webservices.amazon.it',
                                     'CA' => 'http://webservices.amazon.ca');
 
     /**
@@ -155,8 +156,10 @@ class Zend_Service_Amazon
         $defaultOptions = array('ResponseGroup' => 'Small');
         $options['ItemId'] = (string) $asin;
         $options = $this->_prepareOptions('ItemLookup', $options, $defaultOptions);
+
         $response = $client->restGet('/onca/xml', $options);
 
+        
         if ($response->isError()) {
             /**
              * @see Zend_Service_Exception
@@ -168,10 +171,11 @@ class Zend_Service_Amazon
         }
 
         $dom = new DOMDocument();
-        $dom->loadXML($response->getBody());
+        $xml_response = $response->getBody();
+        $dom->loadXML($xml_response);
         self::_checkErrors($dom);
         $xpath = new DOMXPath($dom);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2005-10-05');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
         $items = $xpath->query('//az:Items/az:Item');
 
         if ($items->length == 1) {
@@ -179,7 +183,7 @@ class Zend_Service_Amazon
              * @see Zend_Service_Amazon_Item
              */
             require_once 'Zend/Service/Amazon/Item.php';
-            return new Zend_Service_Amazon_Item($items->item(0));
+            return new Zend_Service_Amazon_Item($items->item(0), $xml_response);
         }
 
         /**
@@ -229,7 +233,7 @@ class Zend_Service_Amazon
         $options['AWSAccessKeyId'] = $this->appId;
         $options['Service']        = 'AWSECommerceService';
         $options['Operation']      = (string) $query;
-        $options['Version']        = '2005-10-05';
+        $options['Version']        = '2010-10-01';
 
         // de-canonicalize out sort key
         if (isset($options['ResponseGroup'])) {
