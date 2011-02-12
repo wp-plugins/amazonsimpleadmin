@@ -3,7 +3,7 @@ Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
 Tested up to: 3.0.5
-Stable Tag: 0.9.8
+Stable Tag: 0.9.9
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Requires at least PHP 5.1.4!
 
@@ -50,7 +50,7 @@ Here you can find a detailed documentation:
 http://www.ichdigital.de/amazonsimpleadmin-documentation/
 
 == Change Log ==
-0.9.8
+0.9.9
 * Added: Support for the excerpt
 * Added: 2 new parameters for [asa_collection]: "items" and "type". 
          "items=2" for example lets you limit the collection items to be displayed.
@@ -60,6 +60,9 @@ http://www.ichdigital.de/amazonsimpleadmin-documentation/
          If you want to use a template: [asa_collection book, items=2, type=random]Products01[/asa_collection]
 * Added: Support for placeholders: Languages, Subtitles (for DVDs), Model, 
          ListPrice->FormattedPrice, ListPrice->CurrencyCode, AmountSaved->FormattedPrice, AmountSaved->CurrencyCode
+         
+0.9.8
+* Bugfixes
           
 0.9.7
 * Fixed: Customer reviews. Due to amazon api changes in November 2010 the customer reviews did not work any more.
