@@ -63,7 +63,7 @@ http://www.ichdigital.de/amazonsimpleadmin-documentation/
          
 0.9.8
 * Bugfixes
-          
+                 
 0.9.7
 * Fixed: Customer reviews. Due to amazon api changes in November 2010 the customer reviews did not work any more.
          The api now provides a url to an iframe where the reviews are generated for 24 hours. I implemented a way
