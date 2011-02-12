@@ -60,9 +60,6 @@ http://www.ichdigital.de/amazonsimpleadmin-documentation/
          If you want to use a template: [asa_collection book, items=2, type=random]Products01[/asa_collection]
 * Added: Support for placeholders: Languages, Subtitles (for DVDs), Model, 
          ListPrice->FormattedPrice, ListPrice->CurrencyCode, AmountSaved->FormattedPrice, AmountSaved->CurrencyCode
-         
-0.9.8
-* Bugfixes
           
 0.9.7
 * Fixed: Customer reviews. Due to amazon api changes in November 2010 the customer reviews did not work any more.
