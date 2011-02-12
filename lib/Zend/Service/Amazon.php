@@ -62,6 +62,7 @@ class Zend_Service_Amazon
                                     'DE' => 'http://webservices.amazon.de',
                                     'JP' => 'http://webservices.amazon.co.jp',
                                     'FR' => 'http://webservices.amazon.fr',
+                                    'IT' => 'http://webservices.amazon.it',
                                     'CA' => 'http://webservices.amazon.ca');
 
     /**

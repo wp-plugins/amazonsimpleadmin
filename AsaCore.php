@@ -204,6 +204,7 @@ class AmazonSimpleAdmin {
         require_once 'Zend/Service/Amazon/Query.php';
         require_once 'Zend/Service/Amazon/ResultSet.php';
         require_once 'Zend/Service/Amazon/SimilarProduct.php';
+        
         		
 		
 		if (isset($_GET['task'])) {
@@ -1072,11 +1073,37 @@ class AmazonSimpleAdmin {
 					} else {
 						
 						$coll_html = '';
-						if (isset($coll_options['type']) && $coll_options['type'] == 'random') {
+						if (isset($coll_options['type']) && $coll_options['type'] == 'random' && !isset($coll_options['items'])) {
+							// only one random collection item
 							$coll_items = array($coll_items[rand(0, count($coll_items)-1)]);
+						} else if (isset($coll_options['items']) && !isset($coll_options['type'])) {
+							// only get the defined number of the latest collection items 
+							$coll_items_limit = (int)$coll_options['items'];
+						} else if (isset($coll_options['items']) && isset($coll_options['type']) && $coll_options['type'] == 'random') {
+							// only get a limited number of random items							
+							$new_coll_items = array();
+							$items_limit = (int)$coll_options['items'];
+							if ($items_limit > count($coll_items)) {
+								$items_limit = count($coll_items);
+							}
+							while (count($new_coll_items) < $items_limit) {
+
+								$rand_item_index = rand(0, count($coll_items)-1);
+								
+								if (!isset($new_coll_items[$rand_item_index])) {
+									$new_coll_items[$rand_item_index] = $coll_items[$rand_item_index];
+								}
+							}
+							$coll_items = $new_coll_items;							
 						}
+						
+						$coll_items_counter = 1;
 						foreach ($coll_items as $row) {
 							$coll_html .= $this->_parseTpl($row->collection_item_asin, $tpl);
+							$coll_items_counter++;
+							if (isset($coll_items_limit) && $coll_items_counter > $coll_items_limit) {
+								break;
+							}
 						}
 						$content = str_replace($match, $coll_html, $content);
 					}					

@@ -329,8 +329,22 @@ class Zend_Service_Amazon_Item
     
 	protected function _searchValue ($itemXml, $s) 
 	{
+		switch ($s) {
+			case 'Languages':
+				require_once 'Zend/Service/Amazon/Language.php';
+				$resultObj = new Zend_Service_Amazon_Language($itemXml);
+				return $resultObj->getResult();
+				break;
+			case 'Subtitles':
+				require_once 'Zend/Service/Amazon/Subtitles.php';
+				$resultObj = new Zend_Service_Amazon_Subtitles($itemXml);
+				return $resultObj->getResult();
+				break;
+		}
+		
+		
 	    $result = $itemXml->xpath('//'.$s);
-	    
+
 	    if (count($result) == 1) {
 	        if (count($result[0]) > 0) {
 	            return $this->_showResultArray($result[0]);
