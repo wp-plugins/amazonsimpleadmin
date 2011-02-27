@@ -169,7 +169,7 @@ class Zend_Service_Amazon
                 'An error occurred sending request. Status code: ' . $response->getStatus()
             );
         }
-
+file_put_contents('/Users/timo/Sites/dev/devlog.txt', var_export($response->getBody(), true), FILE_APPEND);
         $dom = new DOMDocument();
         $xml_response = $response->getBody();
         $dom->loadXML($xml_response);
