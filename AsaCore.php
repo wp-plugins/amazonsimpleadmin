@@ -82,7 +82,8 @@ class AmazonSimpleAdmin {
 	    'CustomRating',
 	    'ProductDescription',
 	    'AmazonDescription',
-	    'Artist'
+	    'Artist',
+		'Comment'
 	);
 	
 	/**
@@ -114,6 +115,11 @@ class AmazonSimpleAdmin {
 	 * AmazonSimpleAdmin bb tag regex
 	 */
 	protected $bb_regex_collection = '#\[asa_collection(.*)\]([\w-]+)\[/asa_collection\]#i';	
+	
+	/**
+	 * param separator regex
+	 */
+	protected $_regex_param_separator = '/(,)(?=(?:[^"]|"[^"]*")*$)/m';	
 	
 	/**
 	 * my Amazon Access Key ID
@@ -152,6 +158,12 @@ class AmazonSimpleAdmin {
 	 * @var bool
 	 */
 	protected $_parse_comments = false;
+	
+	/**
+	 * internal param delimiter
+	 * @var string
+	 */
+	protected $_internal_param_delimit = '[#asa_param_delim#]';
 	
 	/**
 	 * 
@@ -994,8 +1006,10 @@ class AmazonSimpleAdmin {
 				$match 		= $matches[0][$i];
 								
 				$tpl_file	    = null;
-				$asin           = $matches[2][$i];      
-				$params	        = explode(',', strip_tags(trim($matches[1][$i])));
+				$asin           = $matches[2][$i]; 
+
+				$params         = preg_replace($this->_regex_param_separator, $this->_internal_param_delimit, strip_tags(trim($matches[1][$i])));
+				$params	        = explode($this->_internal_param_delimit, $params);
 				$params         = array_map('trim', $params);
 				$parse_params   = array();
 				
@@ -1004,8 +1018,15 @@ class AmazonSimpleAdmin {
                         if (!strstr($param, '=')) {
                         	$tpl_file = $param;
                         } else {
-                            $tp = explode('=', $param);
-                            $parse_params[$tp[0]] = $tp[1];	
+                        	if (strstr($param, 'comment=')) {
+                        		// the comment feature
+                        		$param = substr($param, 7);
+                        		preg_match('/"([^"\r\n]*)"/', $param, $comment_match);
+                        		$parse_params['comment'] = $comment_match[1];
+                        	} else {
+                            	$tp = explode('=', $param);
+                            	$parse_params[$tp[0]] = $tp[1];
+                        	}	
                         }
 				    }
 				}
@@ -1266,7 +1287,9 @@ class AmazonSimpleAdmin {
 				!empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',
 				$item->EditorialReviews[0]->Content,
 				!empty($item->EditorialReviews[1]) ? $item->EditorialReviews[1]->Content : '',
-				is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist
+				is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist,
+				!empty($parse_params['comment']) ? $parse_params['comment'] : '',
+				
 				
 			);
 			$result =  preg_replace($search, $replace, $tpl);
