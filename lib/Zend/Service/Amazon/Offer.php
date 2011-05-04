@@ -69,6 +69,12 @@ class Zend_Service_Amazon_Offer
     /**
      * @var string
      */
+    public $FormattedPrice;
+
+
+    /**
+     * @var string
+     */
     public $Availability;
 
     /**
@@ -98,6 +104,7 @@ class Zend_Service_Amazon_Offer
         if ($Price->length == 1) {
             $this->Price = (int) $xpath->query('./az:OfferListing/az:Price/az:Amount/text()', $dom)->item(0)->data;
             $this->CurrencyCode = (string) $xpath->query('./az:OfferListing/az:Price/az:CurrencyCode/text()', $dom)->item(0)->data;
+            $this->FormattedPrice = (string) $xpath->query('./az:OfferListing/az:Price/az:FormattedPrice/text()', $dom)->item(0)->data;
         }
         $availability = $xpath->query('./az:OfferListing/az:Availability/text()', $dom)->item(0);
         if($availability instanceof DOMText) {

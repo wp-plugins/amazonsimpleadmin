@@ -158,7 +158,10 @@ class Zend_Service_Amazon
         $options = $this->_prepareOptions('ItemLookup', $options, $defaultOptions);
 
         $response = $client->restGet('/onca/xml', $options);
-
+        
+        if (getenv('ASA_APPLICATION_ENV') == 'development') {
+            file_put_contents(getenv('ASA_DEBUG_PATH') . date('YmdHis') . '.xml', substr(var_export($response->getBody(), true), 1, -1));
+        } 
         
         if ($response->isError()) {
             /**
@@ -169,7 +172,7 @@ class Zend_Service_Amazon
                 'An error occurred sending request. Status code: ' . $response->getStatus()
             );
         }
-file_put_contents('/Users/timo/Sites/dev/devlog.txt', var_export($response->getBody(), true), FILE_APPEND);
+
         $dom = new DOMDocument();
         $xml_response = $response->getBody();
         $dom->loadXML($xml_response);

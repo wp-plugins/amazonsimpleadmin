@@ -55,7 +55,11 @@ class AmazonSimpleAdmin {
 		'LowestOfferPrice',
 		'LowestOfferCurrency',
 		'LowestOfferFormattedPrice',
+		'LowestNewOfferFormattedPrice',
+		'LowestUsedOfferFormattedPrice',
 		'AmazonPrice',
+		'AmazonPriceFormatted',
+		'ListPriceFormatted',
 		'AmazonCurrency',
 		'AmazonAvailability',
 		'AmazonLogoSmallUrl',
@@ -78,7 +82,6 @@ class AmazonSimpleAdmin {
 	    'Actors',
 	    'RunningTime',
 	    'Format',
-	    'Studio',
 	    'CustomRating',
 	    'ProductDescription',
 	    'AmazonDescription',
@@ -114,7 +117,7 @@ class AmazonSimpleAdmin {
 	/**
 	 * AmazonSimpleAdmin bb tag regex
 	 */
-	protected $bb_regex_collection = '#\[asa_collection(.*)\]([\w-]+)\[/asa_collection\]#i';	
+	protected $bb_regex_collection = '#\[asa_collection(.*)\]([\w-\s]+)\[/asa_collection\]#i';	
 	
 	/**
 	 * param separator regex
@@ -124,7 +127,7 @@ class AmazonSimpleAdmin {
 	/**
 	 * my Amazon Access Key ID
 	 */
-	protected $amazon_api_key_internal = '0TA14MJ6AS7KEC5KN582';
+	protected $amazon_api_key_internal = '';
 	
 	/**
 	 * user's Amazon Access Key ID
@@ -135,7 +138,7 @@ class AmazonSimpleAdmin {
 	 * user's Amazon Access Key ID
 	 * @var string
 	 */
-    protected $_amazon_api_secret_key = 'AgWI4lZbNiq1E0UKC5kCvg8zUEWv2xy290TgHTIE';	
+    protected $_amazon_api_secret_key = '';	
 	
 	/**
 	 * user's Amazon Tracking ID
@@ -216,8 +219,7 @@ class AmazonSimpleAdmin {
         require_once 'Zend/Service/Amazon/Query.php';
         require_once 'Zend/Service/Amazon/ResultSet.php';
         require_once 'Zend/Service/Amazon/SimilarProduct.php';
-        
-        		
+        require_once dirname(__FILE__) . '/AsaWidget.php';
 		
 		if (isset($_GET['task'])) {
 			$this->task = strip_tags($_GET['task']);
@@ -247,6 +249,8 @@ class AmazonSimpleAdmin {
 		if ($this->_product_preview == true) {
 			add_action('wp_footer', array($this, 'addProductPreview'));
 		}
+		
+		
 		
 		$this->amazon = $this->connect();		
 	}
@@ -314,7 +318,7 @@ class AmazonSimpleAdmin {
 	public function createAdminMenu () 
 	{   		
 		// Add a new submenu under Options:
-	    add_options_page('AmazonSimpleAdmin', 'AmazonSimpleAdmin', 8, 'amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'createOptionsPage'));
+	    add_options_page('Amazon Simple Admin', 'Amazon Simple Admin', 8, 'amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'createOptionsPage'));
 	    add_action('admin_head', array($this, 'getOptionsHead'));
 	    wp_enqueue_script( 'listman' );
 	}
@@ -326,7 +330,7 @@ class AmazonSimpleAdmin {
 	public function createOptionsPage () 
 	{	
 		echo '<div class="wrap">';
-		echo '<h2>AmazonSimpleAdmin</h2>';
+		echo '<h2>Amazon Simple Admin</h2>';
 				
 		echo $this->getTabMenu($this->task);
 		#echo '<div style="clear: both"></div>';
@@ -374,7 +378,7 @@ class AmazonSimpleAdmin {
             $nav .= '</div>';
         }
         
-        $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;"><p>Please visit the <a href="http://www.ichdigital.de/amazonsimpleadmin" target="_blank">AmazonSimpleAdmin-Homepage</a> to stay informed about the development and to give me feedback.</p></div>';
+        $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;"><p>Please visit the <a href="http://www.wordpress-amazon-plugin.com/" target="_blank">Amazon Simple Admin-Homepage</a> to stay informed about the development and to give me feedback.</p></div>';
         if (!get_option('_asa_cache_active')) {
             $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #aa0000;"><p>It is highly recommended to activate the <a href="'. $this->plugin_url .'&task=cache">cache</a>!</p></div>';
         }
@@ -695,6 +699,7 @@ class AmazonSimpleAdmin {
 			$table .= '<th scope="col" style="text-align: center"><input type="checkbox" onclick="asa_checkAll();"/></th>';
 			$table .= '<th scope="col" width="[thumb_width]"></th>';
 			$table .= '<th scope="col" width="120">ASIN</th>';
+			$table .= '<th scope="col" width="120">'. __('Price') .'</th>';
 			$table .= '<th scope="col">'. __('Title') .'</th>';
 			$table .= '<th scope="col" width="160">'. __('Timestamp') . '</th>';
 			$table .= '<th scope="col"></th>';
@@ -729,6 +734,7 @@ class AmazonSimpleAdmin {
 				}
 				$table .= '<td width="[thumb_width]"><a href="'. $item->DetailPageURL .'" target="_blank"><img src="'. $thumbnail .'" /></a></td>';
 				$table .= '<td width="120">'. $row->collection_item_asin .'</td>';
+				$table .= '<td width="120">'. $item->Offers->Offers[0]->FormattedPrice .'</td>';
 				$table .= '<td><span id="">'. $item->Title .'</span></td>';
 				$table .= '<td width="160">'. date(str_replace(' \<\b\r \/\>', ',', __('Y-m-d \<\b\r \/\> g:i:s a')), $row->timestamp) .'</td>';				
 				$table .= '<td><a href="'. $this->plugin_url .'&task=collections&update_timestamp='. $row->collection_item_id .'&select_manage_collection='. $collection_id .'" class="edit" onclick="return asa_set_latest('. $row->collection_item_id .', \'Set timestamp of &quot;'. $title .'&quot; to actual time?\');" title="update timestamp">latest</a></td>';
@@ -773,7 +779,7 @@ class AmazonSimpleAdmin {
 		<fieldset class="options">
 		<h2><?php _e('Usage') ?></h2>
 		
-		<p>On the plugin's homepage you can find a more <a href="http://www.ichdigital.de/amazonsimpleadmin-documentation/" target="_blank">detailed documentation</a>.</p>
+		<p>Please visit the <a href="http://www.wordpress-amazon-plugin.com/" target="_blank">plugin's homepage</a> for a more detailed and always up-to-date documentation</a>.</p>
 		<h3>Tags</h3>
 			<p><?php _e('To embed products from Amazon into your post with AmazonSimpleAdmin, easily use tags like this:') ?></p>
 			<p><strong>[asa]ASIN[/asa]</strong> where ASIN is the Amazon ASIN number you can find on each product's site, like: <strong>[asa]B000EWN5JM[/asa]</strong></p>
@@ -806,20 +812,9 @@ class AmazonSimpleAdmin {
 		<p><?php _e('Available templates in your tpl folder are:') ?></p>
 		<ul>
 		<?php
-		$tpl_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl';
-
-		if (is_dir($tpl_dir)) {
-		    if ($dh = opendir($tpl_dir)) {
-		        while (($file = readdir($dh)) !== false) {
-		            if (!is_dir($file) && $file != '.' && $file != '..') {
-		            	$info = pathinfo($file);
-		            	if ($info['extension'] == 'htm') {
-		            		echo '<li>'. basename($info['basename'], '.htm') .'</li>';
-		            	}
-		            }
-		        }
-		        closedir($dh);
-		    }
+		$templates = $this->getAllTemplates();
+		foreach ($templates as $template) {
+		    echo '<li>'. $template .'</li>';
 		}
 		?>
 		</ul>
@@ -995,11 +990,13 @@ class AmazonSimpleAdmin {
 		$matches 		= array();
 		$matches_coll 	= array();
 		
+		// single items
 		preg_match_all($this->bb_regex, $content, $matches);
 		
 		if ($matches && count($matches[0]) > 0) {
 			
-			$tpl_src		= file_get_contents(dirname(__FILE__) .'/tpl/default.htm');									
+		    // get defaul template file
+		    $tpl_src = $this->_getDefaultTpl();
 
 			for ($i=0; $i<count($matches[0]); $i++) {
 				
@@ -1030,13 +1027,8 @@ class AmazonSimpleAdmin {
                         }
 				    }
 				}
-
-				if (!empty($tpl_file) && 
-					file_exists(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm')) {
-					$tpl = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm');	
-				} else {
-				    $tpl = $tpl_src;	
-				}
+				
+				$tpl = $this->_getTpl($tpl_file, $tpl_src);
 				
 				if (!empty($asin)) {
 									
@@ -1045,11 +1037,13 @@ class AmazonSimpleAdmin {
 			}
 		}
 		
+		// collections
 		preg_match_all($this->bb_regex_collection, $content, $matches_coll);
 		
 		if ($matches_coll && count($matches_coll[0]) > 0) {
 			
-			$tpl_src		= file_get_contents(dirname(__FILE__) .'/tpl/default.htm');									
+			// get defaul template file
+		    $tpl_src = $this->_getDefaultTpl();								
 
 			for ($i=0; $i<count($matches_coll[0]); $i++) {
 				
@@ -1072,13 +1066,7 @@ class AmazonSimpleAdmin {
 				    }
 				}
 				
-				
-				$tpl = $tpl_src;
-
-				if (!empty($tpl_file) && 
-					file_exists(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm')) {
-					$tpl = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm');	
-				}
+				$tpl = $this->_getTpl($tpl_file, $tpl_src);
 				
 				if (!empty($coll_label)) {
 					
@@ -1097,14 +1085,16 @@ class AmazonSimpleAdmin {
 						if (isset($coll_options['type']) && $coll_options['type'] == 'random' && !isset($coll_options['items'])) {
 							// only one random collection item
 							$coll_items = array($coll_items[rand(0, count($coll_items)-1)]);
-						} else if (isset($coll_options['items']) && !isset($coll_options['type'])) {
+						} else if (isset($coll_options['items']) && (!isset($coll_options['type']) || $coll_options['type'] == 'latest')) {
 							// only get the defined number of the latest collection items 
-							$coll_items_limit = (int)$coll_options['items'];
+							if ((int)$coll_options['items'] !== 0) {
+							    $coll_items_limit = (int)$coll_options['items'];
+							}
 						} else if (isset($coll_options['items']) && isset($coll_options['type']) && $coll_options['type'] == 'random') {
 							// only get a limited number of random items							
 							$new_coll_items = array();
 							$items_limit = (int)$coll_options['items'];
-							if ($items_limit > count($coll_items)) {
+							if ($items_limit > count($coll_items) || $items_limit === 0) {
 								$items_limit = count($coll_items);
 							}
 							while (count($new_coll_items) < $items_limit) {
@@ -1133,6 +1123,91 @@ class AmazonSimpleAdmin {
 		}
 		
 		return $content;
+	}
+	
+	/**
+	 * Retrieves default template file
+	 */
+	protected function _getDefaultTpl()
+	{
+		$tpl_src_custom  = dirname(__FILE__) .'/tpl/default.htm';
+	    $tpl_src_builtin = dirname(__FILE__) .'/tpl/built-in/default.htm';
+	    
+	    if (file_exists($tpl_src_custom)) {
+	        $tpl_src = file_get_contents($tpl_src_custom);
+	    } else {
+	        $tpl_src = file_get_contents($tpl_src_builtin);
+	    }    
+	    return $tpl_src;
+	}
+	
+	/**
+	 * Retrieves all existing template files
+	 */
+	public function getAllTemplates()
+	{
+		$tpl_src_custom  = dirname(__FILE__) .'/tpl/';
+	    $tpl_src_builtin = dirname(__FILE__) .'/tpl/built-in/';
+	    
+	    $templates_custom  = array();
+	    $templates_builtin = array();
+	    
+	    $dirIt = new DirectoryIterator($tpl_src_builtin);
+		
+        foreach ($dirIt as $fileinfo) {
+			
+        	$filename = $fileinfo->getFilename();
+        	
+        	if ($fileinfo->isDir() || $fileinfo->isDot()) {
+				continue;
+			}
+			$fileExtension = strrpos($filename, '.', 1);
+			
+			$templates_builtin[] = strtolower(substr($filename, 0, $fileExtension));
+		}
+		
+	    $dirIt = new DirectoryIterator($tpl_src_custom);
+		
+        foreach ($dirIt as $fileinfo) {
+			
+        	$filename = $fileinfo->getFilename();
+        	
+        	if ($fileinfo->isDir() || $fileinfo->isDot()) {
+				continue;
+			}
+			$fileExtension = strrpos($filename, '.', 1);
+			
+			$templates_custom[] = strtolower(substr($filename, 0, $fileExtension));
+		}
+		
+		$result = array_merge($templates_custom, $templates_builtin);
+		sort($result);
+		return $result;
+	}
+	
+	/**
+	 * Retrieves template file to use
+	 */
+	protected function _getTpl($tpl_file, $default=false)
+	{
+	    if (!empty($tpl_file)) {
+		    $tpl_file_custom  = dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm';
+		    $tpl_file_builtin = dirname(__FILE__) .'/tpl/built-in/'. $tpl_file .'.htm';
+		}
+		
+		if (!empty($tpl_file) &&
+			file_exists($tpl_file_custom)) {
+		    // custom template exists 
+			$tpl = file_get_contents($tpl_file_custom);	
+		} else if (!empty($tpl_file) && 
+			file_exists($tpl_file_builtin)) {
+			// take the built-in template
+			$tpl = file_get_contents($tpl_file_builtin);	
+		} else {
+		    // take default template
+		    $tpl = $default;	
+		}
+		return $tpl;
 	}
 	
 	/**
@@ -1207,14 +1282,21 @@ class AmazonSimpleAdmin {
 			}
 			
 			$lowestOfferPrice = $this->_formatPrice($lowestOfferPrice);
-			
-		    if ($item->Offers->Offers[0]->Price != null) {
+			$lowestNewOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
+			$lowestUsedOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
+
+			if ($item->Offers->Offers[0]->Price != null) {
                 $amazonPrice = $item->Offers->Offers[0]->Price;
                 $amazonPrice = $this->_formatPrice($amazonPrice);
+                $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
             } else {
                 $amazonPrice = $lowestOfferFormattedPrice;
             }
-			
+            
+            if (empty($amazonPriceFormatted)) {
+                $amazonPriceFormatted = $lowestOfferFormattedPrice;  
+            }
+			$listPriceFormatted = $item->ListPriceFormatted;
 			
 			$totalOffers = $item->Offers->TotalNew + $item->Offers->TotalUsed + 
 				$item->Offers->TotalCollectible + $item->Offers->TotalRefurbished;
@@ -1257,8 +1339,12 @@ class AmazonSimpleAdmin {
 				empty($totalOffers) ? '0' : $totalOffers,
 				empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
 				$lowestOfferCurrency,
-				$lowestOfferFormattedPrice,
-				empty($amazonPrice) ? '---' : $amazonPrice,
+				str_replace('$', '\$', $lowestOfferFormattedPrice),
+				str_replace('$', '\$', $lowestNewOfferFormattedPrice),
+				str_replace('$', '\$', $lowestUsedOfferFormattedPrice),
+				empty($amazonPrice) ? '---' : str_replace('$', '\$', $amazonPrice),
+				empty($amazonPriceFormatted) ? '---' : str_replace('$', '\$', $amazonPriceFormatted),
+				empty($listPriceFormatted) ? '---' : str_replace('$', '\$', $listPriceFormatted),
 				$item->Offers->Offers[0]->CurrencyCode,
 				$item->Offers->Offers[0]->Availability,
 				get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_' . 
@@ -1283,7 +1369,6 @@ class AmazonSimpleAdmin {
 				is_array($item->Actor) ? implode(', ', $item->Actor) : $item->Actor,
 				$item->RunningTime,
 				is_array($item->Format) ? implode(', ', $item->Format) : $item->Format,
-				$item->Studio,
 				!empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',
 				$item->EditorialReviews[0]->Content,
 				!empty($item->EditorialReviews[1]) ? $item->EditorialReviews[1]->Content : '',
@@ -1344,6 +1429,7 @@ class AmazonSimpleAdmin {
 				// put asin in cache now
 				$this->cache->save($item, $asin);
 			}
+			
 			return $item;
 			
 		} catch (Exception $e) {			
@@ -1360,7 +1446,7 @@ class AmazonSimpleAdmin {
 	protected function _getItemLookup ($asin)
     {
     	return $this->amazon->itemLookup($asin, array(
-                    'ResponseGroup' => 'ItemAttributes,Images,Offers,Reviews,EditorialReview'));
+                    'ResponseGroup' => 'ItemAttributes,Images,Offers,OfferListings,Reviews,EditorialReview,Tracks'));
     }
     		
 	
@@ -1570,7 +1656,8 @@ class AmazonSimpleAdmin {
 			$type = 'all';	
 		}
 
-		$tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl .'.htm');
+		//$tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl .'.htm');
+		$tpl_src = $this->_getTpl($tpl);
 		
 		switch ($type) {
 			
