@@ -158,7 +158,6 @@ class Zend_Service_Amazon
         $options = $this->_prepareOptions('ItemLookup', $options, $defaultOptions);
 
         $response = $client->restGet('/onca/xml', $options);
-
         
         if ($response->isError()) {
             /**
