@@ -15,9 +15,9 @@
  * @category   Zend
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: File.php 17029 2009-07-24 11:57:49Z matthew $
+ * @version    $Id: File.php 21636 2010-03-24 17:10:23Z mabe $
  */
 
 /**
@@ -34,7 +34,7 @@ require_once 'Zend/Cache/Backend.php';
 /**
  * @package    Zend_Cache
  * @subpackage Zend_Cache_Backend
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
@@ -123,8 +123,8 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
             $this->setCacheDir(self::getTmpDir() . DIRECTORY_SEPARATOR, false);
         }
         if (isset($this->_options['file_name_prefix'])) { // particular case for this option
-            if (!preg_match('~^[\w]+$~', $this->_options['file_name_prefix'])) {
-                Zend_Cache::throwException('Invalid file_name_prefix : must use only [a-zA-A0-9_]');
+            if (!preg_match('~^[a-zA-Z0-9_]+$~D', $this->_options['file_name_prefix'])) {
+                Zend_Cache::throwException('Invalid file_name_prefix : must use only [a-zA-Z0-9_]');
             }
         }
         if ($this->_options['metadatas_array_max_size'] < 10) {
@@ -259,7 +259,9 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
     public function remove($id)
     {
         $file = $this->_file($id);
-        return ($this->_delMetadatas($id) && $this->_remove($file));
+        $boolRemove   = $this->_remove($file);
+        $boolMetadata = $this->_delMetadatas($id);
+        return $boolMetadata && $boolRemove;
     }
 
     /**
@@ -645,6 +647,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
         $prefix = $this->_options['file_name_prefix'];
         $glob = @glob($dir . $prefix . '--*');
         if ($glob === false) {
+            // On some systems it is impossible to distinguish between empty match and an error.
             return true;
         }
         foreach ($glob as $file)  {
@@ -672,7 +675,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
                         break;
                     case Zend_Cache::CLEANING_MODE_OLD:
                         if (time() > $metadatas['expire']) {
-                            $result = ($result) && ($this->remove($id));
+                            $result = $this->remove($id) && $result;
                         }
                         break;
                     case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
@@ -684,7 +687,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
                             }
                         }
                         if ($matching) {
-                            $result = ($result) && ($this->remove($id));
+                            $result = $this->remove($id) && $result;
                         }
                         break;
                     case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
@@ -696,7 +699,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
                             }
                         }
                         if (!$matching) {
-                            $result = ($result) && $this->remove($id);
+                            $result = $this->remove($id) && $result;
                         }
                         break;
                     case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
@@ -708,7 +711,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
                             }
                         }
                         if ($matching) {
-                            $result = ($result) && ($this->remove($id));
+                            $result = $this->remove($id) && $result;
                         }
                         break;
                     default:
@@ -718,7 +721,7 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
             }
             if ((is_dir($file)) and ($this->_options['hashed_directory_level']>0)) {
                 // Recursive call
-                $result = ($result) && ($this->_clean($file . DIRECTORY_SEPARATOR, $mode, $tags));
+                $result = $this->_clean($file . DIRECTORY_SEPARATOR, $mode, $tags) && $result;
                 if ($mode=='all') {
                     // if mode=='all', we try to drop the structure too
                     @rmdir($file);
@@ -737,7 +740,8 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
         $prefix = $this->_options['file_name_prefix'];
         $glob = @glob($dir . $prefix . '--*');
         if ($glob === false) {
-            return true;
+            // On some systems it is impossible to distinguish between empty match and an error.
+            return array();
         }
         foreach ($glob as $file)  {
             if (is_file($file)) {
@@ -800,7 +804,12 @@ class Zend_Cache_Backend_File extends Zend_Cache_Backend implements Zend_Cache_B
             }
             if ((is_dir($file)) and ($this->_options['hashed_directory_level']>0)) {
                 // Recursive call
-                $result = array_unique(array_merge($result, $this->_get($file . DIRECTORY_SEPARATOR, $mode, $tags)));
+                $recursiveRs =  $this->_get($file . DIRECTORY_SEPARATOR, $mode, $tags);
+                if ($recursiveRs === false) {
+                    $this->_log('Zend_Cache_Backend_File::_get() / recursive call : can\'t list entries of "'.$file.'"');
+                } else {
+                    $result = array_unique(array_merge($result, $recursiveRs));
+                }
             }
         }
         return array_unique($result);

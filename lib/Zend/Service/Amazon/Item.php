@@ -16,9 +16,9 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
- * @version    $Id: Item.php 16211 2009-06-21 19:23:55Z thomas $
+ * @version    $Id: Item.php 21883 2010-04-16 14:57:07Z dragonbe $
  */
 
 
@@ -26,7 +26,7 @@
  * @category   Zend
  * @package    Zend_Service
  * @subpackage Amazon
- * @copyright  Copyright (c) 2005-2009 Zend Technologies USA Inc. (http://www.zend.com)
+ * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 class Zend_Service_Amazon_Item
@@ -85,6 +85,11 @@ class Zend_Service_Amazon_Item
      * @var Zend_Service_Amazon_CustomerReview[]
      */
     public $CustomerReviews = array();
+    
+    /**
+     * @var Zend_Service_Amazon_EditorialReview[]
+     */
+    public $EditorialReviews = array();
 
     /**
      * @var Zend_Service_Amazon_SimilarProducts[]
@@ -105,20 +110,39 @@ class Zend_Service_Amazon_Item
      * @var Zend_Service_Amazon_ListmaniaLists[]
      */
     public $ListmaniaLists = array();
-
+    
     protected $_dom;
+    protected $_xpath;
+    protected $_xml;
 
 
     /**
      * Parse the given <Item> element
      *
-     * @param  DOMElement $dom
+     * @param  null|DOMElement $dom
      * @return void
+     * @throws	Zend_Service_Amazon_Exception
+     * 
+     * @group ZF-9547
      */
-    public function __construct(DOMElement $dom)
+    public function __construct($dom, $xml_response)
     {
+    	if (null === $dom) {
+    		require_once 'Zend/Service/Amazon/Exception.php';
+    		throw new Zend_Service_Amazon_Exception('Item element is empty');
+    	}
+    	if (!$dom instanceof DOMElement) {
+    		require_once 'Zend/Service/Amazon/Exception.php';
+    		throw new Zend_Service_Amazon_Exception('Item is not a valid DOM element');
+    	}
+    	
+    	$this->_xml = str_replace('xmlns=', 'ns=', $xml_response);
+    	
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2005-10-05');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $this->_xpath = $xpath;
+        $this->_dom   = $dom;
+        
         $this->ASIN = $xpath->query('./az:ASIN/text()', $dom)->item(0)->data;
 
         $result = $xpath->query('./az:DetailPageURL/text()', $dom);
@@ -130,11 +154,14 @@ class Zend_Service_Amazon_Item
             $this->CurrencyCode = (string) $xpath->query('./az:ItemAttributes/az:ListPrice/az:CurrencyCode/text()', $dom)->item(0)->data;
             $this->Amount = (int) $xpath->query('./az:ItemAttributes/az:ListPrice/az:Amount/text()', $dom)->item(0)->data;
             $this->FormattedPrice = (string) $xpath->query('./az:ItemAttributes/az:ListPrice/az:FormattedPrice/text()', $dom)->item(0)->data;
+            $this->ListPriceFormatted = (string) $xpath->query('./az:ItemAttributes/az:ListPrice/az:FormattedPrice/text()', $dom)->item(0)->data;
         }
 
         $result = $xpath->query('./az:ItemAttributes/az:*/text()', $dom);
+        
         if ($result->length >= 1) {
             foreach ($result as $v) {
+            	
                 if (isset($this->{$v->parentNode->tagName})) {
                     if (is_array($this->{$v->parentNode->tagName})) {
                         array_push($this->{$v->parentNode->tagName}, (string) $v->data);
@@ -163,28 +190,38 @@ class Zend_Service_Amazon_Item
             $this->SalesRank = (int) $result->item(0)->data;
         }
 
-        $result = $xpath->query('./az:CustomerReviews/az:Review', $dom);
-        if ($result->length >= 1) {
-            /**
-             * @see Zend_Service_Amazon_CustomerReview
-             */
-            require_once 'Zend/Service/Amazon/CustomerReview.php';
-            foreach ($result as $review) {
-                $this->CustomerReviews[] = new Zend_Service_Amazon_CustomerReview($review);
-            }
-            $this->AverageRating = (float) $xpath->query('./az:CustomerReviews/az:AverageRating/text()', $dom)->item(0)->data;
-            $this->TotalReviews = (int) $xpath->query('./az:CustomerReviews/az:TotalReviews/text()', $dom)->item(0)->data;
-        }
+//        $result = $xpath->query('./az:CustomerReviews/az:IFrameURL', $dom);
+                        
+//        if ($result->length >= 1) { 	
+//        	
+//            /**
+//             * @see Zend_Service_Amazon_CustomerReview
+//             */
+//            require_once 'Zend/Service/Amazon/CustomerReview.php';
+//            foreach ($result as $review) {
+//                $this->CustomerReviews[] = new Zend_Service_Amazon_CustomerReview($review);
+//            }
+//            $this->AverageRating = (float) $xpath->query('./az:CustomerReviews/az:AverageRating/text()', $dom)->item(0)->data;
+//            $this->TotalReviews = (int) $xpath->query('./az:CustomerReviews/az:TotalReviews/text()', $dom)->item(0)->data;
+//        }
 
+        // custommization
+        $result = $xpath->query('./az:CustomerReviews/az:IFrameURL/text()', $dom);
+        if ($result->length == 1) {
+            $this->CustomerReviewsIFrameURL = $result->item(0)->data;            
+        }
+        
         $result = $xpath->query('./az:EditorialReviews/az:*', $dom);
+        
         if ($result->length >= 1) {
             /**
              * @see Zend_Service_Amazon_EditorialReview
              */
+        	
             require_once 'Zend/Service/Amazon/EditorialReview.php';
             foreach ($result as $r) {
-                $this->EditorialReviews[] = new Zend_Service_Amazon_EditorialReview($r);
-            }
+                $this->EditorialReviews[] = new Zend_Service_Amazon_EditorialReview($r);                
+            }            
         }
 
         $result = $xpath->query('./az:SimilarProducts/az:*', $dom);
@@ -231,7 +268,7 @@ class Zend_Service_Amazon_Item
              * @see Zend_Service_Amazon_OfferSet
              */
             require_once 'Zend/Service/Amazon/OfferSet.php';
-            $this->Offers = new Zend_Service_Amazon_OfferSet($dom);
+            $this->Offers = new Zend_Service_Amazon_OfferSet($dom);            
         }
 
         $result = $xpath->query('./az:Accessories/*', $dom);
@@ -243,10 +280,93 @@ class Zend_Service_Amazon_Item
             foreach ($result as $r) {
                 $this->Accessories[] = new Zend_Service_Amazon_Accessories($r);
             }
+        }    
+        
+        
+    }
+    
+    /**
+     * 
+     * Enter description here ...
+     * @param $name
+     */
+    public function __get ($name)
+    {
+    	if (in_array($name, array(
+            'ASIN', 'SmallImageUrl', 'SmallImageWidth', 'SmallImageHeight',
+            'MediumImageUrl', 'MediumImageWidth', 'MediumImageHeight',
+            'LargeImageUrl', 'LargeImageWidth', 'LargeImageHeight', 'Label',
+            'Manufacturer', 'Publisher', 'Studio', 'Title', 'AmazonUrl',
+            'TotalOffers', 'LowestOfferPrice', 'LowestOfferCurrency',
+            'LowestOfferFormattedPrice', 'AmazonPrice', 'AmazonCurrency',
+            'AmazonAvailability', 'AmazonLogoSmallUrl', 'AmazonLogoLargeUrl',
+            'DetailPageURL', 'Platform', 'ISBN', 'EAN', 'NumberOfPages',
+            'ReleaseDate', 'Binding', 'Author', 'Creator', 'Edition',
+            'AverageRating', 'TotalReviews', 'RatingStars', 'RatingStarsSrc',
+            'Director', 'Actors', 'Actor', 'RunningTime', 'Format', 'Studio',
+            'CustomRating', 'ProductDescription', 'AmazonDescription', 
+            'EditorialReviews', 'Artist'
+        ))) {
+	    	if (isset($this->$name)) {
+	    		return $this->$name;
+	    	}
+        } else {
+        
+	        $itemXml = new SimpleXMLElement($this->_xml);
+	        if (strstr($name, '->')) {
+	        	$name = str_replace('->', '/', $name);
+	        }
+	        $result = $this->_searchValue($itemXml, $name);
+        
+	        if (!empty($result)) {
+	            return $result;
+	        }
+	        
+	        return '';
         }
 
-        $this->_dom = $dom;
     }
+    
+    
+	protected function _searchValue ($itemXml, $s) 
+	{
+		switch ($s) {
+			case 'Languages':
+				require_once 'Zend/Service/Amazon/Language.php';
+				$resultObj = new Zend_Service_Amazon_Language($itemXml);
+				return $resultObj->getResult();
+				break;
+			case 'Subtitles':
+				require_once 'Zend/Service/Amazon/Subtitles.php';
+				$resultObj = new Zend_Service_Amazon_Subtitles($itemXml);
+				return $resultObj->getResult();
+				break;
+		}
+		
+		
+	    $result = $itemXml->xpath('//'.$s);
+
+	    if (count($result) == 1) {
+	        if (count($result[0]) > 0) {
+	            return $this->_showResultArray($result[0]);
+	        }
+	        return (string)$result[0];
+	    } else if (count($result) > 1) {
+	        return $this->_showResultArray($result);
+	    }   
+	}
+    
+	protected function _showResultArray ($a) 
+	{	    
+	    $show = '';
+	    foreach ($a as $k => $v) {
+	        if (is_string($k)) {
+	            $show .= $k .': ';
+	        }
+	        $show .= $v . ', ';
+	    }
+	    return substr(trim($show), 0, -1);
+	}    
 
 
     /**
