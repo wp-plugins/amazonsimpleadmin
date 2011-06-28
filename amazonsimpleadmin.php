@@ -1,14 +1,14 @@
 <?php
 /*
-Plugin Name: AmazonSimpleAdmin
-Plugin URI: http://www.ichdigital.de/AmazonSimpleAdmin
-Description: Let's you easily embed amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5! <strong>Note for updating</strong>: version 0.9.6 requires to change your settings in order to work with request authentification after August 15, 2009.
-Version: 0.9.6
+Plugin Name: Amazon Simple Admin
+Plugin URI: http://www.wordpress-amazon-plugin.com/
+Description: Lets you easily embed amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5! <a href="options-general.php?page=amazonsimpleadmin/amazonsimpleadmin.php">Options panel</a>
+Version: 0.9.9.3
 Author: Timo Reith
-Author URI: http://www.ichdigital.de
+Author URI: http://www.timoreith.de/
 */
 
-/*  Copyright 2007  Timo Reith (email : info@ichdigital.de)
+/*  Copyright 2007-2011  Timo Reith (email : support@wordpress-amazon-plugin.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -46,6 +46,5 @@ if (version_compare(phpversion(), '5.0') === -1) {
 	
 	die('Your PHP Version is not compatible with this Plugin. <a href="plugins.php">back</a>');
 }
-
 include_once(dirname(__FILE__) . '/AsaCore.php');
 ?>
