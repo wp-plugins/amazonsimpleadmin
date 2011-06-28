@@ -126,28 +126,7 @@ class AsaCustomerReviews {
 		
 		$allow_url_fopen = ini_get('allow_url_fopen');
 		
-		if (!empty($allow_url_fopen)) {
-			
-			// via fopen
-			$handle = fopen($this->iframeUrl, 'r');
-            
-			$saveBuffer = false;
-			while(!feof($handle)) { 
-			
-			       $buffer = trim(fgets($handle, 4096));
-			       if ($buffer == '<div class="crIFrameNumCustReviews">') {
-			           $saveBuffer = true;
-			       } else if ($saveBuffer == true && $buffer == '</div>') {
-			           $saveBuffer = false;
-			       }
-			       
-			       if ($saveBuffer == true) {
-			          $contents .= $buffer;
-			       }   
-			}
-			fclose($handle);
-			
-		} else if (function_exists('curl_init')) {
+		if (function_exists('curl_init')) {
 			
 			// via curl
             $ch = curl_init();
@@ -170,7 +149,32 @@ class AsaCustomerReviews {
 	                $contents .= $line;
 	            }   
             }
-        }
+            
+        } else if (!empty($allow_url_fopen)) {
+			
+			// via fopen
+			$handle = fopen($this->iframeUrl, 'r');
+			
+			if (!empty($handle)) {
+			    			            
+    			$saveBuffer = false;
+    			while(!feof($handle)) { 
+    			
+    			       $buffer = trim(fgets($handle, 4096));
+    			       if ($buffer == '<div class="crIFrameNumCustReviews">') {
+    			           $saveBuffer = true;
+    			       } else if ($saveBuffer == true && $buffer == '</div>') {
+    			           $saveBuffer = false;
+    			       }
+    			       
+    			       if ($saveBuffer == true) {
+    			          $contents .= $buffer;
+    			       }   
+    			}
+    			fclose($handle);
+			}
+			
+		}
 		
 		return $contents;
 	}
