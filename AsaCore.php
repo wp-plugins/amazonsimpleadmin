@@ -253,6 +253,7 @@ class AmazonSimpleAdmin {
 		
 		
 		$this->amazon = $this->connect();		
+		
 	}
 	
 	/**

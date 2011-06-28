@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.1.2
-Stable tag: 0.9.9.2
+Tested up to: 3.1.3
+Stable tag: 0.9.9.3
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -51,6 +51,10 @@ Here you can find a detailed documentation:
 http://www.wordpress-amazon-plugin.com/guide/
 
 == Change Log ==
+= 0.9.9.3 =
+* hotfix: Solves a problem when accessing the Amazon customer rating page for parsing the results
+          I will check this in detail and provide some more options on this in the admin panel later on
+
 = 0.9.9.2 =
 * Fixed: issue with currency and price not displaying properly
 * Added: Widget for displaying collections in sidebar

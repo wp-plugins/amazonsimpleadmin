@@ -3,7 +3,7 @@
 Plugin Name: Amazon Simple Admin
 Plugin URI: http://www.wordpress-amazon-plugin.com/
 Description: Lets you easily embed amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can choose from various presentation styles and of course create your own template in a few seconds. Needs PHP 5! <a href="options-general.php?page=amazonsimpleadmin/amazonsimpleadmin.php">Options panel</a>
-Version: 0.9.9.2
+Version: 0.9.9.3
 Author: Timo Reith
 Author URI: http://www.timoreith.de/
 */
