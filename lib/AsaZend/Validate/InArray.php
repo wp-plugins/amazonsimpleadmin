@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: InArray.php 20352 2010-01-17 17:55:38Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_InArray extends Zend_Validate_Abstract
+class AsaZend_Validate_InArray extends AsaZend_Validate_Abstract
 {
     const NOT_IN_ARRAY = 'notInArray';
 
@@ -65,16 +65,16 @@ class Zend_Validate_InArray extends Zend_Validate_Abstract
     /**
      * Sets validator options
      *
-     * @param  array|Zend_Config $haystack
+     * @param  array|AsaZend_Config $haystack
      * @return void
      */
     public function __construct($options)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } else if (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Array expected as parameter');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Array expected as parameter');
         } else {
             $count = func_num_args();
             $temp  = array();
@@ -117,7 +117,7 @@ class Zend_Validate_InArray extends Zend_Validate_Abstract
      * Sets the haystack option
      *
      * @param  mixed $haystack
-     * @return Zend_Validate_InArray Provides a fluent interface
+     * @return AsaZend_Validate_InArray Provides a fluent interface
      */
     public function setHaystack(array $haystack)
     {
@@ -139,7 +139,7 @@ class Zend_Validate_InArray extends Zend_Validate_Abstract
      * Sets the strict option
      *
      * @param  boolean $strict
-     * @return Zend_Validate_InArray Provides a fluent interface
+     * @return AsaZend_Validate_InArray Provides a fluent interface
      */
     public function setStrict($strict)
     {
@@ -161,7 +161,7 @@ class Zend_Validate_InArray extends Zend_Validate_Abstract
      * Sets the recursive option
      *
      * @param  boolean $recursive
-     * @return Zend_Validate_InArray Provides a fluent interface
+     * @return AsaZend_Validate_InArray Provides a fluent interface
      */
     public function setRecursive($recursive)
     {
@@ -170,7 +170,7 @@ class Zend_Validate_InArray extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if $value is contained in the haystack option. If the strict
      * option is true, then the type of $value is also checked.

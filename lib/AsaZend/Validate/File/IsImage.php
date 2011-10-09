@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: IsImage.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_File_MimeType
+ * @see AsaZend_Validate_File_MimeType
  */
-require_once 'Zend/Validate/File/MimeType.php';
+require_once 'AsaZend/Validate/File/MimeType.php';
 
 /**
  * Validator which checks if the file already exists in the directory
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_IsImage extends Zend_Validate_File_MimeType
+class AsaZend_Validate_File_IsImage extends AsaZend_Validate_File_MimeType
 {
     /**
      * @const string Error constants
@@ -53,12 +53,12 @@ class Zend_Validate_File_IsImage extends Zend_Validate_File_MimeType
     /**
      * Sets validator options
      *
-     * @param  string|array|Zend_Config $mimetype
+     * @param  string|array|AsaZend_Config $mimetype
      * @return void
      */
     public function __construct($mimetype = array())
     {
-        if ($mimetype instanceof Zend_Config) {
+        if ($mimetype instanceof AsaZend_Config) {
             $mimetype = $mimetype->toArray();
         }
 
@@ -156,13 +156,13 @@ class Zend_Validate_File_IsImage extends Zend_Validate_File_MimeType
     {
         $this->_value = $file['name'];
         switch($errorType) {
-            case Zend_Validate_File_MimeType::FALSE_TYPE :
+            case AsaZend_Validate_File_MimeType::FALSE_TYPE :
                 $errorType = self::FALSE_TYPE;
                 break;
-            case Zend_Validate_File_MimeType::NOT_DETECTED :
+            case AsaZend_Validate_File_MimeType::NOT_DETECTED :
                 $errorType = self::NOT_DETECTED;
                 break;
-            case Zend_Validate_File_MimeType::NOT_READABLE :
+            case AsaZend_Validate_File_MimeType::NOT_READABLE :
                 $errorType = self::NOT_READABLE;
                 break;
         }

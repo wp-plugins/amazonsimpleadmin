@@ -13,25 +13,25 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service_Amazon
+ * @package    AsaZend_Service_Amazon
  * @subpackage Authentication
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
- * @see Zend_Service_Amazon_Exception
+ * @see AsaZend_Service_Amazon_Exception
  */
-require_once 'Zend/Service/Amazon/Exception.php';
+require_once 'AsaZend/Service/Amazon/Exception.php';
 
 /**
  * @category   Zend
- * @package    Zend_Service_Amazon
+ * @package    AsaZend_Service_Amazon
  * @subpackage Authentication
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_Authentication_Exception extends Zend_Service_Amazon_Exception
+class AsaZend_Service_Amazon_Authentication_Exception extends AsaZend_Service_Amazon_Exception
 {
 
 }

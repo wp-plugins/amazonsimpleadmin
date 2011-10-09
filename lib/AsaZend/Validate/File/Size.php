@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: Size.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * Validator for the maximum size of a file up to a max of 2GB
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_Size extends Zend_Validate_Abstract
+class AsaZend_Validate_File_Size extends AsaZend_Validate_Abstract
 {
     /**#@+
      * @const string Error constants
@@ -102,13 +102,13 @@ class Zend_Validate_File_Size extends Zend_Validate_Abstract
      */
     public function __construct($options)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } elseif (is_string($options) || is_numeric($options)) {
             $options = array('max' => $options);
         } elseif (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception ('Invalid options to validator provided');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception ('Invalid options to validator provided');
         }
 
         if (1 < func_num_args()) {
@@ -175,21 +175,21 @@ class Zend_Validate_File_Size extends Zend_Validate_Abstract
      * Sets the minimum filesize
      *
      * @param  integer $min The minimum filesize
-     * @throws Zend_Validate_Exception When min is greater than max
-     * @return Zend_Validate_File_Size Provides a fluent interface
+     * @throws AsaZend_Validate_Exception When min is greater than max
+     * @return AsaZend_Validate_File_Size Provides a fluent interface
      */
     public function setMin($min)
     {
         if (!is_string($min) and !is_numeric($min)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception ('Invalid options to validator provided');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception ('Invalid options to validator provided');
         }
 
         $min = (integer) $this->_fromByteString($min);
         $max = $this->getMax(true);
         if (($max !== null) && ($min > $max)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception("The minimum must be less than or equal to the maximum filesize, but $min >"
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception("The minimum must be less than or equal to the maximum filesize, but $min >"
                                             . " $max");
         }
 
@@ -217,21 +217,21 @@ class Zend_Validate_File_Size extends Zend_Validate_Abstract
      * Sets the maximum filesize
      *
      * @param  integer $max The maximum filesize
-     * @throws Zend_Validate_Exception When max is smaller than min
-     * @return Zend_Validate_StringLength Provides a fluent interface
+     * @throws AsaZend_Validate_Exception When max is smaller than min
+     * @return AsaZend_Validate_StringLength Provides a fluent interface
      */
     public function setMax($max)
     {
         if (!is_string($max) && !is_numeric($max)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception ('Invalid options to validator provided');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception ('Invalid options to validator provided');
         }
 
         $max = (integer) $this->_fromByteString($max);
         $min = $this->getMin(true);
         if (($min !== null) && ($max < $min)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception("The maximum must be greater than or equal to the minimum filesize, but "
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception("The maximum must be greater than or equal to the minimum filesize, but "
                                             . "$max < $min");
         }
 
@@ -253,7 +253,7 @@ class Zend_Validate_File_Size extends Zend_Validate_Abstract
      * Set current size
      *
      * @param  int $size
-     * @return Zend_Validate_File_Size
+     * @return AsaZend_Validate_File_Size
      */
     protected function _setSize($size)
     {
@@ -262,20 +262,20 @@ class Zend_Validate_File_Size extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the filesize of $value is at least min and
      * not bigger than max (when max is not null).
      *
      * @param  string $value Real file to check for size
-     * @param  array  $file  File data from Zend_File_Transfer
+     * @param  array  $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }
 

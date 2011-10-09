@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -22,18 +22,18 @@
  */
 
 /**
- * @see Zend_Rest_Client
+ * @see AsaZend_Rest_Client
  */
-require_once 'Zend/Rest/Client.php';
+require_once 'AsaZend/Rest/Client.php';
 
 /**
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon
+class AsaZend_Service_Amazon
 {
     /**
      * Amazon Web Services Access Key ID
@@ -68,7 +68,7 @@ class Zend_Service_Amazon
     /**
      * Reference to REST client object
      *
-     * @var Zend_Rest_Client
+     * @var AsaZend_Rest_Client
      */
     protected $_rest = null;
 
@@ -78,8 +78,8 @@ class Zend_Service_Amazon
      *
      * @param  string $appId       Developer's Amazon appid
      * @param  string $countryCode Country code for Amazon service; may be US, UK, DE, JP, FR, CA
-     * @throws Zend_Service_Exception
-     * @return Zend_Service_Amazon
+     * @throws AsaZend_Service_Exception
+     * @return AsaZend_Service_Amazon
      */
     public function __construct($appId, $countryCode = 'US', $secretKey = null)
     {
@@ -89,10 +89,10 @@ class Zend_Service_Amazon
         $countryCode = (string) $countryCode;
         if (!isset($this->_baseUriList[$countryCode])) {
             /**
-             * @see Zend_Service_Exception
+             * @see AsaZend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
-            throw new Zend_Service_Exception("Unknown country code: $countryCode");
+            require_once 'AsaZend/Service/Exception.php';
+            throw new AsaZend_Service_Exception("Unknown country code: $countryCode");
         }
 
         $this->_baseUri = $this->_baseUriList[$countryCode];
@@ -103,8 +103,8 @@ class Zend_Service_Amazon
      * Search for Items
      *
      * @param  array $options Options to use for the Search Query
-     * @throws Zend_Service_Exception
-     * @return Zend_Service_Amazon_ResultSet
+     * @throws AsaZend_Service_Exception
+     * @return AsaZend_Service_Amazon_ResultSet
      * @see http://www.amazon.com/gp/aws/sdk/main.html/102-9041115-9057709?s=AWSEcommerceService&v=2005-10-05&p=ApiReference/ItemSearchOperation
      */
     public function itemSearch(array $options)
@@ -119,10 +119,10 @@ class Zend_Service_Amazon
 
         if ($response->isError()) {
             /**
-             * @see Zend_Service_Exception
+             * @see AsaZend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
-            throw new Zend_Service_Exception('An error occurred sending request. Status code: '
+            require_once 'AsaZend/Service/Exception.php';
+            throw new AsaZend_Service_Exception('An error occurred sending request. Status code: '
                                            . $response->getStatus());
         }
 
@@ -131,10 +131,10 @@ class Zend_Service_Amazon
         self::_checkErrors($dom);
 
         /**
-         * @see Zend_Service_Amazon_ResultSet
+         * @see AsaZend_Service_Amazon_ResultSet
          */
-        require_once 'Zend/Service/Amazon/ResultSet.php';
-        return new Zend_Service_Amazon_ResultSet($dom);
+        require_once 'AsaZend/Service/Amazon/ResultSet.php';
+        return new AsaZend_Service_Amazon_ResultSet($dom);
     }
 
 
@@ -144,8 +144,8 @@ class Zend_Service_Amazon
      * @param  string $asin    Amazon ASIN ID
      * @param  array  $options Query Options
      * @see http://www.amazon.com/gp/aws/sdk/main.html/102-9041115-9057709?s=AWSEcommerceService&v=2005-10-05&p=ApiReference/ItemLookupOperation
-     * @throws Zend_Service_Exception
-     * @return Zend_Service_Amazon_Item|Zend_Service_Amazon_ResultSet
+     * @throws AsaZend_Service_Exception
+     * @return AsaZend_Service_Amazon_Item|AsaZend_Service_Amazon_ResultSet
      */
     public function itemLookup($asin, array $options = array())
     {
@@ -165,10 +165,10 @@ class Zend_Service_Amazon
         
         if ($response->isError()) {
             /**
-             * @see Zend_Service_Exception
+             * @see AsaZend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
-            throw new Zend_Service_Exception(
+            require_once 'AsaZend/Service/Exception.php';
+            throw new AsaZend_Service_Exception(
                 'An error occurred sending request. Status code: ' . $response->getStatus()
             );
         }
@@ -183,29 +183,29 @@ class Zend_Service_Amazon
 
         if ($items->length == 1) {
             /**
-             * @see Zend_Service_Amazon_Item
+             * @see AsaZend_Service_Amazon_Item
              */
-            require_once 'Zend/Service/Amazon/Item.php';
-            return new Zend_Service_Amazon_Item($items->item(0), $xml_response);
+            require_once 'AsaZend/Service/Amazon/Item.php';
+            return new AsaZend_Service_Amazon_Item($items->item(0), $xml_response);
         }
 
         /**
-         * @see Zend_Service_Amazon_ResultSet
+         * @see AsaZend_Service_Amazon_ResultSet
          */
-        require_once 'Zend/Service/Amazon/ResultSet.php';
-        return new Zend_Service_Amazon_ResultSet($dom);
+        require_once 'AsaZend/Service/Amazon/ResultSet.php';
+        return new AsaZend_Service_Amazon_ResultSet($dom);
     }
 
 
     /**
      * Returns a reference to the REST client
      *
-     * @return Zend_Rest_Client
+     * @return AsaZend_Rest_Client
      */
     public function getRestClient()
     {
         if($this->_rest === null) {
-            $this->_rest = new Zend_Rest_Client();
+            $this->_rest = new AsaZend_Rest_Client();
         }
         return $this->_rest;
     }
@@ -213,10 +213,10 @@ class Zend_Service_Amazon
     /**
      * Set REST client
      *
-     * @param Zend_Rest_Client
-     * @return Zend_Service_Amazon
+     * @param AsaZend_Rest_Client
+     * @return AsaZend_Service_Amazon
      */
-    public function setRestClient(Zend_Rest_Client $client)
+    public function setRestClient(AsaZend_Rest_Client $client)
     {
         $this->_rest = $client;
         return $this;
@@ -269,11 +269,11 @@ class Zend_Service_Amazon
      */
     static public function computeSignature($baseUri, $secretKey, array $options)
     {
-        require_once "Zend/Crypt/Hmac.php";
+        require_once "AsaZend/Crypt/Hmac.php";
 
         $signature = self::buildRawSignature($baseUri, $options);
         return base64_encode(
-            Zend_Crypt_Hmac::compute($secretKey, 'sha256', $signature, Zend_Crypt_Hmac::BINARY)
+            AsaZend_Crypt_Hmac::compute($secretKey, 'sha256', $signature, AsaZend_Crypt_Hmac::BINARY)
         );
     }
 
@@ -303,7 +303,7 @@ class Zend_Service_Amazon
      * Check result for errors
      *
      * @param  DOMDocument $dom
-     * @throws Zend_Service_Exception
+     * @throws AsaZend_Service_Exception
      * @return void
      */
     protected static function _checkErrors(DOMDocument $dom)
@@ -320,10 +320,10 @@ class Zend_Service_Amazon
                     break;
                 default:
                     /**
-                     * @see Zend_Service_Exception
+                     * @see AsaZend_Service_Exception
                      */
-                    require_once 'Zend/Service/Exception.php';
-                    throw new Zend_Service_Exception("$message ($code)");
+                    require_once 'AsaZend/Service/Exception.php';
+                    throw new AsaZend_Service_Exception("$message ($code)");
             }
         }
     }

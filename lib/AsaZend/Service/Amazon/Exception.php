@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,15 +21,15 @@
  */
 
 /**
- * Zend_Service_Exception
+ * AsaZend_Service_Exception
  */
-require_once 'Zend/Service/Exception.php';
+require_once 'AsaZend/Service/Exception.php';
 
 /**
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_Exception extends Zend_Service_Exception
+class AsaZend_Service_Amazon_Exception extends AsaZend_Service_Exception
 {}

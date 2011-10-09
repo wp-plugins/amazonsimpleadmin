@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: File.php 20096 2010-01-06 02:05:09Z bkarwin $
@@ -22,18 +22,18 @@
 
 
 /**
- * @see Zend_Cache_Core
+ * @see AsaZend_Cache_Core
  */
-require_once 'Zend/Cache/Core.php';
+require_once 'AsaZend/Cache/Core.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Frontend_File extends Zend_Cache_Core
+class AsaZend_Cache_Frontend_File extends AsaZend_Cache_Core
 {
 
     /**
@@ -54,7 +54,7 @@ class Zend_Cache_Frontend_File extends Zend_Cache_Core
      * - this option has to be set !
      *
      * ====> (string) master_files_mode :
-     * - Zend_Cache_Frontend_File::MODE_AND or Zend_Cache_Frontend_File::MODE_OR
+     * - AsaZend_Cache_Frontend_File::MODE_AND or AsaZend_Cache_Frontend_File::MODE_OR
      * - if MODE_AND, then all master files have to be touched to get a cache invalidation
      * - if MODE_OR (default), then a single touched master file is enough to get a cache invalidation
      *
@@ -83,7 +83,7 @@ class Zend_Cache_Frontend_File extends Zend_Cache_Core
      * Constructor
      *
      * @param  array $options Associative array of options
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function __construct(array $options = array())
@@ -92,7 +92,7 @@ class Zend_Cache_Frontend_File extends Zend_Cache_Core
             $this->setOption($name, $value);
         }
         if (!isset($this->_specificOptions['master_files'])) {
-            Zend_Cache::throwException('master_files option must be set');
+            AsaZend_Cache::throwException('master_files option must be set');
         }
     }
 
@@ -111,7 +111,7 @@ class Zend_Cache_Frontend_File extends Zend_Cache_Core
         foreach ($masterFiles as $masterFile) {
             $this->_masterFile_mtimes[$i] = @filemtime($masterFile);
             if ((!($this->_specificOptions['ignore_missing_master_files'])) && (!($this->_masterFile_mtimes[$i]))) {
-                Zend_Cache::throwException('Unable to read master_file : '.$masterFile);
+                AsaZend_Cache::throwException('Unable to read master_file : '.$masterFile);
             }
             $i++;
         }
@@ -137,7 +137,7 @@ class Zend_Cache_Frontend_File extends Zend_Cache_Core
      *
      * @param  string $name  Name of the option
      * @param  mixed  $value Value of the option
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function setOption($name, $value)

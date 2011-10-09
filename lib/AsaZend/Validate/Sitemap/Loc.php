@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @subpackage Sitemap
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,14 +21,14 @@
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
- * @see Zend_Uri
+ * @see AsaZend_Uri
  */
-require_once 'Zend/Uri.php';
+require_once 'AsaZend/Uri.php';
 
 /**
  * Validates whether a given value is valid as a sitemap <loc> value
@@ -36,12 +36,12 @@ require_once 'Zend/Uri.php';
  * @link       http://www.sitemaps.org/protocol.php Sitemaps XML format
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @subpackage Sitemap
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Sitemap_Loc extends Zend_Validate_Abstract
+class AsaZend_Validate_Sitemap_Loc extends AsaZend_Validate_Abstract
 {
     /**
      * Validation key for not valid
@@ -76,7 +76,7 @@ class Zend_Validate_Sitemap_Loc extends Zend_Validate_Abstract
         }
 
         $this->_setValue($value);
-        $result = Zend_Uri::check($value);
+        $result = AsaZend_Uri::check($value);
         if ($result !== true) {
             $this->_error(self::NOT_VALID);
             return false;

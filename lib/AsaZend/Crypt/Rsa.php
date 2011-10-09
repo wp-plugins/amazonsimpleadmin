@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @subpackage Rsa
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,22 +21,22 @@
  */
 
 /**
- * @see Zend_Crypt_Rsa_Key_Private
+ * @see AsaZend_Crypt_Rsa_Key_Private
  */
-require_once 'Zend/Crypt/Rsa/Key/Private.php';
+require_once 'AsaZend/Crypt/Rsa/Key/Private.php';
 
 /**
- * @see Zend_Crypt_Rsa_Key_Public
+ * @see AsaZend_Crypt_Rsa_Key_Public
  */
-require_once 'Zend/Crypt/Rsa/Key/Public.php';
+require_once 'AsaZend/Crypt/Rsa/Key/Public.php';
 
 /**
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Crypt_Rsa
+class AsaZend_Crypt_Rsa
 {
 
     const BINARY = 'binary';
@@ -106,11 +106,11 @@ class Zend_Crypt_Rsa
 
     /**
      * @param string $data
-     * @param Zend_Crypt_Rsa_Key_Private $privateKey
+     * @param AsaZend_Crypt_Rsa_Key_Private $privateKey
      * @param string $format
      * @return string
      */
-    public function sign($data, Zend_Crypt_Rsa_Key_Private $privateKey = null, $format = null)
+    public function sign($data, AsaZend_Crypt_Rsa_Key_Private $privateKey = null, $format = null)
     {
         $signature = '';
         if (isset($privateKey)) {
@@ -148,15 +148,15 @@ class Zend_Crypt_Rsa
 
     /**
      * @param string $data
-     * @param Zend_Crypt_Rsa_Key $key
+     * @param AsaZend_Crypt_Rsa_Key $key
      * @param string $format
      * @return string
      */
-    public function encrypt($data, Zend_Crypt_Rsa_Key $key, $format = null)
+    public function encrypt($data, AsaZend_Crypt_Rsa_Key $key, $format = null)
     {
         $encrypted = '';
         $function = 'openssl_public_encrypt';
-        if ($key instanceof Zend_Crypt_Rsa_Key_Private) {
+        if ($key instanceof AsaZend_Crypt_Rsa_Key_Private) {
             $function = 'openssl_private_encrypt';
         }
         $function($data, $encrypted, $key->getOpensslKeyResource());
@@ -168,18 +168,18 @@ class Zend_Crypt_Rsa
 
     /**
      * @param string $data
-     * @param Zend_Crypt_Rsa_Key $key
+     * @param AsaZend_Crypt_Rsa_Key $key
      * @param string $format
      * @return string
      */
-    public function decrypt($data, Zend_Crypt_Rsa_Key $key, $format = null)
+    public function decrypt($data, AsaZend_Crypt_Rsa_Key $key, $format = null)
     {
         $decrypted = '';
         if ($format == self::BASE64) {
             $data = base64_decode($data);
         }
         $function = 'openssl_private_decrypt';
-        if ($key instanceof Zend_Crypt_Rsa_Key_Public) {
+        if ($key instanceof AsaZend_Crypt_Rsa_Key_Public) {
             $function = 'openssl_public_decrypt';
         }
         $function($data, $decrypted, $key->getOpensslKeyResource());
@@ -202,9 +202,9 @@ class Zend_Crypt_Rsa
         $resource = openssl_pkey_new($config);
         // above fails on PHP 5.3
         openssl_pkey_export($resource, $private, $passPhrase);
-        $privateKey = new Zend_Crypt_Rsa_Key_Private($private, $passPhrase);
+        $privateKey = new AsaZend_Crypt_Rsa_Key_Private($private, $passPhrase);
         $details = openssl_pkey_get_details($resource);
-        $publicKey = new Zend_Crypt_Rsa_Key_Public($details['key']);
+        $publicKey = new AsaZend_Crypt_Rsa_Key_Public($details['key']);
         $return = new ArrayObject(array(
            'privateKey'=>$privateKey,
            'publicKey'=>$publicKey
@@ -219,11 +219,11 @@ class Zend_Crypt_Rsa
     {
         $this->_pemString = $value;
         try {
-            $this->_privateKey = new Zend_Crypt_Rsa_Key_Private($this->_pemString, $this->_passPhrase);
+            $this->_privateKey = new AsaZend_Crypt_Rsa_Key_Private($this->_pemString, $this->_passPhrase);
             $this->_publicKey = $this->_privateKey->getPublicKey();
-        } catch (Zend_Crypt_Exception $e) {
+        } catch (AsaZend_Crypt_Exception $e) {
             $this->_privateKey = null;
-            $this->_publicKey = new Zend_Crypt_Rsa_Key_Public($this->_pemString);
+            $this->_publicKey = new AsaZend_Crypt_Rsa_Key_Public($this->_pemString);
         }
     }
 
@@ -236,7 +236,7 @@ class Zend_Crypt_Rsa
     public function setCertificateString($value)
     {
         $this->_certificateString = $value;
-        $this->_publicKey = new Zend_Crypt_Rsa_Key_Public($this->_certificateString, $this->_passPhrase);
+        $this->_publicKey = new AsaZend_Crypt_Rsa_Key_Public($this->_certificateString, $this->_passPhrase);
     }
 
     public function setCertificatePath($value)

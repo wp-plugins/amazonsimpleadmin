@@ -13,32 +13,32 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: BlackHole.php 20785 2010-01-31 09:43:03Z mikaelkael $
  */
 
 /**
- * @see Zend_Cache_Backend_Interface
+ * @see AsaZend_Cache_Backend_Interface
  */
-require_once 'Zend/Cache/Backend/ExtendedInterface.php';
+require_once 'AsaZend/Cache/Backend/ExtendedInterface.php';
 
 /**
- * @see Zend_Cache_Backend
+ * @see AsaZend_Cache_Backend
  */
-require_once 'Zend/Cache/Backend.php';
+require_once 'AsaZend/Cache/Backend.php';
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_BlackHole 
-    extends Zend_Cache_Backend 
-    implements Zend_Cache_Backend_ExtendedInterface
+class AsaZend_Cache_Backend_BlackHole 
+    extends AsaZend_Cache_Backend 
+    implements AsaZend_Cache_Backend_ExtendedInterface
 {
     /**
      * Test if a cache is available for the given id and (if yes) return it (false else)
@@ -108,7 +108,7 @@ class Zend_Cache_Backend_BlackHole
      * @param  tags array $tags array of tags
      * @return boolean true if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = AsaZend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         return true;
     }
@@ -176,7 +176,7 @@ class Zend_Cache_Backend_BlackHole
      * Return the filling percentage of the backend storage
      *
      * @return int integer between 0 and 100
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      */
     public function getFillingPercentage()
     {

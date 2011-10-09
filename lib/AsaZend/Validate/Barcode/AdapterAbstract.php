@@ -13,25 +13,25 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: AdapterAbstract.php 20785 2010-01-31 09:43:03Z mikaelkael $
  */
 
 /**
- * @see Zend_Validate_Barcode_AdapterInterface
+ * @see AsaZend_Validate_Barcode_AdapterInterface
  */
-require_once 'Zend/Validate/Barcode/AdapterInterface.php';
+require_once 'AsaZend/Validate/Barcode/AdapterInterface.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Validate_Barcode_AdapterAbstract
-    implements Zend_Validate_Barcode_AdapterInterface
+abstract class AsaZend_Validate_Barcode_AdapterAbstract
+    implements AsaZend_Validate_Barcode_AdapterInterface
 {
     /**
      * Allowed barcode lengths
@@ -189,7 +189,7 @@ abstract class Zend_Validate_Barcode_AdapterAbstract
      * Sets the checksum validation
      *
      * @param  boolean $check
-     * @return Zend_Validate_Barcode_AdapterAbstract
+     * @return AsaZend_Validate_Barcode_AdapterAbstract
      */
     public function setCheck($check)
     {

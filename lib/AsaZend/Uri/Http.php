@@ -13,32 +13,32 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Uri
+ * @package   AsaZend_Uri
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: Http.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 /**
- * @see Zend_Uri
+ * @see AsaZend_Uri
  */
-require_once 'Zend/Uri.php';
+require_once 'AsaZend/Uri.php';
 
 /**
- * @see Zend_Validate_Hostname
+ * @see AsaZend_Validate_Hostname
  */
-require_once 'Zend/Validate/Hostname.php';
+require_once 'AsaZend/Validate/Hostname.php';
 
 /**
  * HTTP(S) URI handler
  *
  * @category  Zend
- * @package   Zend_Uri
- * @uses      Zend_Uri
+ * @package   AsaZend_Uri
+ * @uses      AsaZend_Uri
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Uri_Http extends Zend_Uri
+class AsaZend_Uri_Http extends AsaZend_Uri
 {
     /**
      * Character classes for validation regular expressions
@@ -111,7 +111,7 @@ class Zend_Uri_Http extends Zend_Uri
      *
      * @param  string $scheme         The scheme of the URI
      * @param  string $schemeSpecific The scheme-specific part of the URI
-     * @throws Zend_Uri_Exception When the URI is not valid
+     * @throws AsaZend_Uri_Exception When the URI is not valid
      */
     protected function __construct($scheme, $schemeSpecific = '')
     {
@@ -152,26 +152,26 @@ class Zend_Uri_Http extends Zend_Uri
 
         // Validate the URI
         if ($this->valid() === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Invalid URI supplied');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Invalid URI supplied');
         }
     }
 
     /**
-     * Creates a Zend_Uri_Http from the given string
+     * Creates a AsaZend_Uri_Http from the given string
      *
      * @param  string $uri String to create URI from, must start with
      *                     'http://' or 'https://'
      * @throws InvalidArgumentException  When the given $uri is not a string or
      *                                   does not start with http:// or https://
-     * @throws Zend_Uri_Exception        When the given $uri is invalid
-     * @return Zend_Uri_Http
+     * @throws AsaZend_Uri_Exception        When the given $uri is invalid
+     * @return AsaZend_Uri_Http
      */
     public static function fromString($uri)
     {
         if (is_string($uri) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('$uri is not a string');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('$uri is not a string');
         }
 
         $uri            = explode(':', $uri, 2);
@@ -179,11 +179,11 @@ class Zend_Uri_Http extends Zend_Uri
         $schemeSpecific = isset($uri[1]) === true ? $uri[1] : '';
 
         if (in_array($scheme, array('http', 'https')) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("Invalid scheme: '$scheme'");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("Invalid scheme: '$scheme'");
         }
 
-        $schemeHandler = new Zend_Uri_Http($scheme, $schemeSpecific);
+        $schemeHandler = new AsaZend_Uri_Http($scheme, $schemeSpecific);
         return $schemeHandler;
     }
 
@@ -191,8 +191,8 @@ class Zend_Uri_Http extends Zend_Uri
      * Parse the scheme-specific portion of the URI and place its parts into instance variables.
      *
      * @param  string $schemeSpecific The scheme-specific portion to parse
-     * @throws Zend_Uri_Exception When scheme-specific decoposition fails
-     * @throws Zend_Uri_Exception When authority decomposition fails
+     * @throws AsaZend_Uri_Exception When scheme-specific decoposition fails
+     * @throws AsaZend_Uri_Exception When authority decomposition fails
      * @return void
      */
     protected function _parseUri($schemeSpecific)
@@ -201,8 +201,8 @@ class Zend_Uri_Http extends Zend_Uri
         $pattern = '~^((//)([^/?#]*))([^?#]*)(\?([^#]*))?(#(.*))?$~';
         $status  = @preg_match($pattern, $schemeSpecific, $matches);
         if ($status === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Internal error: scheme-specific decomposition failed');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Internal error: scheme-specific decomposition failed');
         }
 
         // Failed decomposition; no further processing needed
@@ -220,8 +220,8 @@ class Zend_Uri_Http extends Zend_Uri
         $pattern = '~^(([^:@]*)(:([^@]*))?@)?([^:]+)(:(.*))?$~';
         $status  = @preg_match($pattern, $combo, $matches);
         if ($status === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Internal error: authority decomposition failed');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Internal error: authority decomposition failed');
         }
 
         // Failed decomposition; no further processing needed
@@ -241,14 +241,14 @@ class Zend_Uri_Http extends Zend_Uri
      * Returns a URI based on current values of the instance variables. If any
      * part of the URI does not pass validation, then an exception is thrown.
      *
-     * @throws Zend_Uri_Exception When one or more parts of the URI are invalid
+     * @throws AsaZend_Uri_Exception When one or more parts of the URI are invalid
      * @return string
      */
     public function getUri()
     {
         if ($this->valid() === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('One or more parts of the URI are invalid');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('One or more parts of the URI are invalid');
         }
 
         $password = strlen($this->_password) > 0 ? ":$this->_password" : '';
@@ -300,7 +300,7 @@ class Zend_Uri_Http extends Zend_Uri
      * then the username contained in the instance variable is used.
      *
      * @param  string $username The HTTP username
-     * @throws Zend_Uri_Exception When username validation fails
+     * @throws AsaZend_Uri_Exception When username validation fails
      * @return boolean
      * @link   http://www.faqs.org/rfcs/rfc2396.html
      */
@@ -320,8 +320,8 @@ class Zend_Uri_Http extends Zend_Uri
             self::CHAR_ALNUM . self::CHAR_MARK . ';:&=+$,' . '])+$/', $username);
 
         if ($status === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Internal error: username validation failed');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Internal error: username validation failed');
         }
 
         return $status === 1;
@@ -331,14 +331,14 @@ class Zend_Uri_Http extends Zend_Uri
      * Sets the username for the current URI, and returns the old username
      *
      * @param  string $username The HTTP username
-     * @throws Zend_Uri_Exception When $username is not a valid HTTP username
+     * @throws AsaZend_Uri_Exception When $username is not a valid HTTP username
      * @return string
      */
     public function setUsername($username)
     {
         if ($this->validateUsername($username) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("Username \"$username\" is not a valid HTTP username");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("Username \"$username\" is not a valid HTTP username");
         }
 
         $oldUsername     = $this->_username;
@@ -362,7 +362,7 @@ class Zend_Uri_Http extends Zend_Uri
      * then the password contained in the instance variable is used.
      *
      * @param  string $password The HTTP password
-     * @throws Zend_Uri_Exception When password validation fails
+     * @throws AsaZend_Uri_Exception When password validation fails
      * @return boolean
      * @link   http://www.faqs.org/rfcs/rfc2396.html
      */
@@ -387,8 +387,8 @@ class Zend_Uri_Http extends Zend_Uri
             self::CHAR_ALNUM . self::CHAR_MARK . ';:&=+$,' . '])+$/', $password);
 
         if ($status === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Internal error: password validation failed.');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Internal error: password validation failed.');
         }
 
         return $status == 1;
@@ -398,14 +398,14 @@ class Zend_Uri_Http extends Zend_Uri
      * Sets the password for the current URI, and returns the old password
      *
      * @param  string $password The HTTP password
-     * @throws Zend_Uri_Exception When $password is not a valid HTTP password
+     * @throws AsaZend_Uri_Exception When $password is not a valid HTTP password
      * @return string
      */
     public function setPassword($password)
     {
         if ($this->validatePassword($password) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("Password \"$password\" is not a valid HTTP password.");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("Password \"$password\" is not a valid HTTP password.");
         }
 
         $oldPassword     = $this->_password;
@@ -430,7 +430,7 @@ class Zend_Uri_Http extends Zend_Uri
      *
      * @param  string $host The HTTP host
      * @return boolean
-     * @uses   Zend_Filter
+     * @uses   AsaZend_Filter
      */
     public function validateHost($host = null)
     {
@@ -443,8 +443,8 @@ class Zend_Uri_Http extends Zend_Uri
             return false;
         }
 
-        // Check the host against the allowed values; delegated to Zend_Filter.
-        $validate = new Zend_Validate_Hostname(Zend_Validate_Hostname::ALLOW_ALL);
+        // Check the host against the allowed values; delegated to AsaZend_Filter.
+        $validate = new AsaZend_Validate_Hostname(AsaZend_Validate_Hostname::ALLOW_ALL);
 
         return $validate->isValid($host);
     }
@@ -453,14 +453,14 @@ class Zend_Uri_Http extends Zend_Uri
      * Sets the host for the current URI, and returns the old host
      *
      * @param  string $host The HTTP host
-     * @throws Zend_Uri_Exception When $host is nota valid HTTP host
+     * @throws AsaZend_Uri_Exception When $host is nota valid HTTP host
      * @return string
      */
     public function setHost($host)
     {
         if ($this->validateHost($host) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("Host \"$host\" is not a valid HTTP host");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("Host \"$host\" is not a valid HTTP host");
         }
 
         $oldHost     = $this->_host;
@@ -505,14 +505,14 @@ class Zend_Uri_Http extends Zend_Uri
      * Sets the port for the current URI, and returns the old port
      *
      * @param  string $port The HTTP port
-     * @throws Zend_Uri_Exception When $port is not a valid HTTP port
+     * @throws AsaZend_Uri_Exception When $port is not a valid HTTP port
      * @return string
      */
     public function setPort($port)
     {
         if ($this->validatePort($port) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("Port \"$port\" is not a valid HTTP port.");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("Port \"$port\" is not a valid HTTP port.");
         }
 
         $oldPort     = $this->_port;
@@ -536,7 +536,7 @@ class Zend_Uri_Http extends Zend_Uri
      * then the path contained in the instance variable is used.
      *
      * @param  string $path The HTTP path
-     * @throws Zend_Uri_Exception When path validation fails
+     * @throws AsaZend_Uri_Exception When path validation fails
      * @return boolean
      */
     public function validatePath($path = null)
@@ -554,8 +554,8 @@ class Zend_Uri_Http extends Zend_Uri
         $pattern = '/^' . $this->_regex['path'] . '$/';
         $status  = @preg_match($pattern, $path);
         if ($status === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Internal error: path validation failed');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Internal error: path validation failed');
         }
 
         return (boolean) $status;
@@ -565,14 +565,14 @@ class Zend_Uri_Http extends Zend_Uri
      * Sets the path for the current URI, and returns the old path
      *
      * @param  string $path The HTTP path
-     * @throws Zend_Uri_Exception When $path is not a valid HTTP path
+     * @throws AsaZend_Uri_Exception When $path is not a valid HTTP path
      * @return string
      */
     public function setPath($path)
     {
         if ($this->validatePath($path) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("Path \"$path\" is not a valid HTTP path");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("Path \"$path\" is not a valid HTTP path");
         }
 
         $oldPath     = $this->_path;
@@ -613,7 +613,7 @@ class Zend_Uri_Http extends Zend_Uri
      * then the query string contained in the instance variable is used.
      *
      * @param  string $query The query to validate
-     * @throws Zend_Uri_Exception When query validation fails
+     * @throws AsaZend_Uri_Exception When query validation fails
      * @return boolean
      * @link   http://www.faqs.org/rfcs/rfc2396.html
      */
@@ -632,8 +632,8 @@ class Zend_Uri_Http extends Zend_Uri
         $pattern = '/^' . $this->_regex['uric'] . '*$/';
         $status  = @preg_match($pattern, $query);
         if ($status === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Internal error: query validation failed');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Internal error: query validation failed');
         }
 
         return $status == 1;
@@ -670,7 +670,7 @@ class Zend_Uri_Http extends Zend_Uri
      * string This method accepts both strings and arrays.
      *
      * @param  string|array $query The query string or array
-     * @throws Zend_Uri_Exception When $query is not a valid query string
+     * @throws AsaZend_Uri_Exception When $query is not a valid query string
      * @return string              Old query string
      */
     public function setQuery($query)
@@ -697,8 +697,8 @@ class Zend_Uri_Http extends Zend_Uri
 
         // Make sure the query is valid, and set it
         if ($this->validateQuery($query) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("'$query' is not a valid query string");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("'$query' is not a valid query string");
         }
 
         $this->_query = $query;
@@ -721,7 +721,7 @@ class Zend_Uri_Http extends Zend_Uri
      * then the fragment contained in the instance variable is used.
      *
      * @param  string $fragment Fragment of an URI
-     * @throws Zend_Uri_Exception When fragment validation fails
+     * @throws AsaZend_Uri_Exception When fragment validation fails
      * @return boolean
      * @link   http://www.faqs.org/rfcs/rfc2396.html
      */
@@ -740,8 +740,8 @@ class Zend_Uri_Http extends Zend_Uri
         $pattern = '/^' . $this->_regex['uric'] . '*$/';
         $status  = @preg_match($pattern, $fragment);
         if ($status === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception('Internal error: fragment validation failed');
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception('Internal error: fragment validation failed');
         }
 
         return (boolean) $status;
@@ -751,14 +751,14 @@ class Zend_Uri_Http extends Zend_Uri
      * Sets the fragment for the current URI, and returns the old fragment
      *
      * @param  string $fragment Fragment of the current URI
-     * @throws Zend_Uri_Exception When $fragment is not a valid HTTP fragment
+     * @throws AsaZend_Uri_Exception When $fragment is not a valid HTTP fragment
      * @return string
      */
     public function setFragment($fragment)
     {
         if ($this->validateFragment($fragment) === false) {
-            require_once 'Zend/Uri/Exception.php';
-            throw new Zend_Uri_Exception("Fragment \"$fragment\" is not a valid HTTP fragment");
+            require_once 'AsaZend/Uri/Exception.php';
+            throw new AsaZend_Uri_Exception("Fragment \"$fragment\" is not a valid HTTP fragment");
         }
 
         $oldFragment     = $this->_fragment;

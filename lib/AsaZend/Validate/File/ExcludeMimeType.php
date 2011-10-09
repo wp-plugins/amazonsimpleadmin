@@ -13,40 +13,40 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: ExcludeMimeType.php 21935 2010-04-18 16:21:35Z thomas $
  */
 
 /**
- * @see Zend_Validate_File_MimeType
+ * @see AsaZend_Validate_File_MimeType
  */
-require_once 'Zend/Validate/File/MimeType.php';
+require_once 'AsaZend/Validate/File/MimeType.php';
 
 /**
  * Validator for the mime type of a file
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_ExcludeMimeType extends Zend_Validate_File_MimeType
+class AsaZend_Validate_File_ExcludeMimeType extends AsaZend_Validate_File_MimeType
 {
     const FALSE_TYPE   = 'fileExcludeMimeTypeFalse';
     const NOT_DETECTED = 'fileExcludeMimeTypeNotDetected';
     const NOT_READABLE = 'fileExcludeMimeTypeNotReadable';
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if the mimetype of the file does not matche the given ones. Also parts
      * of mimetypes can be checked. If you give for example "image" all image
      * mime types will not be accepted like "image/gif", "image/jpeg" and so on.
      *
      * @param  string $value Real file to check for mimetype
-     * @param  array  $file  File data from Zend_File_Transfer
+     * @param  array  $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
@@ -59,8 +59,8 @@ class Zend_Validate_File_ExcludeMimeType extends Zend_Validate_File_MimeType
         }
 
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_READABLE);
         }
 

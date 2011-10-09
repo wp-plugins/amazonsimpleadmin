@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Loader
+ * @package    AsaZend_Loader
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Loader.php 22019 2010-04-27 16:33:31Z matthew $
@@ -23,11 +23,11 @@
  * Static methods for loading classes and files.
  *
  * @category   Zend
- * @package    Zend_Loader
+ * @package    AsaZend_Loader
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Loader
+class AsaZend_Loader
 {
     /**
      * Loads a class from a PHP file.  The filename must be formatted
@@ -37,8 +37,8 @@ class Zend_Loader
      * in the order supplied, and attempt to load the first matching file.
      *
      * If $dirs is null, it will split the class name at underscores to
-     * generate a path hierarchy (e.g., "Zend_Example_Class" will map
-     * to "Zend/Example/Class.php").
+     * generate a path hierarchy (e.g., "AsaZend_Example_Class" will map
+     * to "AsaZend/Example/Class.php").
      *
      * If the file was not found in the $dirs, or if no $dirs were specified,
      * it will attempt to load it from PHP's include_path.
@@ -47,7 +47,7 @@ class Zend_Loader
      * @param string|array $dirs - OPTIONAL Either a path or an array of paths
      *                             to search.
      * @return void
-     * @throws Zend_Exception
+     * @throws AsaZend_Exception
      */
     public static function loadClass($class, $dirs = null)
     {
@@ -56,8 +56,8 @@ class Zend_Loader
         }
 
         if ((null !== $dirs) && !is_string($dirs) && !is_array($dirs)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception('Directory argument must be a string or an array');
+            require_once 'AsaZend/Exception.php';
+            throw new AsaZend_Exception('Directory argument must be a string or an array');
         }
 
         // Autodiscover the path from the class name
@@ -95,8 +95,8 @@ class Zend_Loader
         }
 
         if (!class_exists($class, false) && !interface_exists($class, false)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception("File \"$file\" does not exist or class \"$class\" was not found in the file");
+            require_once 'AsaZend/Exception.php';
+            throw new AsaZend_Exception("File \"$file\" does not exist or class \"$class\" was not found in the file");
         }
     }
 
@@ -121,7 +121,7 @@ class Zend_Loader
      *                       to search.
      * @param  boolean       $once
      * @return boolean
-     * @throws Zend_Exception
+     * @throws AsaZend_Exception
      */
     public static function loadFile($filename, $dirs = null, $once = false)
     {
@@ -233,7 +233,7 @@ class Zend_Loader
      *
      * Attach to spl_autoload() using the following:
      * <code>
-     * spl_autoload_register(array('Zend_Loader', 'autoload'));
+     * spl_autoload_register(array('AsaZend_Loader', 'autoload'));
      * </code>
      *
      * @deprecated Since 1.8.0
@@ -242,7 +242,7 @@ class Zend_Loader
      */
     public static function autoload($class)
     {
-        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated as of 1.8.0 and will be removed with 2.0.0; use Zend_Loader_Autoloader instead', E_USER_NOTICE);
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated as of 1.8.0 and will be removed with 2.0.0; use AsaZend_Loader_Autoloader instead', E_USER_NOTICE);
         try {
             @self::loadClass($class);
             return $class;
@@ -258,22 +258,22 @@ class Zend_Loader
      * @param string $class (optional)
      * @param boolean $enabled (optional)
      * @return void
-     * @throws Zend_Exception if spl_autoload() is not found
+     * @throws AsaZend_Exception if spl_autoload() is not found
      * or if the specified class does not have an autoload() method.
      */
-    public static function registerAutoload($class = 'Zend_Loader', $enabled = true)
+    public static function registerAutoload($class = 'AsaZend_Loader', $enabled = true)
     {
-        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated as of 1.8.0 and will be removed with 2.0.0; use Zend_Loader_Autoloader instead', E_USER_NOTICE);
-        require_once 'Zend/Loader/Autoloader.php';
-        $autoloader = Zend_Loader_Autoloader::getInstance();
+        trigger_error(__CLASS__ . '::' . __METHOD__ . ' is deprecated as of 1.8.0 and will be removed with 2.0.0; use AsaZend_Loader_Autoloader instead', E_USER_NOTICE);
+        require_once 'AsaZend/Loader/Autoloader.php';
+        $autoloader = AsaZend_Loader_Autoloader::getInstance();
         $autoloader->setFallbackAutoloader(true);
 
-        if ('Zend_Loader' != $class) {
+        if ('AsaZend_Loader' != $class) {
             self::loadClass($class);
             $methods = get_class_methods($class);
             if (!in_array('autoload', (array) $methods)) {
-                require_once 'Zend/Exception.php';
-                throw new Zend_Exception("The class \"$class\" does not have an autoload() method");
+                require_once 'AsaZend/Exception.php';
+                throw new AsaZend_Exception("The class \"$class\" does not have an autoload() method");
             }
 
             $callback = array($class, 'autoload');
@@ -291,7 +291,7 @@ class Zend_Loader
      *
      * @param  string $filename
      * @return void
-     * @throws Zend_Exception
+     * @throws AsaZend_Exception
      */
     protected static function _securityCheck($filename)
     {
@@ -299,8 +299,8 @@ class Zend_Loader
          * Security check
          */
         if (preg_match('/[^a-z0-9\\/\\\\_.:-]/i', $filename)) {
-            require_once 'Zend/Exception.php';
-            throw new Zend_Exception('Security check: Illegal character in filename');
+            require_once 'AsaZend/Exception.php';
+            throw new AsaZend_Exception('Security check: Illegal character in filename');
         }
     }
 

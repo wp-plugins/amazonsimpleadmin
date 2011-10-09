@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @subpackage Rsa
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,17 +21,17 @@
  */
 
 /**
- * @see Zend_Crypt_Rsa_Key
+ * @see AsaZend_Crypt_Rsa_Key
  */
-require_once 'Zend/Crypt/Rsa/Key.php';
+require_once 'AsaZend/Crypt/Rsa/Key.php';
 
 /**
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Crypt_Rsa_Key_Public extends Zend_Crypt_Rsa_Key
+class AsaZend_Crypt_Rsa_Key_Public extends AsaZend_Crypt_Rsa_Key
 {
 
     protected $_certificateString = null;
@@ -43,7 +43,7 @@ class Zend_Crypt_Rsa_Key_Public extends Zend_Crypt_Rsa_Key
 
     /**
      * @param string $string
-     * @throws Zend_Crypt_Exception
+     * @throws AsaZend_Crypt_Exception
      */
     protected function _parse($string)
     {
@@ -55,10 +55,10 @@ class Zend_Crypt_Rsa_Key_Public extends Zend_Crypt_Rsa_Key
         $result = openssl_get_publickey($string);
         if (!$result) {
             /**
-             * @see Zend_Crypt_Exception
+             * @see AsaZend_Crypt_Exception
              */
-            require_once 'Zend/Crypt/Exception.php';
-            throw new Zend_Crypt_Exception('Unable to load public key');
+            require_once 'AsaZend/Crypt/Exception.php';
+            throw new AsaZend_Crypt_Exception('Unable to load public key');
         }
         //openssl_pkey_export($result, $public);
         //$this->_pemString = $public;

@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: Upload.php 22398 2010-06-09 19:05:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * Validator for the maximum size of a file up to a max of 2GB
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_Upload extends Zend_Validate_Abstract
+class AsaZend_Validate_File_Upload extends AsaZend_Validate_Abstract
 {
     /**@#+
      * @const string Error constants
@@ -74,16 +74,16 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
     /**
      * Sets validator options
      *
-     * The array $files must be given in syntax of Zend_File_Transfer to be checked
+     * The array $files must be given in syntax of AsaZend_File_Transfer to be checked
      * If no files are given the $_FILES array will be used automatically.
      * NOTE: This validator will only work with HTTP POST uploads!
      *
-     * @param  array|Zend_Config $files Array of files in syntax of Zend_File_Transfer
+     * @param  array|AsaZend_Config $files Array of files in syntax of AsaZend_File_Transfer
      * @return void
      */
     public function __construct($files = array())
     {
-        if ($files instanceof Zend_Config) {
+        if ($files instanceof AsaZend_Config) {
             $files = $files->toArray();
         }
 
@@ -95,7 +95,7 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
      *
      * @param  string $files (Optional) The file to return in detail
      * @return array
-     * @throws Zend_Validate_Exception If file is not found
+     * @throws AsaZend_Validate_Exception If file is not found
      */
     public function getFiles($file = null)
     {
@@ -112,8 +112,8 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
             }
 
             if (count($return) === 0) {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("The file '$file' was not found");
+                require_once 'AsaZend/Validate/Exception.php';
+                throw new AsaZend_Validate_Exception("The file '$file' was not found");
             }
 
             return $return;
@@ -125,8 +125,8 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
     /**
      * Sets the files to be checked
      *
-     * @param  array $files The files to check in syntax of Zend_File_Transfer
-     * @return Zend_Validate_File_Upload Provides a fluent interface
+     * @param  array $files The files to check in syntax of AsaZend_File_Transfer
+     * @return AsaZend_Validate_File_Upload Provides a fluent interface
      */
     public function setFiles($files = array())
     {
@@ -146,7 +146,7 @@ class Zend_Validate_File_Upload extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the file was uploaded without errors
      *

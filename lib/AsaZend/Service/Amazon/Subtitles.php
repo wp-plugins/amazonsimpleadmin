@@ -1,6 +1,6 @@
 <?php
 
-class Zend_Service_Amazon_Subtitles
+class AsaZend_Service_Amazon_Subtitles
 {
 	protected $_itemXml;
 	

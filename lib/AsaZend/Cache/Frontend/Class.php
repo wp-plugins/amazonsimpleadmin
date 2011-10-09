@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Class.php 23051 2010-10-07 17:01:21Z mabe $
  */
 
 /**
- * @see Zend_Cache_Core
+ * @see AsaZend_Cache_Core
  */
-require_once 'Zend/Cache/Core.php';
+require_once 'AsaZend/Cache/Core.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Frontend_Class extends Zend_Cache_Core
+class AsaZend_Cache_Frontend_Class extends AsaZend_Cache_Core
 {
     /**
      * Available options
@@ -102,7 +102,7 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      * Constructor
      *
      * @param  array $options Associative array of options
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function __construct(array $options = array())
@@ -111,7 +111,7 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
             $this->setOption($name, $value);
         }
         if ($this->_specificOptions['cached_entity'] === null) {
-            Zend_Cache::throwException('cached_entity must be set !');
+            AsaZend_Cache::throwException('cached_entity must be set !');
         }
         $this->setCachedEntity($this->_specificOptions['cached_entity']);
         $this->setOption('automatic_serialization', true);
@@ -145,7 +145,7 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
      *
      * @param  string $name  Name of the option
      * @param  mixed  $value Value of the option
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function setOption($name, $value)
@@ -168,7 +168,7 @@ class Zend_Cache_Frontend_Class extends Zend_Cache_Core
     public function setCachedEntity($cachedEntity)
     {
         if (!is_string($cachedEntity) && !is_object($cachedEntity)) {
-            Zend_Cache::throwException('cached_entity must be an object or a class name');
+            AsaZend_Cache::throwException('cached_entity must be an object or a class name');
         }
         $this->_cachedEntity = $cachedEntity;
         $this->_specificOptions['cached_entity'] = $cachedEntity;

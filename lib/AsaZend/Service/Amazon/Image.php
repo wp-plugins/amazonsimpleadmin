@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -24,17 +24,17 @@
 
 /**
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_Image
+class AsaZend_Service_Amazon_Image
 {
     /**
      * Image URL
      *
-     * @var Zend_Uri
+     * @var AsaZend_Uri
      */
     public $Url;
 
@@ -62,7 +62,7 @@ class Zend_Service_Amazon_Image
     {
         $xpath = new DOMXPath($dom->ownerDocument);
         $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
-        $this->Url = Zend_Uri::factory($xpath->query('./az:URL/text()', $dom)->item(0)->data);
+        $this->Url = AsaZend_Uri::factory($xpath->query('./az:URL/text()', $dom)->item(0)->data);
         $this->Height = (int) $xpath->query('./az:Height/text()', $dom)->item(0)->data;
         $this->Width = (int) $xpath->query('./az:Width/text()', $dom)->item(0)->data;
     }

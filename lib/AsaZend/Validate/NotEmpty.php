@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: NotEmpty.php 22691 2010-07-26 19:29:14Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_NotEmpty extends Zend_Validate_Abstract
+class AsaZend_Validate_NotEmpty extends AsaZend_Validate_Abstract
 {
     const BOOLEAN       = 1;
     const INTEGER       = 2;
@@ -83,11 +83,11 @@ class Zend_Validate_NotEmpty extends Zend_Validate_Abstract
     /**
      * Constructor
      *
-     * @param string|array|Zend_Config $options OPTIONAL
+     * @param string|array|AsaZend_Config $options OPTIONAL
      */
     public function __construct($options = null)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } else if (!is_array($options)) {
             $options = func_get_args();
@@ -118,8 +118,8 @@ class Zend_Validate_NotEmpty extends Zend_Validate_Abstract
      * Set the types
      *
      * @param  integer|array $type
-     * @throws Zend_Validate_Exception
-     * @return Zend_Validate_NotEmpty
+     * @throws AsaZend_Validate_Exception
+     * @return AsaZend_Validate_NotEmpty
      */
     public function setType($type = null)
     {
@@ -139,8 +139,8 @@ class Zend_Validate_NotEmpty extends Zend_Validate_Abstract
         }
 
         if (!is_int($type) || ($type < 0) || ($type > self::ALL)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Unknown type');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Unknown type');
         }
 
         $this->_type = $type;
@@ -148,7 +148,7 @@ class Zend_Validate_NotEmpty extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if $value is not an empty value.
      *

@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Xcache.php 20096 2010-01-06 02:05:09Z bkarwin $
@@ -22,30 +22,30 @@
 
 
 /**
- * @see Zend_Cache_Backend_Interface
+ * @see AsaZend_Cache_Backend_Interface
  */
-require_once 'Zend/Cache/Backend/Interface.php';
+require_once 'AsaZend/Cache/Backend/Interface.php';
 
 /**
- * @see Zend_Cache_Backend
+ * @see AsaZend_Cache_Backend
  */
-require_once 'Zend/Cache/Backend.php';
+require_once 'AsaZend/Cache/Backend.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache_Backend_Interface
+class AsaZend_Cache_Backend_Xcache extends AsaZend_Cache_Backend implements AsaZend_Cache_Backend_Interface
 {
 
     /**
      * Log message
      */
-    const TAGS_UNSUPPORTED_BY_CLEAN_OF_XCACHE_BACKEND = 'Zend_Cache_Backend_Xcache::clean() : tags are unsupported by the Xcache backend';
-    const TAGS_UNSUPPORTED_BY_SAVE_OF_XCACHE_BACKEND =  'Zend_Cache_Backend_Xcache::save() : tags are unsupported by the Xcache backend';
+    const TAGS_UNSUPPORTED_BY_CLEAN_OF_XCACHE_BACKEND = 'AsaZend_Cache_Backend_Xcache::clean() : tags are unsupported by the Xcache backend';
+    const TAGS_UNSUPPORTED_BY_SAVE_OF_XCACHE_BACKEND =  'AsaZend_Cache_Backend_Xcache::save() : tags are unsupported by the Xcache backend';
 
     /**
      * Available options
@@ -67,13 +67,13 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
      * Constructor
      *
      * @param  array $options associative array of options
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function __construct(array $options = array())
     {
         if (!extension_loaded('xcache')) {
-            Zend_Cache::throwException('The xcache extension must be loaded for using this backend !');
+            AsaZend_Cache::throwException('The xcache extension must be loaded for using this backend !');
         }
         parent::__construct($options);
     }
@@ -90,7 +90,7 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
     public function load($id, $doNotTestCacheValidity = false)
     {
         if ($doNotTestCacheValidity) {
-            $this->_log("Zend_Cache_Backend_Xcache::load() : \$doNotTestCacheValidity=true is unsupported by the Xcache backend");
+            $this->_log("AsaZend_Cache_Backend_Xcache::load() : \$doNotTestCacheValidity=true is unsupported by the Xcache backend");
         }
         $tmp = xcache_get($id);
         if (is_array($tmp)) {
@@ -161,13 +161,13 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
      *
      * @param  string $mode clean mode
      * @param  array  $tags array of tags
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return boolean true if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = AsaZend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         switch ($mode) {
-            case Zend_Cache::CLEANING_MODE_ALL:
+            case AsaZend_Cache::CLEANING_MODE_ALL:
                 // Necessary because xcache_clear_cache() need basic authentification
                 $backup = array();
                 if (isset($_SERVER['PHP_AUTH_USER'])) {
@@ -189,16 +189,16 @@ class Zend_Cache_Backend_Xcache extends Zend_Cache_Backend implements Zend_Cache
                 }
                 return true;
                 break;
-            case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_Xcache::clean() : CLEANING_MODE_OLD is unsupported by the Xcache backend");
+            case AsaZend_Cache::CLEANING_MODE_OLD:
+                $this->_log("AsaZend_Cache_Backend_Xcache::clean() : CLEANING_MODE_OLD is unsupported by the Xcache backend");
                 break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
                 $this->_log(self::TAGS_UNSUPPORTED_BY_CLEAN_OF_XCACHE_BACKEND);
                 break;
             default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
+                AsaZend_Cache::throwException('Invalid mode for clean() method');
                 break;
         }
     }

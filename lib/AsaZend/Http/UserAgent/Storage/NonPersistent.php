@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -22,9 +22,9 @@
 
 
 /**
- * @see Zend_Http_UserAgent_Storage_Interface
+ * @see AsaZend_Http_UserAgent_Storage_Interface
  */
-require_once 'Zend/Http/UserAgent/Storage.php';
+require_once 'AsaZend/Http/UserAgent/Storage.php';
 
 
 /**
@@ -34,13 +34,13 @@ require_once 'Zend/Http/UserAgent/Storage.php';
  * re-populated. So there's no need to use sessions, this simple value class
  * will hold the data for rest of the current request.
  *
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Http_UserAgent_Storage_NonPersistent 
-    implements Zend_Http_UserAgent_Storage
+class AsaZend_Http_UserAgent_Storage_NonPersistent 
+    implements AsaZend_Http_UserAgent_Storage
 {
     /**
      * Holds the actual Browser data
@@ -51,7 +51,7 @@ class Zend_Http_UserAgent_Storage_NonPersistent
     /**
      * Returns true if and only if storage is empty
      *
-     * @throws Zend_Http_UserAgent_Storage_Exception If it is impossible to determine whether storage is empty
+     * @throws AsaZend_Http_UserAgent_Storage_Exception If it is impossible to determine whether storage is empty
      * @return boolean
      */
     public function isEmpty()
@@ -64,7 +64,7 @@ class Zend_Http_UserAgent_Storage_NonPersistent
      *
      * Behavior is undefined when storage is empty.
      *
-     * @throws Zend_Http_UserAgent_Storage_Exception If reading contents from storage is impossible
+     * @throws AsaZend_Http_UserAgent_Storage_Exception If reading contents from storage is impossible
      * @return mixed
      */
     public function read()
@@ -76,7 +76,7 @@ class Zend_Http_UserAgent_Storage_NonPersistent
      * Writes $contents to storage
      *
      * @param  mixed $contents
-     * @throws Zend_Http_UserAgent_Storage_Exception If writing $contents to storage is impossible
+     * @throws AsaZend_Http_UserAgent_Storage_Exception If writing $contents to storage is impossible
      * @return void
      */
     public function write($contents)
@@ -87,7 +87,7 @@ class Zend_Http_UserAgent_Storage_NonPersistent
     /**
      * Clears contents from storage
      *
-     * @throws Zend_Http_UserAgent_Storage_Exception If clearing contents from storage is impossible
+     * @throws AsaZend_Http_UserAgent_Storage_Exception If clearing contents from storage is impossible
      * @return void
      */
     public function clear()

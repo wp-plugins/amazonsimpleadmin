@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: ExcludeExtension.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/File/Extension.php';
+require_once 'AsaZend/Validate/File/Extension.php';
 
 /**
  * Validator for the excluding file extensions
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_ExcludeExtension extends Zend_Validate_File_Extension
+class AsaZend_Validate_File_ExcludeExtension extends AsaZend_Validate_File_Extension
 {
     /**
      * @const string Error constants
@@ -49,20 +49,20 @@ class Zend_Validate_File_ExcludeExtension extends Zend_Validate_File_Extension
     );
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the fileextension of $value is not included in the
      * set extension list
      *
      * @param  string  $value Real file to check for extension
-     * @param  array   $file  File data from Zend_File_Transfer
+     * @param  array   $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }
 

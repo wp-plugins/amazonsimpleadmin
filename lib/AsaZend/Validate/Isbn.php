@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Isbn.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Isbn extends Zend_Validate_Abstract
+class AsaZend_Validate_Isbn extends AsaZend_Validate_Abstract
 {
     const AUTO    = 'auto';
     const ISBN10  = '10';
@@ -65,22 +65,22 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
     /**
      * Set up options.
      *
-     * @param  Zend_Config|array $options
-     * @throws Zend_Validate_Exception When $options is not valid
+     * @param  AsaZend_Config|array $options
+     * @throws AsaZend_Validate_Exception When $options is not valid
      * @return void
      */
     public function __construct($options = array())
     {
         // prepare options
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         }
         if (!is_array($options)) {
             /**
-             * @see Zend_Validate_Exception
+             * @see AsaZend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid options provided.');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid options provided.');
         }
 
         // set type
@@ -145,7 +145,7 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface.
+     * Defined by AsaZend_Validate_Interface.
      *
      * Returns true if and only if $value is a valid ISBN.
      *
@@ -217,18 +217,18 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
      * It is allowed only empty string, hyphen and space.
      *
      * @param  string $separator
-     * @throws Zend_Validate_Exception When $separator is not valid
-     * @return Zend_Validate_Isbn Provides a fluent interface
+     * @throws AsaZend_Validate_Exception When $separator is not valid
+     * @return AsaZend_Validate_Isbn Provides a fluent interface
      */
     public function setSeparator($separator)
     {
         // check separator
         if (!in_array($separator, array('-', ' ', ''))) {
             /**
-             * @see Zend_Validate_Exception
+             * @see AsaZend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid ISBN separator.');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid ISBN separator.');
         }
 
         $this->_separator = $separator;
@@ -249,18 +249,18 @@ class Zend_Validate_Isbn extends Zend_Validate_Abstract
      * Set allowed ISBN type.
      *
      * @param  string $type
-     * @throws Zend_Validate_Exception When $type is not valid
-     * @return Zend_Validate_Isbn Provides a fluent interface
+     * @throws AsaZend_Validate_Exception When $type is not valid
+     * @return AsaZend_Validate_Isbn Provides a fluent interface
      */
     public function setType($type)
     {
         // check type
         if (!in_array($type, array(self::AUTO, self::ISBN10, self::ISBN13))) {
             /**
-             * @see Zend_Validate_Exception
+             * @see AsaZend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid ISBN type');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid ISBN type');
         }
 
         $this->_type = $type;

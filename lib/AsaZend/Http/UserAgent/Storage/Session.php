@@ -13,34 +13,34 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
 /**
- * @see Zend_Http_UserAgent_Storage
+ * @see AsaZend_Http_UserAgent_Storage
  */
-require_once 'Zend/Http/UserAgent/Storage.php';
+require_once 'AsaZend/Http/UserAgent/Storage.php';
 
 /**
- * @see Zend_Session_Namespace
+ * @see AsaZend_Session_Namespace
  */
-require_once 'Zend/Session/Namespace.php';
+require_once 'AsaZend/Session/Namespace.php';
 
 /**
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage 
+class AsaZend_Http_UserAgent_Storage_Session implements AsaZend_Http_UserAgent_Storage 
 {
     /**
      * Default session namespace
      */
-    const NAMESPACE_DEFAULT = 'Zend_Http_UserAgent';
+    const NAMESPACE_DEFAULT = 'AsaZend_Http_UserAgent';
     
     /**
      * Default session object member name
@@ -50,7 +50,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
     /**
      * Object to proxy $_SESSION storage
      *
-     * @var Zend_Session_Namespace
+     * @var AsaZend_Session_Namespace
      */
     protected $_session;
     
@@ -77,7 +77,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
      *
      * @param  null|array|object $options
      * @return void
-     * @throws Zend_Http_UserAgent_Storage_Exception on invalid $options argument
+     * @throws AsaZend_Http_UserAgent_Storage_Exception on invalid $options argument
      */
     public function __construct($options = null) 
     {
@@ -87,8 +87,8 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
             $options = (array) $options;
         }
         if (null !== $options && !is_array($options)) {
-            require_once 'Zend/Http/UserAgent/Storage/Exception.php';
-            throw new Zend_Http_UserAgent_Storage_Exception(sprintf(
+            require_once 'AsaZend/Http/UserAgent/Storage/Exception.php';
+            throw new AsaZend_Http_UserAgent_Storage_Exception(sprintf(
                 'Expected array or object options; "%s" provided',
                 gettype($options)
             ));
@@ -100,7 +100,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
                              ? $options['browser_type'] 
                              : self::NAMESPACE_DEFAULT);
         $this->_member    = isset($options['member']) ? $options['member'] : self::MEMBER_DEFAULT;
-        $this->_session   = new Zend_Session_Namespace($this->_namespace);
+        $this->_session   = new AsaZend_Session_Namespace($this->_namespace);
     }
     
     /**
@@ -124,7 +124,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
     }
     
     /**
-     * Defined by Zend_Http_UserAgent_Storage
+     * Defined by AsaZend_Http_UserAgent_Storage
      *
      * @return boolean
      */
@@ -134,7 +134,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
     }
     
     /**
-     * Defined by Zend_Http_UserAgent_Storage
+     * Defined by AsaZend_Http_UserAgent_Storage
      *
      * @return mixed
      */
@@ -144,7 +144,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
     }
     
     /**
-     * Defined by Zend_Http_UserAgent_Storage
+     * Defined by AsaZend_Http_UserAgent_Storage
      *
      * @param  mixed $contents
      * @return void
@@ -155,7 +155,7 @@ class Zend_Http_UserAgent_Storage_Session implements Zend_Http_UserAgent_Storage
     }
     
     /**
-     * Defined by Zend_Http_UserAgent_Storage
+     * Defined by AsaZend_Http_UserAgent_Storage
      *
      * @return void
      */

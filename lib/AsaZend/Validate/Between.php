@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Between.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Between extends Zend_Validate_Abstract
+class AsaZend_Validate_Between extends AsaZend_Validate_Abstract
 {
     /**
      * Validation failure message key for when the value is not between the min and max, inclusively
@@ -93,12 +93,12 @@ class Zend_Validate_Between extends Zend_Validate_Abstract
      *   'max' => scalar, maximum border
      *   'inclusive' => boolean, inclusive border values
      *
-     * @param  array|Zend_Config $options
+     * @param  array|AsaZend_Config $options
      * @return void
      */
     public function __construct($options)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } else if (!is_array($options)) {
             $options = func_get_args();
@@ -115,8 +115,8 @@ class Zend_Validate_Between extends Zend_Validate_Abstract
         }
 
         if (!array_key_exists('min', $options) || !array_key_exists('max', $options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception("Missing option. 'min' and 'max' has to be given");
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception("Missing option. 'min' and 'max' has to be given");
         }
 
         if (!array_key_exists('inclusive', $options)) {
@@ -142,7 +142,7 @@ class Zend_Validate_Between extends Zend_Validate_Abstract
      * Sets the min option
      *
      * @param  mixed $min
-     * @return Zend_Validate_Between Provides a fluent interface
+     * @return AsaZend_Validate_Between Provides a fluent interface
      */
     public function setMin($min)
     {
@@ -164,7 +164,7 @@ class Zend_Validate_Between extends Zend_Validate_Abstract
      * Sets the max option
      *
      * @param  mixed $max
-     * @return Zend_Validate_Between Provides a fluent interface
+     * @return AsaZend_Validate_Between Provides a fluent interface
      */
     public function setMax($max)
     {
@@ -186,7 +186,7 @@ class Zend_Validate_Between extends Zend_Validate_Abstract
      * Sets the inclusive option
      *
      * @param  boolean $inclusive
-     * @return Zend_Validate_Between Provides a fluent interface
+     * @return AsaZend_Validate_Between Provides a fluent interface
      */
     public function setInclusive($inclusive)
     {
@@ -195,7 +195,7 @@ class Zend_Validate_Between extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if $value is between min and max options, inclusively
      * if inclusive option is true.

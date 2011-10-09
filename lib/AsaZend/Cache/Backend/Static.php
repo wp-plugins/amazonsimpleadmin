@@ -13,32 +13,32 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Static.php 22950 2010-09-16 19:33:00Z mabe $
  */
 
 /**
- * @see Zend_Cache_Backend_Interface
+ * @see AsaZend_Cache_Backend_Interface
  */
-require_once 'Zend/Cache/Backend/Interface.php';
+require_once 'AsaZend/Cache/Backend/Interface.php';
 
 /**
- * @see Zend_Cache_Backend
+ * @see AsaZend_Cache_Backend
  */
-require_once 'Zend/Cache/Backend.php';
+require_once 'AsaZend/Cache/Backend.php';
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_Static
-    extends Zend_Cache_Backend
-    implements Zend_Cache_Backend_Interface
+class AsaZend_Cache_Backend_Static
+    extends AsaZend_Cache_Backend
+    implements AsaZend_Cache_Backend_Interface
 {
     const INNER_CACHE_NAME = 'zend_cache_backend_static_tagcache';
 
@@ -61,7 +61,7 @@ class Zend_Cache_Backend_Static
 
     /**
      * Cache for handling tags
-     * @var Zend_Cache_Core
+     * @var AsaZend_Cache_Core
      */
     protected $_tagCache = null;
 
@@ -78,7 +78,7 @@ class Zend_Cache_Backend_Static
      *
      * @param  string $name
      * @param  mixed $value
-     * @return Zend_Cache_Backend_Static
+     * @return AsaZend_Cache_Backend_Static
      */
     public function setOption($name, $value)
     {
@@ -129,10 +129,10 @@ class Zend_Cache_Backend_Static
             $id = $this->_decodeId($id);
         }
         if (!$this->_verifyPath($id)) {
-            Zend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
+            AsaZend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
         }
         if ($doNotTestCacheValidity) {
-            $this->_log("Zend_Cache_Backend_Static::load() : \$doNotTestCacheValidity=true is unsupported by the Static backend");
+            $this->_log("AsaZend_Cache_Backend_Static::load() : \$doNotTestCacheValidity=true is unsupported by the Static backend");
         }
 
         $fileName = basename($id);
@@ -159,7 +159,7 @@ class Zend_Cache_Backend_Static
     {
         $id = $this->_decodeId($id);
         if (!$this->_verifyPath($id)) {
-            Zend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
+            AsaZend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
         }
 
         $fileName = basename($id);
@@ -266,7 +266,7 @@ class Zend_Cache_Backend_Static
             if ( !@mkdir($path, $this->_octdec($this->_options['cache_directory_umask']), true)) {
                 $lastErr = error_get_last();
                 umask($oldUmask);
-                Zend_Cache::throwException("Can't create directory: {$lastErr['message']}");
+                AsaZend_Cache::throwException("Can't create directory: {$lastErr['message']}");
             }
             umask($oldUmask);
         }
@@ -295,7 +295,7 @@ class Zend_Cache_Backend_Static
     public function remove($id)
     {
         if (!$this->_verifyPath($id)) {
-            Zend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
+            AsaZend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
         }
         $fileName = basename($id);
         if ($this->_tagged === null && $tagged = $this->getInnerCache()->load(self::INNER_CACHE_NAME)) {
@@ -330,7 +330,7 @@ class Zend_Cache_Backend_Static
     public function removeRecursively($id)
     {
         if (!$this->_verifyPath($id)) {
-            Zend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
+            AsaZend_Cache::throwException('Invalid cache id: does not match expected public_dir path');
         }
         $fileName = basename($id);
         if (empty($fileName)) {
@@ -365,27 +365,27 @@ class Zend_Cache_Backend_Static
      * Clean some cache records
      *
      * Available modes are :
-     * Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
+     * AsaZend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
+     * AsaZend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
+     * AsaZend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
      *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
+     * AsaZend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
      *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
+     * AsaZend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
      *                                               ($tags can be an array of strings or a single string)
      *
      * @param  string $mode Clean mode
      * @param  array  $tags Array of tags
      * @return boolean true if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = AsaZend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         $result = false;
         switch ($mode) {
-            case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
                 if (empty($tags)) {
-                    throw new Zend_Exception('Cannot use tag matching modes as no tags were defined');
+                    throw new AsaZend_Exception('Cannot use tag matching modes as no tags were defined');
                 }
                 if ($this->_tagged === null && $tagged = $this->getInnerCache()->load(self::INNER_CACHE_NAME)) {
                     $this->_tagged = $tagged;
@@ -404,7 +404,7 @@ class Zend_Cache_Backend_Static
                 $this->getInnerCache()->save($this->_tagged, self::INNER_CACHE_NAME);
                 $result = true;
                 break;
-            case Zend_Cache::CLEANING_MODE_ALL:
+            case AsaZend_Cache::CLEANING_MODE_ALL:
                 if ($this->_tagged === null) {
                     $tagged = $this->getInnerCache()->load(self::INNER_CACHE_NAME);
                     $this->_tagged = $tagged;
@@ -420,12 +420,12 @@ class Zend_Cache_Backend_Static
                 $this->getInnerCache()->save($this->_tagged, self::INNER_CACHE_NAME);
                 $result = true;
                 break;
-            case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_Static : Selected Cleaning Mode Currently Unsupported By This Backend");
+            case AsaZend_Cache::CLEANING_MODE_OLD:
+                $this->_log("AsaZend_Cache_Backend_Static : Selected Cleaning Mode Currently Unsupported By This Backend");
                 break;
-            case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
                 if (empty($tags)) {
-                    throw new Zend_Exception('Cannot use tag matching modes as no tags were defined');
+                    throw new AsaZend_Exception('Cannot use tag matching modes as no tags were defined');
                 }
                 if ($this->_tagged === null) {
                     $tagged = $this->getInnerCache()->load(self::INNER_CACHE_NAME);
@@ -446,7 +446,7 @@ class Zend_Cache_Backend_Static
                 $result = true;
                 break;
             default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
+                AsaZend_Cache::throwException('Invalid mode for clean() method');
                 break;
         }
         return $result;
@@ -458,10 +458,10 @@ class Zend_Cache_Backend_Static
      * should be completely cleaned as the mapping of tags to caches will
      * have been irrevocably lost.
      *
-     * @param  Zend_Cache_Core
+     * @param  AsaZend_Cache_Core
      * @return void
      */
-    public function setInnerCache(Zend_Cache_Core $cache)
+    public function setInnerCache(AsaZend_Cache_Core $cache)
     {
         $this->_tagCache = $cache;
         $this->_options['tag_cache'] = $cache;
@@ -470,12 +470,12 @@ class Zend_Cache_Backend_Static
     /**
      * Get the Inner Cache if set
      *
-     * @return Zend_Cache_Core
+     * @return AsaZend_Cache_Core
      */
     public function getInnerCache()
     {
         if ($this->_tagCache === null) {
-            Zend_Cache::throwException('An Inner Cache has not been set; use setInnerCache()');
+            AsaZend_Cache::throwException('An Inner Cache has not been set; use setInnerCache()');
         }
         return $this->_tagCache;
     }
@@ -509,14 +509,14 @@ class Zend_Cache_Backend_Static
      * Throw an exception if a problem is found
      *
      * @param  string $string Cache id or tag
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      * @deprecated Not usable until perhaps ZF 2.0
      */
     protected static function _validateIdOrTag($string)
     {
         if (!is_string($string)) {
-            Zend_Cache::throwException('Invalid id or tag : must be a string');
+            AsaZend_Cache::throwException('Invalid id or tag : must be a string');
         }
 
         // Internal only checked in Frontend - not here!
@@ -530,7 +530,7 @@ class Zend_Cache_Backend_Static
                 $string
             )
         ) {
-            Zend_Cache::throwException("Invalid id or tag '$string' : must be a valid URL path");
+            AsaZend_Cache::throwException("Invalid id or tag '$string' : must be a valid URL path");
         }
     }
 
