@@ -15,7 +15,7 @@ class AmazonSimpleAdmin {
 	 * supported amazon country IDs
 	 */
 	protected $_amazon_valid_country_codes = array(
-		'CA', 'DE', 'FR', 'JP', 'UK', 'US', 'IT'
+		'CA', 'DE', 'FR', 'JP', 'UK', 'US', 'IT', 'ES', 'CN'
 	);
 	
 	/**
@@ -108,6 +108,11 @@ class AmazonSimpleAdmin {
 	 * template placeholder postfix
 	 */
 	protected $tpl_postfix = '}';
+	
+	/**
+	 * template dir
+	 */
+	protected $tpl_dir = 'tpl';
 	
 	/**
 	 * AmazonSimpleAdmin bb tag regex
@@ -204,26 +209,29 @@ class AmazonSimpleAdmin {
 	public function __construct ($wpdb) 
 	{
 		$libdir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib';
-		set_include_path($libdir . PATH_SEPARATOR . get_include_path());
+		set_include_path(get_include_path() . PATH_SEPARATOR . $libdir);
 		
-        require_once 'Zend/Uri/Http.php';
-        require_once 'Zend/Service/Amazon.php';
-        require_once 'Zend/Service/Amazon/Accessories.php';
-        //require_once 'Zend/Service/Amazon/CustomerReview.php';
-        require_once 'Zend/Service/Amazon/EditorialReview.php';
-        require_once 'Zend/Service/Amazon/Image.php';
-        require_once 'Zend/Service/Amazon/Item.php';        
-        require_once 'Zend/Service/Amazon/ListmaniaList.php';       
-        require_once 'Zend/Service/Amazon/Offer.php';
-        require_once 'Zend/Service/Amazon/OfferSet.php';
-        require_once 'Zend/Service/Amazon/Query.php';
-        require_once 'Zend/Service/Amazon/ResultSet.php';
-        require_once 'Zend/Service/Amazon/SimilarProduct.php';
+        //require_once 'Asa/Asa.php';
+        require_once 'AsaZend/Uri/Http.php';
+        require_once 'AsaZend/Service/Amazon.php';
+        require_once 'AsaZend/Service/Amazon/Accessories.php';
+        //require_once 'AsaZend/Service/Amazon/CustomerReview.php';
+        require_once 'AsaZend/Service/Amazon/EditorialReview.php';
+        require_once 'AsaZend/Service/Amazon/Image.php';
+        require_once 'AsaZend/Service/Amazon/Item.php';        
+        require_once 'AsaZend/Service/Amazon/ListmaniaList.php';       
+        require_once 'AsaZend/Service/Amazon/Offer.php';
+        require_once 'AsaZend/Service/Amazon/OfferSet.php';
+        require_once 'AsaZend/Service/Amazon/Query.php';
+        require_once 'AsaZend/Service/Amazon/ResultSet.php';
+        require_once 'AsaZend/Service/Amazon/SimilarProduct.php';
         require_once dirname(__FILE__) . '/AsaWidget.php';
 		
 		if (isset($_GET['task'])) {
 			$this->task = strip_tags($_GET['task']);
 		}
+		
+		$this->tpl_dir = dirname(__FILE__) . DIRECTORY_SEPARATOR . $this->tpl_dir . DIRECTORY_SEPARATOR;
 		
 		$this->db = $wpdb;
 		
@@ -236,6 +244,10 @@ class AmazonSimpleAdmin {
 		add_filter('the_content', array($this, 'parseContent'), 1);
 		add_filter('the_excerpt', array($this, 'parseContent'), 1);
 		
+		if (!get_option('_asa_hide_meta_link')) {
+		    add_action('wp_meta', array($this, 'addMetaLink'));
+		}
+		
         $this->_getAmazonUserData();
         		
 		if ($this->_parse_comments == true) {
@@ -244,16 +256,133 @@ class AmazonSimpleAdmin {
             add_filter('comment_text', array($this, 'parseContent'), 1);
 		}
 		
-		//wp_enqueue_script( 'listman' );
-				
 		if ($this->_product_preview == true) {
 			add_action('wp_footer', array($this, 'addProductPreview'));
 		}
 		
+		add_filter('upgrader_pre_install', array($this, 'onPreInstall'), 10, 2);
+		add_filter('upgrader_post_install', array($this, 'onPostInstall'), 10, 2);
 		
 		
 		$this->amazon = $this->connect();		
 		
+	}
+		
+	/**
+	 * Called before installation / upgrade
+	 * 
+	 */
+	public function onPreInstall()
+	{
+	    try {
+	        $this->backupTemplates();
+	    } catch (Exception $e) {
+	        
+	    }
+	}
+	
+	/**
+	 * Called after installation / upgrade
+	 * 
+	 */
+	public function onPostInstall()
+	{
+		try {
+	        $this->restoreTemplates();
+	    } catch (Exception $e) {
+	        
+	    }
+	}
+	
+	/**
+	 * Backups the template files
+	 * 
+	 */
+	public function backupTemplates()
+	{
+	    $dirIt = new DirectoryIterator($this->tpl_dir);
+		
+	    $custom_tpl = array();
+        foreach ($dirIt as $fileinfo) {
+			
+        	if ($fileinfo->isDir() || $fileinfo->isDot()) {
+				continue;
+			}
+			$custom_tpl[] = $fileinfo->getFilename();
+		}
+    	
+		if (count($custom_tpl) > 0) {
+		    $backup_destination = $this->_getBackupDestination();
+		    mkdir($backup_destination);
+		    
+		    foreach($custom_tpl as $tpl_file) {
+		        
+		        $tpl_source_file = $this->tpl_dir . $tpl_file;
+		        $tpl_destination_file = $backup_destination . $tpl_file;
+		        
+		        $cp = copy($tpl_source_file, $tpl_destination_file);
+		        
+		        if ($cp == false) {
+                    $tpl_data = file_get_contents($tpl_source_file);
+                    $handle   = fopen($tpl_destination_file, 'w');
+                    fwrite($handle, $tpl_data);
+                    fclose($handle);
+		        }		        
+		    }
+		}
+	}
+	
+	/**
+	 * Restores the template files
+	 * 
+	 */
+	public function restoreTemplates()
+	{
+		$backup_destination = $this->_getBackupDestination();
+		
+		if (!is_dir($backup_destination)) {
+		    return false;
+		}
+		
+	    $dirIt = new DirectoryIterator($backup_destination);
+		
+	    $custom_tpl = array();
+        foreach ($dirIt as $fileinfo) {
+			
+        	if ($fileinfo->isDir() || $fileinfo->isDot()) {
+				continue;
+			}
+			$custom_tpl[] = $fileinfo->getFilename();
+		}
+	    
+	    if (count($custom_tpl) > 0) {
+		    
+		    foreach($custom_tpl as $tpl_file) {
+		        
+		        $tpl_source_file = $backup_destination . $tpl_file;
+		        $tpl_destination_file = $this->tpl_dir . $tpl_file;
+		        
+		        $cp = copy($tpl_source_file, $tpl_destination_file);
+		        
+		        if ($cp == false) {
+                    $tpl_data = file_get_contents($tpl_source_file);
+                    $handle   = fopen($tpl_destination_file, 'w');
+                    fwrite($handle, $data);
+                    fclose($handle);
+		        }
+
+		        unlink($tpl_source_file);
+		    }
+		}
+
+		rmdir($backup_destination);
+	}	
+	
+	protected function _getBackupDestination()
+	{
+	    $tmp = get_temp_dir() . 'amazonsimpleadmin_tpl_backup' . DIRECTORY_SEPARATOR;
+	    Asa::debug($tmp);
+	    return $tmp;
 	}
 	
 	/**
@@ -261,12 +390,16 @@ class AmazonSimpleAdmin {
 	 */
 	protected function connect ()
 	{
-		try {						
-		    $amazon = new Zend_Service_Amazon (
-                $this->_amazon_api_key,
-                $this->_amazon_country_code, 
-                $this->_amazon_api_secret_key
-            );				
+	    require_once 'Asa/Service/Amazon.php';
+	    
+		try {					
+            $amazon = Asa_Service_Amazon::factory(
+                $this->_amazon_api_key, 
+                $this->_amazon_api_secret_key, 
+                $this->amazon_tracking_id, 
+                $this->_amazon_country_code
+            );
+			
 			return $amazon;
 				
 		} catch (Exception $e) {			
@@ -287,7 +420,7 @@ class AmazonSimpleAdmin {
 		
 		try {	
 			
-			require_once 'Zend/Cache.php';
+			require_once 'AsaZend/Cache.php';
 			
 			$_asa_cache_lifetime  = get_option('_asa_cache_lifetime');
 			$_asa_cache_dir       = get_option('_asa_cache_dir');
@@ -303,13 +436,30 @@ class AmazonSimpleAdmin {
 			    'cache_dir' => dirname(__FILE__) . DIRECTORY_SEPARATOR . $current_cache_dir
 			);
 			
-			// getting a Zend_Cache_Core object
-			$cache = Zend_Cache::factory('Core', 'File', $frontendOptions,
+			// getting a AsaZend_Cache_Core object
+			$cache = AsaZend_Cache::factory('Core', 'File', $frontendOptions,
 			                             $backendOptions);			                             
 		   return $cache;
 	   } catch (Exception $e) {
 	   	   return null;
 	   }
+	}
+	
+	/**
+	 * Determines if cache is working fine
+	 * @return bool
+	 */
+	protected function _isCache()
+	{
+	    $_asa_cache_dir    = get_option('_asa_cache_dir');
+	    $current_cache_dir = (!empty($_asa_cache_dir) ? $_asa_cache_dir : 'cache');
+	    
+	    if (get_option('_asa_cache_active') && 
+	        is_writable(dirname(__FILE__) . '/' . $current_cache_dir)) {
+	        return true;
+	    }
+	    
+	    return false;
 	}
 	
 	/**
@@ -319,7 +469,7 @@ class AmazonSimpleAdmin {
 	public function createAdminMenu () 
 	{   		
 		// Add a new submenu under Options:
-	    add_options_page('Amazon Simple Admin', 'Amazon Simple Admin', 8, 'amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'createOptionsPage'));
+	    add_options_page('AmazonSimpleAdmin', 'AmazonSimpleAdmin', 8, 'amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'createOptionsPage'));
 	    add_action('admin_head', array($this, 'getOptionsHead'));
 	    wp_enqueue_script( 'listman' );
 	}
@@ -331,7 +481,7 @@ class AmazonSimpleAdmin {
 	public function createOptionsPage () 
 	{	
 		echo '<div class="wrap">';
-		echo '<h2>Amazon Simple Admin</h2>';
+		echo '<h2>AmazonSimpleAdmin</h2>';
 				
 		echo $this->getTabMenu($this->task);
 		#echo '<div style="clear: both"></div>';
@@ -379,8 +529,8 @@ class AmazonSimpleAdmin {
             $nav .= '</div>';
         }
         
-        $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;"><p>Please visit the <a href="http://www.wordpress-amazon-plugin.com/" target="_blank">Amazon Simple Admin-Homepage</a> to stay informed about the development and to give me feedback.</p></div>';
-        if (!get_option('_asa_cache_active')) {
+        $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;"><p>Please visit the <a href="http://www.wp-amazon-plugin.com/" target="_blank">AmazonSimpleAdmin-Homepage</a> to stay informed about the development and to give me feedback.</p></div>';
+        if (!$this->_isCache()) {
             $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #aa0000;"><p>It is highly recommended to activate the <a href="'. $this->plugin_url .'&task=cache">cache</a>!</p></div>';
         }
         return $nav;
@@ -515,7 +665,7 @@ class AmazonSimpleAdmin {
             		if (empty($this->cache)) {
             			$this->error['submit_cache'] = 'Cache not activated!';
             		} else {
-	            		$this->cache->clean(Zend_Cache::CLEANING_MODE_ALL);
+	            		$this->cache->clean(AsaZend_Cache::CLEANING_MODE_ALL);
 	            		$this->success['submit_cache'] = 'Cache cleaned up!';
             		}
             		
@@ -545,17 +695,19 @@ class AmazonSimpleAdmin {
 					$_asa_amazon_tracking_id 	= strip_tags($_POST['_asa_amazon_tracking_id']);					
 					$_asa_product_preview		= strip_tags($_POST['_asa_product_preview']);
 					$_asa_parse_comments		= strip_tags($_POST['_asa_parse_comments']);
+					$_asa_hide_meta_link		= strip_tags($_POST['_asa_hide_meta_link']);
 		
 					update_option('_asa_amazon_api_key', $_asa_amazon_api_key);
 					update_option('_asa_amazon_api_secret_key', $_asa_amazon_api_secret_key);
 					update_option('_asa_amazon_tracking_id', $_asa_amazon_tracking_id);
 					update_option('_asa_product_preview', $_asa_product_preview);
 					update_option('_asa_parse_comments', $_asa_parse_comments);
+					update_option('_asa_hide_meta_link', $_asa_hide_meta_link);
 					
 					if (isset($_POST['_asa_amazon_country_code'])) {
-						$_asa_amazon_country_code 	= strip_tags($_POST['_asa_amazon_country_code']);						
-						if ($_asa_amazon_country_code == '0') {
-							$_asa_amazon_country_code = '';
+						$_asa_amazon_country_code = strip_tags($_POST['_asa_amazon_country_code']);						
+						if (!Asa_Service_Amazon::isSupportedCountryCode($_asa_amazon_country_code)) {
+							$_asa_amazon_country_code = 'US';
 						}
 						update_option('_asa_amazon_country_code', $_asa_amazon_country_code);
 					}				
@@ -644,7 +796,7 @@ class AmazonSimpleAdmin {
 		}
 		?>
 		<form name="form_new_asin" action="<?php echo $this->plugin_url .'&task=collections'; ?>" method="post">
-		<label for="new_asin"><img src="<?=bloginfo('url')?><?=$this->plugin_dir?>/img/misc_add_small.gif" /> Add Amazon item (ASIN):</label>
+		<label for="new_asin"><img src="<?php echo bloginfo('url'); ?><?php echo $this->plugin_dir; ?>/img/misc_add_small.gif" /> Add Amazon item (ASIN):</label>
 		<input type="text" name="new_asin" id="new_asin" />
 		<label for="collection">to collection:</label>
 		
@@ -780,7 +932,7 @@ class AmazonSimpleAdmin {
 		<fieldset class="options">
 		<h2><?php _e('Usage') ?></h2>
 		
-		<p>Please visit the <a href="http://www.wordpress-amazon-plugin.com/" target="_blank">plugin's homepage</a> for a more detailed and always up-to-date documentation</a>.</p>
+		<p>Please visit the <a href="http://www.wp-amazon-plugin.com/" target="_blank">plugin's homepage</a> for a more detailed and always up-to-date documentation</a>.</p>
 		<h3>Tags</h3>
 			<p><?php _e('To embed products from Amazon into your post with AmazonSimpleAdmin, easily use tags like this:') ?></p>
 			<p><strong>[asa]ASIN[/asa]</strong> where ASIN is the Amazon ASIN number you can find on each product's site, like: <strong>[asa]B000EWN5JM[/asa]</strong></p>
@@ -836,8 +988,12 @@ class AmazonSimpleAdmin {
 			
 		try {
 			$this->amazon = $this->connect();
-			$this->amazon->itemSearch(array('SearchIndex' => 'Books', 'Keywords' => 'php'));
-			$_asa_status = true;
+			if ($this->amazon != null) {
+			    $this->amazon->itemSearch(array('SearchIndex' => 'Books', 'Keywords' => 'php'));
+			    $_asa_status = true;
+			} else {
+			     throw new Exception('Connection to Amazon Webservice failed. Please check the mandatory data.');   
+			}
 		} catch (Exception $e) {
 			$_asa_error = $e->getMessage();
 		}
@@ -864,14 +1020,14 @@ class AmazonSimpleAdmin {
         <input type="password" name="_asa_amazon_api_secret_key" id="_asa_amazon_api_secret_key" value="<?php echo (!empty($this->_amazon_api_secret_key)) ? $this->_amazon_api_secret_key : ''; ?>" />
         <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/ViewingCredentials.html" target="_blank">What is this?</a>
         <br />			
-		<label for="_asa_amazon_tracking_id"><?php _e('Your Amazon Tracking ID:') ?></label>		
+		<label for="_asa_amazon_tracking_id"<?php if (empty($this->amazon_tracking_id)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Amazon Tracking ID*:') ?></label>		
 		<input type="text" name="_asa_amazon_tracking_id" id="_asa_amazon_tracking_id" value="<?php echo (!empty($this->amazon_tracking_id)) ? $this->amazon_tracking_id : ''; ?>" />
 		<a href="http://amazon.com/associates" target="_blank">Where do I get one?</a>
 		<br />	
-		<label for="_asa_amazon_country_code"><?php _e('Your Amazon Country Code:') ?></label>
+		<label for="_asa_amazon_country_code"<?php if (empty($this->_amazon_country_code)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Amazon Country Code*:') ?></label>
 		<select name="_asa_amazon_country_code">
 			<?php
-			foreach ($this->_amazon_valid_country_codes as $code) {
+			foreach (Asa_Service_Amazon::getCountryCodes() as $code) {
 				if ($code == $this->_amazon_country_code) {
 					$selected = ' selected="selected"'; 	
 				} else {
@@ -880,11 +1036,12 @@ class AmazonSimpleAdmin {
 				echo '<option value="'. $code .'"'.$selected.'>' . $code . '</option>';	
 			}
 			?>
-		</select> (Default: US)
+		</select> <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/amazon_'. $this->_amazon_country_code .'_small.gif'); ?>" />(Default: US)
 		
-		<br />
-		<br />
-		
+		<p class="submit">
+		<input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
+		</p>
+				
 		<h3>Options</h3>
 		
 		<label for="_asa_parse_comments"><?php _e('Allow parsing [asa] tags in user comments:') ?></label>
@@ -896,6 +1053,8 @@ class AmazonSimpleAdmin {
 		<input type="checkbox" name="_asa_product_preview" id="_asa_product_preview" value="1"<?php echo (($this->_product_preview == true) ? 'checked="checked"' : '') ?> />
 		<p>Product preview layers are only supported by US, UK and DE so far. This can effect the site to be loaded a bit slower due to link parsing.</p>
 	
+		<label for="_asa_hide_meta_link"><?php _e('Hide link to Asa-Homepage from Meta widget:') ?></label>
+        <input type="checkbox" name="_asa_hide_meta_link" id="_asa_hide_meta_link" value="1"<?php echo ((get_option('_asa_hide_meta_link') == true) ? 'checked="checked"' : '') ?> />
 	
 		<p class="submit">
 		<input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
@@ -1301,14 +1460,6 @@ class AmazonSimpleAdmin {
 			
 			$totalOffers = $item->Offers->TotalNew + $item->Offers->TotalUsed + 
 				$item->Offers->TotalCollectible + $item->Offers->TotalRefurbished;
-				
-			if (empty($this->_amazon_country_code)) {
-				$amazon_url = sprintf($this->amazon_url['US'], 
-					$item->ASIN, $tracking_id);
-			} else {
-				$amazon_url = sprintf($this->amazon_url[$this->_amazon_country_code], 
-					$item->ASIN, $tracking_id);
-			}
 			
 			$platform = $item->Platform;
 			if (is_array($platform)) {
@@ -1336,7 +1487,7 @@ class AmazonSimpleAdmin {
 				$item->Publisher,
 				$item->Studio,
 				$item->Title,
-				$amazon_url,
+				$item->DetailPageURL,
 				empty($totalOffers) ? '0' : $totalOffers,
 				empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
 				$lowestOfferCurrency,
@@ -1397,6 +1548,9 @@ class AmazonSimpleAdmin {
 				for ($i=0; $i<count($unresolved_names);$i++) {
 
 					$value = $item->$unresolved_names[$i];
+					if (strstr($value, '$')) {
+					    $value = str_replace('$', '\$', $value);
+					}
 					
 					$unresolved_search[]  = $this->TplPlaceholderToRegex($unresolved_placeholders[$i]);
 					$unresolved_replace[] = $value;					
@@ -1413,7 +1567,7 @@ class AmazonSimpleAdmin {
 	 * get item information from amazon webservice or cache
 	 * 
 	 * @param		string		ASIN
-	 * @return 		object		Zend_Service_Amazon_Item object
+	 * @return 		object		AsaZend_Service_Amazon_Item object
 	 */	
 	protected function _getItem ($asin)
 	{
@@ -1430,10 +1584,9 @@ class AmazonSimpleAdmin {
 				// put asin in cache now
 				$this->cache->save($item, $asin);
 			}
-			
 			return $item;
 			
-		} catch (Exception $e) {			
+		} catch (Exception $e) {
 			return null;
 		}
 	}
@@ -1442,12 +1595,13 @@ class AmazonSimpleAdmin {
      * get item information from amazon webservice
      * 
      * @param       string      ASIN
-     * @return      object      Zend_Service_Amazon_Item object
+     * @return      object      AsaZend_Service_Amazon_Item object
      */ 	
 	protected function _getItemLookup ($asin)
     {
-    	return $this->amazon->itemLookup($asin, array(
+    	$result = $this->amazon->itemLookup($asin, array(
                     'ResponseGroup' => 'ItemAttributes,Images,Offers,OfferListings,Reviews,EditorialReview,Tracks'));
+    	return $result;
     }
     		
 	
@@ -1571,6 +1725,14 @@ class AmazonSimpleAdmin {
 		echo '<link rel="stylesheet" type="text/css" media="screen" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/css/options.css" />';
 		echo '<script type="text/javascript" src="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/js/asa.js"></script>';
 	}
+	
+	/**
+	 * Adds the meta link
+	 */
+    public function addMetaLink() 
+    {
+        echo '<li>Powered by <a href="http://www.wp-amazon-plugin.com/" target="_blank" title="Open AmazonSimpleAdmin homepage">AmazonSimpleAdmin</a></li>';
+	}	
 	
 	/**
 	 * enabled amazon product preview layers
