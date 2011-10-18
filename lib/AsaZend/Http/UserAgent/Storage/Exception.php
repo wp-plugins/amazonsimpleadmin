@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,17 +21,17 @@
 
 
 /**
- * @see Zend_Http_UserAgent_Exception
+ * @see AsaZend_Http_UserAgent_Exception
  */
-require_once 'Zend/Http/UserAgent/Exception.php';
+require_once 'AsaZend/Http/UserAgent/Exception.php';
 
 
 /**
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Http_UserAgent_Storage_Exception extends Zend_Http_UserAgent_Exception
+class AsaZend_Http_UserAgent_Storage_Exception extends AsaZend_Http_UserAgent_Exception
 {
 }

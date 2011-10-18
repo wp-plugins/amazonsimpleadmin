@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: FilesSize.php 20454 2010-01-20 22:50:59Z thomas $
  */
 
 /**
- * @see Zend_Validate_File_Size
+ * @see AsaZend_Validate_File_Size
  */
-require_once 'Zend/Validate/File/Size.php';
+require_once 'AsaZend/Validate/File/Size.php';
 
 /**
  * Validator for the size of all files which will be validated in sum
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_FilesSize extends Zend_Validate_File_Size
+class AsaZend_Validate_File_FilesSize extends AsaZend_Validate_File_Size
 {
     /**
      * @const string Error constants
@@ -63,7 +63,7 @@ class Zend_Validate_File_FilesSize extends Zend_Validate_File_Size
      * Min limits the used diskspace for all files, when used with max=null it is the maximum filesize
      * It also accepts an array with the keys 'min' and 'max'
      *
-     * @param  integer|array|Zend_Config $options Options for this validator
+     * @param  integer|array|AsaZend_Config $options Options for this validator
      * @return void
      */
     public function __construct($options)
@@ -71,13 +71,13 @@ class Zend_Validate_File_FilesSize extends Zend_Validate_File_Size
         $this->_files = array();
         $this->_setSize(0);
 
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } elseif (is_scalar($options)) {
             $options = array('max' => $options);
         } elseif (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid options to validator provided');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid options to validator provided');
         }
 
         if (1 < func_num_args()) {
@@ -93,18 +93,18 @@ class Zend_Validate_File_FilesSize extends Zend_Validate_File_Size
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the disk usage of all files is at least min and
      * not bigger than max (when max is not null).
      *
      * @param  string|array $value Real file to check for size
-     * @param  array        $file  File data from Zend_File_Transfer
+     * @param  array        $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
-        require_once 'Zend/Loader.php';
+        require_once 'AsaZend/Loader.php';
         if (is_string($value)) {
             $value = array($value);
         }
@@ -114,7 +114,7 @@ class Zend_Validate_File_FilesSize extends Zend_Validate_File_Size
         $size = $this->_getSize();
         foreach ($value as $files) {
             // Is file readable ?
-            if (!Zend_Loader::isReadable($files)) {
+            if (!AsaZend_Loader::isReadable($files)) {
                 $this->_throw($file, self::NOT_READABLE);
                 continue;
             }

@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: ImageSize.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * Validator for the image size of a image file
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
+class AsaZend_Validate_File_ImageSize extends AsaZend_Validate_Abstract
 {
     /**
      * @const string Error constants
@@ -119,12 +119,12 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
      * - maxheight
      * - maxwidth
      *
-     * @param  Zend_Config|array $options
+     * @param  AsaZend_Config|array $options
      * @return void
      */
     public function __construct($options)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } elseif (1 < func_num_args()) {
             if (!is_array($options)) {
@@ -140,8 +140,8 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
                 }
             }
         } else if (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception ('Invalid options to validator provided');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception ('Invalid options to validator provided');
         }
 
         if (isset($options['minheight']) || isset($options['minwidth'])) {
@@ -197,24 +197,24 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
      * Sets the minimum image size
      *
      * @param  array $options               The minimum image dimensions
-     * @throws Zend_Validate_Exception      When minwidth is greater than maxwidth
-     * @throws Zend_Validate_Exception      When minheight is greater than maxheight
-     * @return Zend_Validate_File_ImageSize Provides a fluent interface
+     * @throws AsaZend_Validate_Exception      When minwidth is greater than maxwidth
+     * @throws AsaZend_Validate_Exception      When minheight is greater than maxheight
+     * @return AsaZend_Validate_File_ImageSize Provides a fluent interface
      */
     public function setImageMin($options)
     {
         if (isset($options['minwidth'])) {
             if (($this->_maxwidth !== null) and ($options['minwidth'] > $this->_maxwidth)) {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("The minimum image width must be less than or equal to the "
+                require_once 'AsaZend/Validate/Exception.php';
+                throw new AsaZend_Validate_Exception("The minimum image width must be less than or equal to the "
                     . " maximum image width, but {$options['minwidth']} > {$this->_maxwidth}");
             }
         }
 
         if (isset($options['maxheight'])) {
             if (($this->_maxheight !== null) and ($options['minheight'] > $this->_maxheight)) {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("The minimum image height must be less than or equal to the "
+                require_once 'AsaZend/Validate/Exception.php';
+                throw new AsaZend_Validate_Exception("The minimum image height must be less than or equal to the "
                     . " maximum image height, but {$options['minheight']} > {$this->_maxheight}");
             }
         }
@@ -234,24 +234,24 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
      * Sets the maximum image size
      *
      * @param  array $options          The maximum image dimensions
-     * @throws Zend_Validate_Exception When maxwidth is smaller than minwidth
-     * @throws Zend_Validate_Exception When maxheight is smaller than minheight
-     * @return Zend_Validate_StringLength Provides a fluent interface
+     * @throws AsaZend_Validate_Exception When maxwidth is smaller than minwidth
+     * @throws AsaZend_Validate_Exception When maxheight is smaller than minheight
+     * @return AsaZend_Validate_StringLength Provides a fluent interface
      */
     public function setImageMax($options)
     {
         if (isset($options['maxwidth'])) {
             if (($this->_minwidth !== null) and ($options['maxwidth'] < $this->_minwidth)) {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("The maximum image width must be greater than or equal to the "
+                require_once 'AsaZend/Validate/Exception.php';
+                throw new AsaZend_Validate_Exception("The maximum image width must be greater than or equal to the "
                     . "minimum image width, but {$options['maxwidth']} < {$this->_minwidth}");
             }
         }
 
         if (isset($options['maxheight'])) {
             if (($this->_minheight !== null) and ($options['maxheight'] < $this->_minheight)) {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception("The maximum image height must be greater than or equal to the "
+                require_once 'AsaZend/Validate/Exception.php';
+                throw new AsaZend_Validate_Exception("The maximum image height must be greater than or equal to the "
                     . "minimum image height, but {$options['maxheight']} < {$this->_minwidth}");
             }
         }
@@ -271,7 +271,7 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
      * Sets the mimimum and maximum image width
      *
      * @param  array $options               The image width dimensions
-     * @return Zend_Validate_File_ImageSize Provides a fluent interface
+     * @return AsaZend_Validate_File_ImageSize Provides a fluent interface
      */
     public function setImageWidth($options)
     {
@@ -285,7 +285,7 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
      * Sets the mimimum and maximum image height
      *
      * @param  array $options               The image height dimensions
-     * @return Zend_Validate_File_ImageSize Provides a fluent interface
+     * @return AsaZend_Validate_File_ImageSize Provides a fluent interface
      */
     public function setImageHeight($options)
     {
@@ -296,20 +296,20 @@ class Zend_Validate_File_ImageSize extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the imagesize of $value is at least min and
      * not bigger than max
      *
      * @param  string $value Real file to check for image size
-     * @param  array  $file  File data from Zend_File_Transfer
+     * @param  array  $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_READABLE);
         }
 

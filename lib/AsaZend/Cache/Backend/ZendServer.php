@@ -13,28 +13,28 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: ZendServer.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 
-/** @see Zend_Cache_Backend_Interface */
-require_once 'Zend/Cache/Backend/Interface.php';
+/** @see AsaZend_Cache_Backend_Interface */
+require_once 'AsaZend/Cache/Backend/Interface.php';
 
-/** @see Zend_Cache_Backend */
-require_once 'Zend/Cache/Backend.php';
+/** @see AsaZend_Cache_Backend */
+require_once 'AsaZend/Cache/Backend.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implements Zend_Cache_Backend_Interface
+abstract class AsaZend_Cache_Backend_ZendServer extends AsaZend_Cache_Backend implements AsaZend_Cache_Backend_Interface
 {
     /**
      * Available options
@@ -54,7 +54,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      * @param mixed  $data        Object to store
      * @param string $id          Cache id
      * @param int    $timeToLive  Time to live in seconds
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      */
     abstract protected function _store($data, $id, $timeToLive);
 
@@ -62,7 +62,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      * Fetch data
      *
      * @param string $id          Cache id
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      */
     abstract protected function _fetch($id);
 
@@ -99,14 +99,14 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      *
      * @param  string $id cache id
      * @return mixed false (a cache is not available) or "last modified" timestamp (int) of the available cache record
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      */
     public function test($id)
     {
         $tmp = $this->_fetch('internal-metadatas---' . $id);
         if ($tmp !== false) {
             if (!is_array($tmp) || !isset($tmp['mtime'])) {
-                Zend_Cache::throwException('Cache metadata for \'' . $id . '\' id is corrupted' );
+                AsaZend_Cache::throwException('Cache metadata for \'' . $id . '\' id is corrupted' );
             }
             return $tmp['mtime'];
         }
@@ -147,7 +147,7 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
         );
 
         if (count($tags) > 0) {
-            $this->_log('Zend_Cache_Backend_ZendServer::save() : tags are unsupported by the ZendServer backends');
+            $this->_log('AsaZend_Cache_Backend_ZendServer::save() : tags are unsupported by the ZendServer backends');
         }
 
         return  $this->_store($data, $id, $lifetime) &&
@@ -180,27 +180,27 @@ abstract class Zend_Cache_Backend_ZendServer extends Zend_Cache_Backend implemen
      *
      * @param  string $mode clean mode
      * @param  array  $tags array of tags
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return boolean true if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = AsaZend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         switch ($mode) {
-            case Zend_Cache::CLEANING_MODE_ALL:
+            case AsaZend_Cache::CLEANING_MODE_ALL:
                 $this->_clear();
                 return true;
                 break;
-            case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_ZendServer::clean() : CLEANING_MODE_OLD is unsupported by the Zend Server backends.");
+            case AsaZend_Cache::CLEANING_MODE_OLD:
+                $this->_log("AsaZend_Cache_Backend_ZendServer::clean() : CLEANING_MODE_OLD is unsupported by the Zend Server backends.");
                 break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
                 $this->_clear();
-                $this->_log('Zend_Cache_Backend_ZendServer::clean() : tags are unsupported by the Zend Server backends.');
+                $this->_log('AsaZend_Cache_Backend_ZendServer::clean() : tags are unsupported by the Zend Server backends.');
                 break;
             default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
+                AsaZend_Cache::throwException('Invalid mode for clean() method');
                 break;
         }
     }

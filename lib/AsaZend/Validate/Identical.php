@@ -13,22 +13,22 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Identical.php 22075 2010-05-02 13:42:08Z thomas $
  */
 
-/** @see Zend_Validate_Abstract */
-require_once 'Zend/Validate/Abstract.php';
+/** @see AsaZend_Validate_Abstract */
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Identical extends Zend_Validate_Abstract
+class AsaZend_Validate_Identical extends AsaZend_Validate_Abstract
 {
     /**
      * Error codes
@@ -69,7 +69,7 @@ class Zend_Validate_Identical extends Zend_Validate_Abstract
      */
     public function __construct($token = null)
     {
-        if ($token instanceof Zend_Config) {
+        if ($token instanceof AsaZend_Config) {
             $token = $token->toArray();
         }
 
@@ -98,7 +98,7 @@ class Zend_Validate_Identical extends Zend_Validate_Abstract
      * Set token against which to compare
      *
      * @param  mixed $token
-     * @return Zend_Validate_Identical
+     * @return AsaZend_Validate_Identical
      */
     public function setToken($token)
     {
@@ -120,7 +120,7 @@ class Zend_Validate_Identical extends Zend_Validate_Abstract
     /**
      * Sets the strict parameter
      *
-     * @param Zend_Validate_Identical
+     * @param AsaZend_Validate_Identical
      */
     public function setStrict($strict)
     {
@@ -129,7 +129,7 @@ class Zend_Validate_Identical extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if a token has been set and the provided value
      * matches that token.

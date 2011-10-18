@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage Client_Adapter
  * @version    $Id: Stream.php 20785 2010-01-31 09:43:03Z mikaelkael $
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
@@ -22,17 +22,17 @@
  */
 
 /**
- * An interface description for Zend_Http_Client_Adapter_Stream classes.
+ * An interface description for AsaZend_Http_Client_Adapter_Stream classes.
  *
- * This interface decribes Zend_Http_Client_Adapter which supports streaming.
+ * This interface decribes AsaZend_Http_Client_Adapter which supports streaming.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage Client_Adapter
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Http_Client_Adapter_Stream
+interface AsaZend_Http_Client_Adapter_Stream
 {
     /**
      * Set output stream

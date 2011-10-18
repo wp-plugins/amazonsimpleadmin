@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage Response
  * @version    $Id: Stream.php 20785 2010-01-31 09:43:03Z mikaelkael $
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
@@ -22,16 +22,16 @@
  */
 
 /**
- * Zend_Http_Response represents an HTTP 1.0 / 1.1 response message. It
+ * AsaZend_Http_Response represents an HTTP 1.0 / 1.1 response message. It
  * includes easy access to all the response's different elemts, as well as some
  * convenience methods for parsing and validating HTTP responses.
  *
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage Response
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Http_Response_Stream extends Zend_Http_Response
+class AsaZend_Http_Response_Stream extends AsaZend_Http_Response
 {
     /**
      * Response as stream
@@ -70,7 +70,7 @@ class Zend_Http_Response_Stream extends Zend_Http_Response
      * Set the response stream
      *
      * @param resourse $stream
-     * @return Zend_Http_Response_Stream
+     * @return AsaZend_Http_Response_Stream
      */
     public function setStream($stream)
     {
@@ -109,7 +109,7 @@ class Zend_Http_Response_Stream extends Zend_Http_Response
      * Set file name associated with the stream
      *
      * @param string $stream_name Name to set
-     * @return Zend_Http_Response_Stream
+     * @return AsaZend_Http_Response_Stream
      */
     public function setStreamName($stream_name) {
         $this->stream_name = $stream_name;
@@ -120,8 +120,8 @@ class Zend_Http_Response_Stream extends Zend_Http_Response
     /**
      * HTTP response constructor
      *
-     * In most cases, you would use Zend_Http_Response::fromString to parse an HTTP
-     * response string and create a new Zend_Http_Response object.
+     * In most cases, you would use AsaZend_Http_Response::fromString to parse an HTTP
+     * response string and create a new AsaZend_Http_Response object.
      *
      * NOTE: The constructor no longer accepts nulls or empty values for the code and
      * headers and will throw an exception if the passed values do not form a valid HTTP
@@ -134,7 +134,7 @@ class Zend_Http_Response_Stream extends Zend_Http_Response
      * @param string $body Response body
      * @param string $version HTTP version
      * @param string $message Response code as text
-     * @throws Zend_Http_Exception
+     * @throws AsaZend_Http_Exception
      */
     public function __construct($code, $headers, $body = null, $version = '1.1', $message = null)
     {
@@ -147,11 +147,11 @@ class Zend_Http_Response_Stream extends Zend_Http_Response
     }
 
     /**
-     * Create a new Zend_Http_Response_Stream object from a string
+     * Create a new AsaZend_Http_Response_Stream object from a string
      *
      * @param string $response_str
      * @param resource $stream
-     * @return Zend_Http_Response_Stream
+     * @return AsaZend_Http_Response_Stream
      */
     public static function fromStream($response_str, $stream)
     {

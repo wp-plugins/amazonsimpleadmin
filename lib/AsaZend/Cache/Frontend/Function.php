@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Function.php 22648 2010-07-20 14:43:27Z mabe $
@@ -22,18 +22,18 @@
 
 
 /**
- * @see Zend_Cache_Core
+ * @see AsaZend_Cache_Core
  */
-require_once 'Zend/Cache/Core.php';
+require_once 'AsaZend/Cache/Core.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Frontend_Function extends Zend_Cache_Core
+class AsaZend_Cache_Frontend_Function extends AsaZend_Cache_Core
 {
     /**
      * This frontend specific options
@@ -82,7 +82,7 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
     public function call($callback, array $parameters = array(), $tags = array(), $specificLifetime = false, $priority = 8)
     {
         if (!is_callable($callback, true, $name)) {
-            Zend_Cache::throwException('Invalid callback');
+            AsaZend_Cache::throwException('Invalid callback');
         }
 
         $cacheBool1 = $this->_specificOptions['cache_by_default'];
@@ -129,13 +129,13 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
      *
      * @param  callback $callback A valid callback
      * @param  array    $args     Function parameters
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return string Cache id
      */
     public function makeId($callback, array $args = array())
     {
         if (!is_callable($callback, true, $name)) {
-            Zend_Cache::throwException('Invalid callback');
+            AsaZend_Cache::throwException('Invalid callback');
         }
 
         // functions, methods and classnames are case-insensitive
@@ -151,11 +151,11 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
             try {
                 $tmp = @serialize($callback);
             } catch (Exception $e) {
-                Zend_Cache::throwException($e->getMessage());
+                AsaZend_Cache::throwException($e->getMessage());
             }
             if (!$tmp) {
                 $lastErr = error_get_last();
-                Zend_Cache::throwException("Can't serialize callback object to generate id: {$lastErr['message']}");
+                AsaZend_Cache::throwException("Can't serialize callback object to generate id: {$lastErr['message']}");
             }
             $name.= '__' . $tmp;
         }
@@ -166,11 +166,11 @@ class Zend_Cache_Frontend_Function extends Zend_Cache_Core
             try {
                 $argsStr = @serialize(array_values($args));
             } catch (Exception $e) {
-                Zend_Cache::throwException($e->getMessage());
+                AsaZend_Cache::throwException($e->getMessage());
             }
             if (!$argsStr) {
                 $lastErr = error_get_last();
-                throw Zend_Cache::throwException("Can't serialize arguments to generate id: {$lastErr['message']}");
+                throw AsaZend_Cache::throwException("Can't serialize arguments to generate id: {$lastErr['message']}");
             }
         }
 

@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Callback.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Callback extends Zend_Validate_Abstract
+class AsaZend_Validate_Callback extends AsaZend_Validate_Abstract
 {
     /**
      * Invalid callback
@@ -88,8 +88,8 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
         }
 
         if (null === ($initializedCallack = $this->getCallback())) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('No callback registered');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('No callback registered');
         }
     }
 
@@ -107,13 +107,13 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
      * Sets the callback
      *
      * @param  string|array $callback
-     * @return Zend_Validate_Callback Provides a fluent interface
+     * @return AsaZend_Validate_Callback Provides a fluent interface
      */
     public function setCallback($callback)
     {
         if (!is_callable($callback)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid callback given');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid callback given');
         }
         $this->_callback = $callback;
         return $this;
@@ -133,7 +133,7 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
      * Sets options for the callback
      *
      * @param  mixed $max
-     * @return Zend_Validate_Callback Provides a fluent interface
+     * @return AsaZend_Validate_Callback Provides a fluent interface
      */
     public function setOptions($options)
     {
@@ -142,7 +142,7 @@ class Zend_Validate_Callback extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the set callback returns
      * for the provided $value

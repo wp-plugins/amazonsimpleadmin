@@ -13,25 +13,25 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Http/UserAgent/Device.php';
+require_once 'AsaZend/Http/UserAgent/Device.php';
 
 /**
  * Abstract Class to define a browser device.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Http_UserAgent_AbstractDevice
-    implements Zend_Http_UserAgent_Device
+abstract class AsaZend_Http_UserAgent_AbstractDevice
+    implements AsaZend_Http_UserAgent_Device
 {
     /**
      * Browser signature
@@ -217,7 +217,7 @@ abstract class Zend_Http_UserAgent_AbstractDevice
      * @param  string $feature The feature to set.
      * @param  string $value (option) feature value.
      * @param  string $group (option) Group to associate with the feature
-     * @return Zend_Http_UserAgent_AbstractDevice
+     * @return AsaZend_Http_UserAgent_AbstractDevice
      */
     public function setFeature($feature, $value = false, $group = '')
     {
@@ -233,7 +233,7 @@ abstract class Zend_Http_UserAgent_AbstractDevice
      *
      * @param  string $group Group name
      * @param  string $feature Feature name
-     * @return Zend_Http_UserAgent_AbstractDevice
+     * @return AsaZend_Http_UserAgent_AbstractDevice
      */
     public function setGroup($group, $feature)
     {
@@ -748,8 +748,8 @@ abstract class Zend_Http_UserAgent_AbstractDevice
         $config = $config[$browserType]['features'];
 
         if (empty($config['classname'])) {
-            require_once 'Zend/Http/UserAgent/Exception.php';
-            throw new Zend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter must have a "classname" config parameter defined');
+            require_once 'AsaZend/Http/UserAgent/Exception.php';
+            throw new AsaZend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter must have a "classname" config parameter defined');
         }
 
         $className = $config['classname'];
@@ -757,13 +757,13 @@ abstract class Zend_Http_UserAgent_AbstractDevice
             if (isset($config['path'])) {
                 $path = $config['path'];
             } else {
-                require_once 'Zend/Http/UserAgent/Exception.php';
-                throw new Zend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter must have a "path" config parameter defined');
+                require_once 'AsaZend/Http/UserAgent/Exception.php';
+                throw new AsaZend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter must have a "path" config parameter defined');
             }
             
             if (false === include_once ($path)) {
-                require_once 'Zend/Http/UserAgent/Exception.php';
-                throw new Zend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter path that does not exist');
+                require_once 'AsaZend/Http/UserAgent/Exception.php';
+                throw new AsaZend_Http_UserAgent_Exception('The ' . $this->getType() . ' features adapter path that does not exist');
             }
         }
         

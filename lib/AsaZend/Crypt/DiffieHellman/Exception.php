@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @subpackage DiffieHellman
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,16 +21,16 @@
  */
 
 /**
- * @see Zend_Crypt_Exception
+ * @see AsaZend_Crypt_Exception
  */
-require_once 'Zend/Crypt/Exception.php';
+require_once 'AsaZend/Crypt/Exception.php';
 
 /**
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Crypt_DiffieHellman_Exception extends Zend_Crypt_Exception
+class AsaZend_Crypt_DiffieHellman_Exception extends AsaZend_Crypt_Exception
 {
 }

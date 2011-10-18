@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: CreditCard.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_CreditCard extends Zend_Validate_Abstract
+class AsaZend_Validate_CreditCard extends AsaZend_Validate_Abstract
 {
     /**
      * Detected CCI list
@@ -140,7 +140,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
      */
     public function __construct($options = array())
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } else if (!is_array($options)) {
             $options = func_get_args();
@@ -176,7 +176,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
      * Sets CCIs which are accepted by validation
      *
      * @param string|array $type Type to allow for validation
-     * @return Zend_Validate_CreditCard Provides a fluid interface
+     * @return AsaZend_Validate_CreditCard Provides a fluid interface
      */
     public function setType($type)
     {
@@ -188,7 +188,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
      * Adds a CCI to be accepted by validation
      *
      * @param string|array $type Type to allow for validation
-     * @return Zend_Validate_CreditCard Provides a fluid interface
+     * @return AsaZend_Validate_CreditCard Provides a fluid interface
      */
     public function addType($type)
     {
@@ -227,8 +227,8 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
     public function setService($service)
     {
         if (!is_callable($service)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid callback given');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid callback given');
         }
 
         $this->_service = $service;
@@ -236,7 +236,7 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if $value follows the Luhn algorithm (mod-10 checksum)
      *
@@ -299,14 +299,14 @@ class Zend_Validate_CreditCard extends Zend_Validate_Abstract
 
         if (!empty($this->_service)) {
             try {
-                require_once 'Zend/Validate/Callback.php';
-                $callback = new Zend_Validate_Callback($this->_service);
+                require_once 'AsaZend/Validate/Callback.php';
+                $callback = new AsaZend_Validate_Callback($this->_service);
                 $callback->setOptions($this->_type);
                 if (!$callback->isValid($value)) {
                     $this->_error(self::SERVICE, $value);
                     return false;
                 }
-            } catch (Zend_Exception $e) {
+            } catch (AsaZend_Exception $e) {
                 $this->_error(self::SERVICEFAILURE, $value);
                 return false;
             }

@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
+ * @package    AsaZend_Cache
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Cache.php 23154 2010-10-18 17:41:06Z mabe $
@@ -21,11 +21,11 @@
 
 
 /**
- * @package    Zend_Cache
+ * @package    AsaZend_Cache
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Cache
+abstract class AsaZend_Cache
 {
 
     /**
@@ -78,25 +78,25 @@ abstract class Zend_Cache
     /**
      * Factory
      *
-     * @param mixed  $frontend        frontend name (string) or Zend_Cache_Frontend_ object
-     * @param mixed  $backend         backend name (string) or Zend_Cache_Backend_ object
+     * @param mixed  $frontend        frontend name (string) or AsaZend_Cache_Frontend_ object
+     * @param mixed  $backend         backend name (string) or AsaZend_Cache_Backend_ object
      * @param array  $frontendOptions associative array of options for the corresponding frontend constructor
      * @param array  $backendOptions  associative array of options for the corresponding backend constructor
-     * @param boolean $customFrontendNaming if true, the frontend argument is used as a complete class name ; if false, the frontend argument is used as the end of "Zend_Cache_Frontend_[...]" class name
-     * @param boolean $customBackendNaming if true, the backend argument is used as a complete class name ; if false, the backend argument is used as the end of "Zend_Cache_Backend_[...]" class name
+     * @param boolean $customFrontendNaming if true, the frontend argument is used as a complete class name ; if false, the frontend argument is used as the end of "AsaZend_Cache_Frontend_[...]" class name
+     * @param boolean $customBackendNaming if true, the backend argument is used as a complete class name ; if false, the backend argument is used as the end of "AsaZend_Cache_Backend_[...]" class name
      * @param boolean $autoload if true, there will no require_once for backend and frontend (useful only for custom backends/frontends)
-     * @throws Zend_Cache_Exception
-     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     * @throws AsaZend_Cache_Exception
+     * @return AsaZend_Cache_Core|AsaZend_Cache_Frontend
      */
     public static function factory($frontend, $backend, $frontendOptions = array(), $backendOptions = array(), $customFrontendNaming = false, $customBackendNaming = false, $autoload = false)
     {
         if (is_string($backend)) {
             $backendObject = self::_makeBackend($backend, $backendOptions, $customBackendNaming, $autoload);
         } else {
-            if ((is_object($backend)) && (in_array('Zend_Cache_Backend_Interface', class_implements($backend)))) {
+            if ((is_object($backend)) && (in_array('AsaZend_Cache_Backend_Interface', class_implements($backend)))) {
                 $backendObject = $backend;
             } else {
-                self::throwException('backend must be a backend name (string) or an object which implements Zend_Cache_Backend_Interface');
+                self::throwException('backend must be a backend name (string) or an object which implements AsaZend_Cache_Backend_Interface');
             }
         }
         if (is_string($frontend)) {
@@ -119,26 +119,26 @@ abstract class Zend_Cache
      * @param array   $backendOptions
      * @param boolean $customBackendNaming
      * @param boolean $autoload
-     * @return Zend_Cache_Backend
+     * @return AsaZend_Cache_Backend
      */
     public static function _makeBackend($backend, $backendOptions, $customBackendNaming = false, $autoload = false)
     {
         if (!$customBackendNaming) {
             $backend  = self::_normalizeName($backend);
         }
-        if (in_array($backend, Zend_Cache::$standardBackends)) {
+        if (in_array($backend, AsaZend_Cache::$standardBackends)) {
             // we use a standard backend
-            $backendClass = 'Zend_Cache_Backend_' . $backend;
+            $backendClass = 'AsaZend_Cache_Backend_' . $backend;
             // security controls are explicit
             require_once str_replace('_', DIRECTORY_SEPARATOR, $backendClass) . '.php';
         } else {
             // we use a custom backend
             if (!preg_match('~^[\w]+$~D', $backend)) {
-                Zend_Cache::throwException("Invalid backend name [$backend]");
+                AsaZend_Cache::throwException("Invalid backend name [$backend]");
             }
             if (!$customBackendNaming) {
                 // we use this boolean to avoid an API break
-                $backendClass = 'Zend_Cache_Backend_' . $backend;
+                $backendClass = 'AsaZend_Cache_Backend_' . $backend;
             } else {
                 $backendClass = $backend;
             }
@@ -160,7 +160,7 @@ abstract class Zend_Cache
      * @param array   $frontendOptions
      * @param boolean $customFrontendNaming
      * @param boolean $autoload
-     * @return Zend_Cache_Core|Zend_Cache_Frontend
+     * @return AsaZend_Cache_Core|AsaZend_Cache_Frontend
      */
     public static function _makeFrontend($frontend, $frontendOptions = array(), $customFrontendNaming = false, $autoload = false)
     {
@@ -170,17 +170,17 @@ abstract class Zend_Cache
         if (in_array($frontend, self::$standardFrontends)) {
             // we use a standard frontend
             // For perfs reasons, with frontend == 'Core', we can interact with the Core itself
-            $frontendClass = 'Zend_Cache_' . ($frontend != 'Core' ? 'Frontend_' : '') . $frontend;
+            $frontendClass = 'AsaZend_Cache_' . ($frontend != 'Core' ? 'Frontend_' : '') . $frontend;
             // security controls are explicit
             require_once str_replace('_', DIRECTORY_SEPARATOR, $frontendClass) . '.php';
         } else {
             // we use a custom frontend
             if (!preg_match('~^[\w]+$~D', $frontend)) {
-                Zend_Cache::throwException("Invalid frontend name [$frontend]");
+                AsaZend_Cache::throwException("Invalid frontend name [$frontend]");
             }
             if (!$customFrontendNaming) {
                 // we use this boolean to avoid an API break
-                $frontendClass = 'Zend_Cache_Frontend_' . $frontend;
+                $frontendClass = 'AsaZend_Cache_Frontend_' . $frontend;
             } else {
                 $frontendClass = $frontend;
             }
@@ -198,15 +198,15 @@ abstract class Zend_Cache
     /**
      * Throw an exception
      *
-     * Note : for perf reasons, the "load" of Zend/Cache/Exception is dynamic
+     * Note : for perf reasons, the "load" of AsaZend/Cache/Exception is dynamic
      * @param  string $msg  Message for the exception
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      */
     public static function throwException($msg, Exception $e = null)
     {
         // For perfs reasons, we use this dynamic inclusion
-        require_once 'Zend/Cache/Exception.php';
-        throw new Zend_Cache_Exception($msg, 0, $e);
+        require_once 'AsaZend/Cache/Exception.php';
+        throw new AsaZend_Cache_Exception($msg, 0, $e);
     }
 
     /**
@@ -233,7 +233,7 @@ abstract class Zend_Cache
      * This function uses the PHP include_path, where PHP's is_readable()
      * does not.
      *
-     * Note : this method comes from Zend_Loader (see #ZF-2891 for details)
+     * Note : this method comes from AsaZend_Loader (see #ZF-2891 for details)
      *
      * @param string   $filename
      * @return boolean

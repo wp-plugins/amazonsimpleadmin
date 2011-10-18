@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -23,19 +23,19 @@
 
 
 /**
- * @see Zend_Service_Amazon
+ * @see AsaZend_Service_Amazon
  */
-require_once 'Zend/Service/Amazon.php';
+require_once 'AsaZend/Service/Amazon.php';
 
 
 /**
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_Query extends Zend_Service_Amazon
+class AsaZend_Service_Amazon_Query extends AsaZend_Service_Amazon
 {
     /**
      * Search parameters
@@ -56,8 +56,8 @@ class Zend_Service_Amazon_Query extends Zend_Service_Amazon
      *
      * @param  string $method
      * @param  array  $args
-     * @throws Zend_Service_Exception
-     * @return Zend_Service_Amazon_Query Provides a fluent interface
+     * @throws AsaZend_Service_Exception
+     * @return AsaZend_Service_Amazon_Query Provides a fluent interface
      */
     public function __call($method, $args)
     {
@@ -74,10 +74,10 @@ class Zend_Service_Amazon_Query extends Zend_Service_Amazon
             $this->_search[$method] = $args[0];
         } else {
             /**
-             * @see Zend_Service_Exception
+             * @see AsaZend_Service_Exception
              */
-            require_once 'Zend/Service/Exception.php';
-            throw new Zend_Service_Exception('You must set a category before setting the search parameters');
+            require_once 'AsaZend/Service/Exception.php';
+            throw new AsaZend_Service_Exception('You must set a category before setting the search parameters');
         }
 
         return $this;
@@ -86,7 +86,7 @@ class Zend_Service_Amazon_Query extends Zend_Service_Amazon
     /**
      * Search using the prepared query
      *
-     * @return Zend_Service_Amazon_Item|Zend_Service_Amazon_ResultSet
+     * @return AsaZend_Service_Amazon_Item|AsaZend_Service_Amazon_ResultSet
      */
     public function search()
     {

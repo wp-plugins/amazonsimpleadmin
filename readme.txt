@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.1.3
-Stable tag: 0.9.9.3
+Tested up to: 3.2.1
+Stable tag: 0.9.10
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -18,7 +18,7 @@ Features:
 
 * Ease of use with **BBCode** tags
 * Lets you design your own product **templates**
-* Supports all Amazon webservice **country codes**: CA, DE, FR, JP, UK, US
+* Supports all Amazon webservice **country codes**: CA, CN, DE, ES, FR, IT, JP, UK, US
 * Use your Amazon **tracking ID** for making money
 * Features **collections**. You can define and mangage sets of products as a collection an show them on a page with only one BBCode tag or just the latest added product in your sidebar
 * Supports product **preview layers** (for US, UK and DE so far)
@@ -29,11 +29,11 @@ Features:
 
 For the latest information visit the plugin homepage:
 
-http://www.wordpress-amazon-plugin.com/
+http://www.wp-amazon-plugin.com/
 
 Here you can find a detailed documentation:
 
-http://www.wordpress-amazon-plugin.com/guide/
+http://www.wp-amazon-plugin.com/guide/
 
 == Installation ==
 
@@ -48,9 +48,15 @@ Go to the new option page `AmazonSimpleAdmin`. On the `Setup` panel you can set 
 
 Here you can find a detailed documentation:
 
-http://www.wordpress-amazon-plugin.com/guide/
+http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+= 0.9.10 =
+* Fix: Update to API version 2011-08-01. The associate tag is now mandatory!
+* New: Support of Amazon Italy, Spain and China
+* New: With this version comes a backup mechanism for your custom templates. Further updates should keep your custom files.
+* Fix: Fixed a bug in rendering placeholder $AmountSaved->FormattedPrice
+
 = 0.9.9.3 =
 * hotfix: Solves a problem when accessing the Amazon customer rating page for parsing the results
           I will check this in detail and provide some more options on this in the admin panel later on
@@ -71,7 +77,7 @@ http://www.wordpress-amazon-plugin.com/guide/
 * Added: New build in template: mp3
 * Improved default / built-in templates: default, book, dvd, mp3
 * Added: When browsing a collection in the backend, the price of an item is listed
-* New plugin homepage: http://www.wordpress-amazon-plugin.com/
+* New plugin homepage: http://www.wp-amazon-plugin.com/
 
 = 0.9.9.1 =
 * Added: Support for the excerpt
@@ -132,7 +138,7 @@ http://www.wordpress-amazon-plugin.com/guide/
 
 == Info ==
 
-If you find any bugs please send me a mail (support@NOSPAM_wordpress-amazon-plugin.com, remove the NOSPAM_) or use the comments on the [plugin's homepage](http://www.wordpress-amazon-plugin.com/ ). Please also contact me for feature requests and ideas how to improve this plugin. Any other reactions are welcome too of course.
+If you find any bugs please send me a mail (support@NOSPAM_wp-amazon-plugin.com, remove the NOSPAM_) or use the comments on the [plugin's homepage](http://www.wp-amazon-plugin.com/ ). Please also contact me for feature requests and ideas how to improve this plugin. Any other reactions are welcome too of course.
 
 == Frequently Asked Questions ==
 

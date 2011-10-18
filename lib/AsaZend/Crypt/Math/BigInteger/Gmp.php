@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @subpackage Math
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,22 +21,22 @@
  */
 
 /**
- * @see Zend_Crypt_Math_BigInteger_Interface
+ * @see AsaZend_Crypt_Math_BigInteger_Interface
  */
-require_once 'Zend/Crypt/Math/BigInteger/Interface.php';
+require_once 'AsaZend/Crypt/Math/BigInteger/Interface.php';
 
 /**
  * Support for arbitrary precision mathematics in PHP.
  *
- * Zend_Crypt_Math_BigInteger_Bcmath is a wrapper across the PHP BCMath
+ * AsaZend_Crypt_Math_BigInteger_Bcmath is a wrapper across the PHP BCMath
  * extension.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Crypt_Math_BigInteger_Gmp implements Zend_Crypt_Math_BigInteger_Interface
+class AsaZend_Crypt_Math_BigInteger_Gmp implements AsaZend_Crypt_Math_BigInteger_Interface
 {
 
     /**

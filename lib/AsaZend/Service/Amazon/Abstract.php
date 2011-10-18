@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,21 +21,21 @@
  */
 
 /**
- * @see Zend_Service_Abstract
+ * @see AsaZend_Service_Abstract
  */
-require_once 'Zend/Service/Abstract.php';
+require_once 'AsaZend/Service/Abstract.php';
 
 /**
  * Abstract Amazon class that handles the credentials for any of the Web Services that
  * Amazon offers
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Service_Amazon_Abstract extends Zend_Service_Abstract
+abstract class AsaZend_Service_Amazon_Abstract extends AsaZend_Service_Abstract
 {
     /**
      * @var string Amazon Access Key
@@ -88,8 +88,8 @@ abstract class Zend_Service_Amazon_Abstract extends Zend_Service_Abstract
         }
 
         if(!$accessKey || !$secretKey) {
-            require_once 'Zend/Service/Amazon/Exception.php';
-            throw new Zend_Service_Amazon_Exception("AWS keys were not supplied");
+            require_once 'AsaZend/Service/Amazon/Exception.php';
+            throw new AsaZend_Service_Amazon_Exception("AWS keys were not supplied");
         }
         $this->_accessKey = $accessKey;
         $this->_secretKey = $secretKey;

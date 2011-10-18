@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @subpackage Hmac
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,9 +21,9 @@
  */
 
 /**
- * @see Zend_Crypt
+ * @see AsaZend_Crypt
  */
-require_once 'Zend/Crypt.php';
+require_once 'AsaZend/Crypt.php';
 
 /**
  * PHP implementation of the RFC 2104 Hash based Message Authentication Code
@@ -32,11 +32,11 @@ require_once 'Zend/Crypt.php';
  * @todo  Patch for refactoring failed tests (key block sizes >80 using internal algo)
  * @todo       Check if mhash() is a required alternative (will be PECL-only soon)
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Crypt_Hmac extends Zend_Crypt
+class AsaZend_Crypt_Hmac extends AsaZend_Crypt
 {
 
     /**
@@ -92,8 +92,8 @@ class Zend_Crypt_Hmac extends Zend_Crypt
     {
         // set the key
         if (!isset($key) || empty($key)) {
-            require_once 'Zend/Crypt/Hmac/Exception.php';
-            throw new Zend_Crypt_Hmac_Exception('provided key is null or empty');
+            require_once 'AsaZend/Crypt/Hmac/Exception.php';
+            throw new AsaZend_Crypt_Hmac_Exception('provided key is null or empty');
         }
         self::$_key = $key;
 
@@ -108,13 +108,13 @@ class Zend_Crypt_Hmac extends Zend_Crypt
      * Setter for the hash method.
      *
      * @param string $hash
-     * @return Zend_Crypt_Hmac
+     * @return AsaZend_Crypt_Hmac
      */
     protected static function _setHashAlgorithm($hash)
     {
         if (!isset($hash) || empty($hash)) {
-            require_once 'Zend/Crypt/Hmac/Exception.php';
-            throw new Zend_Crypt_Hmac_Exception('provided hash string is null or empty');
+            require_once 'AsaZend/Crypt/Hmac/Exception.php';
+            throw new AsaZend_Crypt_Hmac_Exception('provided hash string is null or empty');
         }
 
         $hash = strtolower($hash);
@@ -129,8 +129,8 @@ class Zend_Crypt_Hmac extends Zend_Crypt
         }
 
         if ($hashSupported === false) {
-            require_once 'Zend/Crypt/Hmac/Exception.php';
-            throw new Zend_Crypt_Hmac_Exception('hash algorithm provided is not supported on this PHP installation; please enable the hash or mhash extensions');
+            require_once 'AsaZend/Crypt/Hmac/Exception.php';
+            throw new AsaZend_Crypt_Hmac_Exception('hash algorithm provided is not supported on this PHP installation; please enable the hash or mhash extensions');
         }
         self::$_hashAlgorithm = $hash;
     }

@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: Extension.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * Validator for the file extension of a file
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_Extension extends Zend_Validate_Abstract
+class AsaZend_Validate_File_Extension extends AsaZend_Validate_Abstract
 {
     /**
      * @const string Error constants
@@ -71,12 +71,12 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
     /**
      * Sets validator options
      *
-     * @param  string|array|Zend_Config $options
+     * @param  string|array|AsaZend_Config $options
      * @return void
      */
     public function __construct($options)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         }
 
@@ -107,7 +107,7 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
      * Sets the case to use
      *
      * @param  boolean $case
-     * @return Zend_Validate_File_Extension Provides a fluent interface
+     * @return AsaZend_Validate_File_Extension Provides a fluent interface
      */
     public function setCase($case)
     {
@@ -131,7 +131,7 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
      * Sets the file extensions
      *
      * @param  string|array $extension The extensions to validate
-     * @return Zend_Validate_File_Extension Provides a fluent interface
+     * @return AsaZend_Validate_File_Extension Provides a fluent interface
      */
     public function setExtension($extension)
     {
@@ -144,7 +144,7 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
      * Adds the file extensions
      *
      * @param  string|array $extension The extensions to add for validation
-     * @return Zend_Validate_File_Extension Provides a fluent interface
+     * @return AsaZend_Validate_File_Extension Provides a fluent interface
      */
     public function addExtension($extension)
     {
@@ -175,20 +175,20 @@ class Zend_Validate_File_Extension extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the fileextension of $value is included in the
      * set extension list
      *
      * @param  string  $value Real file to check for extension
-     * @param  array   $file  File data from Zend_File_Transfer
+     * @param  array   $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }
 

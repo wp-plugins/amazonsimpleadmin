@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @subpackage Rsa
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -22,11 +22,11 @@
 
 /**
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Crypt_Rsa_Key implements Countable
+class AsaZend_Crypt_Rsa_Key implements Countable
 {
     /**
      * @var string
@@ -59,7 +59,7 @@ class Zend_Crypt_Rsa_Key implements Countable
 
     /**
      * @return string
-     * @throws Zend_Crypt_Exception
+     * @throws AsaZend_Crypt_Exception
      */
     public function toString()
     {
@@ -69,10 +69,10 @@ class Zend_Crypt_Rsa_Key implements Countable
             return $this->_certificateString;
         }
         /**
-         * @see Zend_Crypt_Exception
+         * @see AsaZend_Crypt_Exception
          */
-        require_once 'Zend/Crypt/Exception.php';
-        throw new Zend_Crypt_Exception('No public key string representation is available');
+        require_once 'AsaZend/Crypt/Exception.php';
+        throw new AsaZend_Crypt_Exception('No public key string representation is available');
     }
 
     /**

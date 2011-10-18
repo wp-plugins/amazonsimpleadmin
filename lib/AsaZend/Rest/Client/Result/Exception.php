@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @subpackage Client
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,16 +21,16 @@
  */
 
 /**
- * @see Zend_Rest_Client_Exception
+ * @see AsaZend_Rest_Client_Exception
  */
-require_once "Zend/Rest/Client/Exception.php";
+require_once "AsaZend/Rest/Client/Exception.php";
 
 /**
- * Zend_Rest_Client_Result_Exception
+ * AsaZend_Rest_Client_Result_Exception
  *
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @subpackage Client
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Rest_Client_Result_Exception extends Zend_Rest_Client_Exception{}
+class AsaZend_Rest_Client_Result_Exception extends AsaZend_Rest_Client_Exception{}

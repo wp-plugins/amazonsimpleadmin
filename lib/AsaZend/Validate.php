@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Validate.php 21339 2010-03-05 15:32:25Z thomas $
  */
 
 /**
- * @see Zend_Validate_Interface
+ * @see AsaZend_Validate_Interface
  */
-require_once 'Zend/Validate/Interface.php';
+require_once 'AsaZend/Validate/Interface.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate implements Zend_Validate_Interface
+class AsaZend_Validate implements AsaZend_Validate_Interface
 {
     /**
      * Validator chain
@@ -67,11 +67,11 @@ class Zend_Validate implements Zend_Validate_Interface
      * If $breakChainOnFailure is true, then if the validator fails, the next validator in the chain,
      * if one exists, will not be executed.
      *
-     * @param  Zend_Validate_Interface $validator
+     * @param  AsaZend_Validate_Interface $validator
      * @param  boolean                 $breakChainOnFailure
-     * @return Zend_Validate Provides a fluent interface
+     * @return AsaZend_Validate Provides a fluent interface
      */
-    public function addValidator(Zend_Validate_Interface $validator, $breakChainOnFailure = false)
+    public function addValidator(AsaZend_Validate_Interface $validator, $breakChainOnFailure = false)
     {
         $this->_validators[] = array(
             'instance' => $validator,
@@ -110,7 +110,7 @@ class Zend_Validate implements Zend_Validate_Interface
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns array of validation failure messages
      *
@@ -122,7 +122,7 @@ class Zend_Validate implements Zend_Validate_Interface
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns array of validation failure message codes
      *
@@ -190,20 +190,20 @@ class Zend_Validate implements Zend_Validate_Interface
      * @param  array    $args          OPTIONAL
      * @param  mixed    $namespaces    OPTIONAL
      * @return boolean
-     * @throws Zend_Validate_Exception
+     * @throws AsaZend_Validate_Exception
      */
     public static function is($value, $classBaseName, array $args = array(), $namespaces = array())
     {
-        $namespaces = array_merge((array) $namespaces, self::$_defaultNamespaces, array('Zend_Validate'));
+        $namespaces = array_merge((array) $namespaces, self::$_defaultNamespaces, array('AsaZend_Validate'));
         $className  = ucfirst($classBaseName);
         try {
             if (!class_exists($className, false)) {
-                require_once 'Zend/Loader.php';
+                require_once 'AsaZend/Loader.php';
                 foreach($namespaces as $namespace) {
                     $class = $namespace . '_' . $className;
                     $file  = str_replace('_', DIRECTORY_SEPARATOR, $class) . '.php';
-                    if (Zend_Loader::isReadable($file)) {
-                        Zend_Loader::loadClass($class);
+                    if (AsaZend_Loader::isReadable($file)) {
+                        AsaZend_Loader::loadClass($class);
                         $className = $class;
                         break;
                     }
@@ -211,7 +211,7 @@ class Zend_Validate implements Zend_Validate_Interface
             }
 
             $class = new ReflectionClass($className);
-            if ($class->implementsInterface('Zend_Validate_Interface')) {
+            if ($class->implementsInterface('AsaZend_Validate_Interface')) {
                 if ($class->hasMethod('__construct')) {
                     $keys    = array_keys($args);
                     $numeric = false;
@@ -233,15 +233,15 @@ class Zend_Validate implements Zend_Validate_Interface
 
                 return $object->isValid($value);
             }
-        } catch (Zend_Validate_Exception $ze) {
+        } catch (AsaZend_Validate_Exception $ze) {
             // if there is an exception while validating throw it
             throw $ze;
         } catch (Exception $e) {
             // fallthrough and continue for missing validation classes
         }
 
-        require_once 'Zend/Validate/Exception.php';
-        throw new Zend_Validate_Exception("Validate class not found from basename '$classBaseName'");
+        require_once 'AsaZend/Validate/Exception.php';
+        throw new AsaZend_Validate_Exception("Validate class not found from basename '$classBaseName'");
     }
 
     /**
@@ -251,8 +251,8 @@ class Zend_Validate implements Zend_Validate_Interface
      */
     public static function getMessageLength()
     {
-        require_once 'Zend/Validate/Abstract.php';
-        return Zend_Validate_Abstract::getMessageLength();
+        require_once 'AsaZend/Validate/Abstract.php';
+        return AsaZend_Validate_Abstract::getMessageLength();
     }
 
     /**
@@ -262,29 +262,29 @@ class Zend_Validate implements Zend_Validate_Interface
      */
     public static function setMessageLength($length = -1)
     {
-        require_once 'Zend/Validate/Abstract.php';
-        Zend_Validate_Abstract::setMessageLength($length);
+        require_once 'AsaZend/Validate/Abstract.php';
+        AsaZend_Validate_Abstract::setMessageLength($length);
     }
 
     /**
      * Returns the default translation object
      *
-     * @return Zend_Translate_Adapter|null
+     * @return AsaZend_Translate_Adapter|null
      */
     public static function getDefaultTranslator($translator = null)
     {
-        require_once 'Zend/Validate/Abstract.php';
-        return Zend_Validate_Abstract::getDefaultTranslator();
+        require_once 'AsaZend/Validate/Abstract.php';
+        return AsaZend_Validate_Abstract::getDefaultTranslator();
     }
 
     /**
      * Sets a default translation object for all validation objects
      *
-     * @param Zend_Translate|Zend_Translate_Adapter|null $translator
+     * @param AsaZend_Translate|AsaZend_Translate_Adapter|null $translator
      */
     public static function setDefaultTranslator($translator = null)
     {
-        require_once 'Zend/Validate/Abstract.php';
-        Zend_Validate_Abstract::setDefaultTranslator($translator);
+        require_once 'AsaZend/Validate/Abstract.php';
+        AsaZend_Validate_Abstract::setDefaultTranslator($translator);
     }
 }

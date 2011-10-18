@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @subpackage Server
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,28 +21,28 @@
  */
 
 /**
- * @see Zend_Server_Interface
+ * @see AsaZend_Server_Interface
  */
-require_once 'Zend/Server/Interface.php';
+require_once 'AsaZend/Server/Interface.php';
 
 /**
- * @see Zend_Server_Reflection
+ * @see AsaZend_Server_Reflection
  */
-require_once 'Zend/Server/Reflection.php';
+require_once 'AsaZend/Server/Reflection.php';
 
 /**
- * @see Zend_Server_Abstract
+ * @see AsaZend_Server_Abstract
  */
-require_once 'Zend/Server/Abstract.php';
+require_once 'AsaZend/Server/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @subpackage Server
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Rest_Server implements Zend_Server_Interface
+class AsaZend_Rest_Server implements AsaZend_Server_Interface
 {
     /**
      * Class Constructor Args
@@ -56,7 +56,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     protected $_encoding = 'UTF-8';
 
     /**
-     * @var array An array of Zend_Server_Reflect_Method
+     * @var array An array of AsaZend_Server_Reflect_Method
      */
     protected $_functions = array();
 
@@ -89,7 +89,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     protected $_method;
 
     /**
-     * @var Zend_Server_Reflection
+     * @var AsaZend_Server_Reflection
      */
     protected $_reflection = null;
 
@@ -105,14 +105,14 @@ class Zend_Rest_Server implements Zend_Server_Interface
     public function __construct()
     {
         set_exception_handler(array($this, "fault"));
-        $this->_reflection = new Zend_Server_Reflection();
+        $this->_reflection = new AsaZend_Server_Reflection();
     }
 
     /**
      * Set XML encoding
      *
      * @param  string $encoding
-     * @return Zend_Rest_Server
+     * @return AsaZend_Rest_Server
      */
     public function setEncoding($encoding)
     {
@@ -154,7 +154,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
      * but will instead return the response from the dispatched function/method.
      *
      * @param boolean $flag
-     * @return boolean|Zend_Rest_Server Returns Zend_Rest_Server when used to set the flag; returns boolean flag value otherwise.
+     * @return boolean|AsaZend_Rest_Server Returns AsaZend_Rest_Server when used to set the flag; returns boolean flag value otherwise.
      */
     public function returnResponse($flag = null)
     {
@@ -167,10 +167,10 @@ class Zend_Rest_Server implements Zend_Server_Interface
     }
 
     /**
-     * Implement Zend_Server_Interface::handle()
+     * Implement AsaZend_Server_Interface::handle()
      *
      * @param  array $request
-     * @throws Zend_Rest_Server_Exception
+     * @throws AsaZend_Rest_Server_Exception
      * @return string|void
      */
     public function handle($request = false)
@@ -182,7 +182,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
         if (isset($request['method'])) {
             $this->_method = $request['method'];
             if (isset($this->_functions[$this->_method])) {
-                if ($this->_functions[$this->_method] instanceof Zend_Server_Reflection_Function || $this->_functions[$this->_method] instanceof Zend_Server_Reflection_Method && $this->_functions[$this->_method]->isPublic()) {
+                if ($this->_functions[$this->_method] instanceof AsaZend_Server_Reflection_Function || $this->_functions[$this->_method] instanceof AsaZend_Server_Reflection_Method && $this->_functions[$this->_method]->isPublic()) {
                     $request_keys = array_keys($request);
                     array_walk($request_keys, array(__CLASS__, "lowerCase"));
                     $request = array_combine($request_keys, $request);
@@ -216,11 +216,11 @@ class Zend_Rest_Server implements Zend_Server_Interface
 
                     $result = false;
                     if (count($calling_args) < count($func_args)) {
-                        require_once 'Zend/Rest/Server/Exception.php';
-                        $result = $this->fault(new Zend_Rest_Server_Exception('Invalid Method Call to ' . $this->_method . '. Missing argument(s): ' . implode(', ', $missing_args) . '.'), 400);
+                        require_once 'AsaZend/Rest/Server/Exception.php';
+                        $result = $this->fault(new AsaZend_Rest_Server_Exception('Invalid Method Call to ' . $this->_method . '. Missing argument(s): ' . implode(', ', $missing_args) . '.'), 400);
                     }
 
-                    if (!$result && $this->_functions[$this->_method] instanceof Zend_Server_Reflection_Method) {
+                    if (!$result && $this->_functions[$this->_method] instanceof AsaZend_Server_Reflection_Method) {
                         // Get class
                         $class = $this->_functions[$this->_method]->getDeclaringClass()->getName();
 
@@ -241,23 +241,23 @@ class Zend_Rest_Server implements Zend_Server_Interface
                         }
                     }
                 } else {
-                    require_once "Zend/Rest/Server/Exception.php";
+                    require_once "AsaZend/Rest/Server/Exception.php";
                     $result = $this->fault(
-                        new Zend_Rest_Server_Exception("Unknown Method '$this->_method'."),
+                        new AsaZend_Rest_Server_Exception("Unknown Method '$this->_method'."),
                         404
                     );
                 }
             } else {
-                require_once "Zend/Rest/Server/Exception.php";
+                require_once "AsaZend/Rest/Server/Exception.php";
                 $result = $this->fault(
-                    new Zend_Rest_Server_Exception("Unknown Method '$this->_method'."),
+                    new AsaZend_Rest_Server_Exception("Unknown Method '$this->_method'."),
                     404
                 );
             }
         } else {
-            require_once "Zend/Rest/Server/Exception.php";
+            require_once "AsaZend/Rest/Server/Exception.php";
             $result = $this->fault(
-                new Zend_Rest_Server_Exception("No Method Specified."),
+                new AsaZend_Rest_Server_Exception("No Method Specified."),
                 404
             );
         }
@@ -289,7 +289,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
      }
 
     /**
-     * Implement Zend_Server_Interface::setClass()
+     * Implement AsaZend_Server_Interface::setClass()
      *
      * @param string $classname Class name
      * @param string $namespace Class namespace (unused)
@@ -312,7 +312,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     protected function _handleStruct($struct)
     {
         $function = $this->_functions[$this->_method];
-        if ($function instanceof Zend_Server_Reflection_Method) {
+        if ($function instanceof AsaZend_Server_Reflection_Method) {
             $class = $function->getDeclaringClass()->getName();
         } else {
             $class = false;
@@ -391,7 +391,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     protected function _handleScalar($value)
     {
         $function = $this->_functions[$this->_method];
-        if ($function instanceof Zend_Server_Reflection_Method) {
+        if ($function instanceof AsaZend_Server_Reflection_Method) {
             $class = $function->getDeclaringClass()->getName();
         } else {
             $class = false;
@@ -432,7 +432,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     }
 
     /**
-     * Implement Zend_Server_Interface::fault()
+     * Implement AsaZend_Server_Interface::fault()
      *
      * Creates XML error response, returning DOMDocument with response.
      *
@@ -450,13 +450,13 @@ class Zend_Rest_Server implements Zend_Server_Interface
             $function = 'rest';
         }
 
-        if ($function instanceof Zend_Server_Reflection_Method) {
+        if ($function instanceof AsaZend_Server_Reflection_Method) {
             $class = $function->getDeclaringClass()->getName();
         } else {
             $class = false;
         }
 
-        if ($function instanceof Zend_Server_Reflection_Function_Abstract) {
+        if ($function instanceof AsaZend_Server_Reflection_Function_Abstract) {
             $method = $function->getName();
         } else {
             $method = $function;
@@ -513,7 +513,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     }
 
     /**
-     * Implement Zend_Server_Interface::addFunction()
+     * Implement AsaZend_Server_Interface::addFunction()
      *
      * @param string $function Function Name
      * @param string $namespace Function namespace (unused)
@@ -528,16 +528,16 @@ class Zend_Rest_Server implements Zend_Server_Interface
             if (is_callable($func) && !in_array($func, self::$magicMethods)) {
                 $this->_functions[$func] = $this->_reflection->reflectFunction($func);
             } else {
-                require_once 'Zend/Rest/Server/Exception.php';
-                throw new Zend_Rest_Server_Exception("Invalid Method Added to Service.");
+                require_once 'AsaZend/Rest/Server/Exception.php';
+                throw new AsaZend_Rest_Server_Exception("Invalid Method Added to Service.");
             }
         }
     }
 
     /**
-     * Implement Zend_Server_Interface::getFunctions()
+     * Implement AsaZend_Server_Interface::getFunctions()
      *
-     * @return array An array of Zend_Server_Reflection_Method's
+     * @return array An array of AsaZend_Server_Reflection_Method's
      */
     public function getFunctions()
     {
@@ -545,7 +545,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     }
 
     /**
-     * Implement Zend_Server_Interface::loadFunctions()
+     * Implement AsaZend_Server_Interface::loadFunctions()
      *
      * @todo Implement
      * @param array $functions
@@ -555,7 +555,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
     }
 
     /**
-     * Implement Zend_Server_Interface::setPersistence()
+     * Implement AsaZend_Server_Interface::setPersistence()
      *
      * @todo Implement
      * @param int $mode
@@ -587,7 +587,7 @@ class Zend_Rest_Server implements Zend_Server_Interface
      * @param  string $class
      * @param  array $args
      * @return mixed
-     * @throws Zend_Rest_Server_Exception For invalid class name
+     * @throws AsaZend_Rest_Server_Exception For invalid class name
      */
     protected function _callObjectMethod($class, array $args)
     {
@@ -598,8 +598,8 @@ class Zend_Rest_Server implements Zend_Server_Interface
                 $object = $this->_functions[$this->_method]->getDeclaringClass()->newInstance();
             }
         } catch (Exception $e) {
-            require_once 'Zend/Rest/Server/Exception.php';
-            throw new Zend_Rest_Server_Exception('Error instantiating class ' . $class .
+            require_once 'AsaZend/Rest/Server/Exception.php';
+            throw new AsaZend_Rest_Server_Exception('Error instantiating class ' . $class .
                                                  ' to invoke method ' . $this->_functions[$this->_method]->getName() .
                                                  ' (' . $e->getMessage() . ') ',
                                                  500, $e);

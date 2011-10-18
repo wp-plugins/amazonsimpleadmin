@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service_Amazon
+ * @package    AsaZend_Service_Amazon
  * @subpackage Authentication
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -21,23 +21,23 @@
 
 
 /**
- * @see Zend_Service_Amazon_Authentication
+ * @see AsaZend_Service_Amazon_Authentication
  */
-require_once 'Zend/Service/Amazon/Authentication.php';
+require_once 'AsaZend/Service/Amazon/Authentication.php';
 
 /**
- * @see Zend_Crypt_Hmac
+ * @see AsaZend_Crypt_Hmac
  */
-require_once 'Zend/Crypt/Hmac.php';
+require_once 'AsaZend/Crypt/Hmac.php';
 
 /**
  * @category   Zend
- * @package    Zend_Service_Amazon
+ * @package    AsaZend_Service_Amazon
  * @subpackage Authentication
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_Authentication_S3 extends Zend_Service_Amazon_Authentication
+class AsaZend_Service_Amazon_Authentication_S3 extends AsaZend_Service_Amazon_Authentication
 {
     /**
      * Add the S3 Authorization signature to the request headers
@@ -104,7 +104,7 @@ class Zend_Service_Amazon_Authentication_S3 extends Zend_Service_Amazon_Authenti
                     $sig_str .= '?torrent';
                 }
         
-        $signature = base64_encode(Zend_Crypt_Hmac::compute($this->_secretKey, 'sha1', utf8_encode($sig_str), Zend_Crypt_Hmac::BINARY));
+        $signature = base64_encode(AsaZend_Crypt_Hmac::compute($this->_secretKey, 'sha1', utf8_encode($sig_str), AsaZend_Crypt_Hmac::BINARY));
         $headers['Authorization'] = 'AWS ' . $this->_accessKey . ':' . $signature;
 
         return $sig_str;

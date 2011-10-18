@@ -13,38 +13,38 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Hostname.php 22830 2010-08-12 16:05:09Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
- * @see Zend_Validate_Ip
+ * @see AsaZend_Validate_Ip
  */
-require_once 'Zend/Validate/Ip.php';
+require_once 'AsaZend/Validate/Ip.php';
 
 /**
  * Please note there are two standalone test scripts for testing IDN characters due to problems
  * with file encoding.
  *
- * The first is tests/Zend/Validate/HostnameTestStandalone.php which is designed to be run on
+ * The first is tests/AsaZend/Validate/HostnameTestStandalone.php which is designed to be run on
  * the command line.
  *
- * The second is tests/Zend/Validate/HostnameTestForm.php which is designed to be run via HTML
+ * The second is tests/AsaZend/Validate/HostnameTestForm.php which is designed to be run via HTML
  * to allow users to test entering UTF-8 characters in a form.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Hostname extends Zend_Validate_Abstract
+class AsaZend_Validate_Hostname extends AsaZend_Validate_Abstract
 {
     const CANNOT_DECODE_PUNYCODE  = 'hostnameCannotDecodePunycode';
     const INVALID                 = 'hostnameInvalid';
@@ -203,7 +203,7 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
         'CH'  => array(1 => '/^[\x{002d}0-9a-zà-öø-ÿœ]{1,63}$/iu'),
         'CL'  => array(1 => '/^[\x{002d}0-9a-záéíñóúü]{1,63}$/iu'),
         'CN'  => 'Hostname/Cn.php',
-        'COM' => 'Zend/Validate/Hostname/Com.php',
+        'COM' => 'AsaZend/Validate/Hostname/Com.php',
         'DE'  => array(1 => '/^[\x{002d}0-9a-zà-öø-ÿăąāćĉčċďđĕěėęēğĝġģĥħĭĩįīıĵķĺľļłńňņŋŏőōœĸŕřŗśŝšşťţŧŭůűũųūŵŷźžż]{1,63}$/iu'),
         'DK'  => array(1 => '/^[\x{002d}0-9a-zäéöü]{1,63}$/iu'),
         'ES'  => array(1 => '/^[\x{002d}0-9a-zàáçèéíïñòóúü·]{1,63}$/iu'),
@@ -215,7 +215,7 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
             6 => '/^[\x{002d}0-9a-zἀ-ἇἐ-ἕἠ-ἧἰ-ἷὀ-ὅὐ-ὗὠ-ὧὰ-ώᾀ-ᾇᾐ-ᾗᾠ-ᾧᾰ-ᾴᾶᾷῂῃῄῆῇῐ-ΐῖῗῠ-ῧῲῳῴῶῷ]{1,63}$/iu'),
         'FI'  => array(1 => '/^[\x{002d}0-9a-zäåö]{1,63}$/iu'),
         'GR'  => array(1 => '/^[\x{002d}0-9a-zΆΈΉΊΌΎ-ΡΣ-ώἀ-ἕἘ-Ἕἠ-ὅὈ-Ὅὐ-ὗὙὛὝὟ-ώᾀ-ᾴᾶ-ᾼῂῃῄῆ-ῌῐ-ΐῖ-Ίῠ-Ῥῲῳῴῶ-ῼ]{1,63}$/iu'),
-        'HK'  => 'Zend/Validate/Hostname/Cn.php',
+        'HK'  => 'AsaZend/Validate/Hostname/Cn.php',
         'HU'  => array(1 => '/^[\x{002d}0-9a-záéíóöúüőű]{1,63}$/iu'),
         'INFO'=> array(1 => '/^[\x{002d}0-9a-zäåæéöøü]{1,63}$/iu',
             2 => '/^[\x{002d}0-9a-záéíóöúüőű]{1,63}$/iu',
@@ -227,15 +227,15 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
             8 => '/^[\x{002d}0-9a-záéíñóúü]{1,63}$/iu'),
         'IO'  => array(1 => '/^[\x{002d}0-9a-zà-öø-ÿăąāćĉčċďđĕěėęēğĝġģĥħĭĩįīıĵķĺľļłńňņŋŏőōœĸŕřŗśŝšşťţŧŭůűũųūŵŷźžż]{1,63}$/iu'),
         'IS'  => array(1 => '/^[\x{002d}0-9a-záéýúíóþæöð]{1,63}$/iu'),
-        'JP'  => 'Zend/Validate/Hostname/Jp.php',
+        'JP'  => 'AsaZend/Validate/Hostname/Jp.php',
         'KR'  => array(1 => '/^[\x{AC00}-\x{D7A3}]{1,17}$/iu'),
         'LI'  => array(1 => '/^[\x{002d}0-9a-zà-öø-ÿœ]{1,63}$/iu'),
         'LT'  => array(1 => '/^[\x{002d}0-9ąčęėįšųūž]{1,63}$/iu'),
         'MD'  => array(1 => '/^[\x{002d}0-9ăâîşţ]{1,63}$/iu'),
         'MUSEUM' => array(1 => '/^[\x{002d}0-9a-zà-öø-ÿāăąćċčďđēėęěğġģħīįıķĺļľłńņňŋōőœŕŗřśşšţťŧūůűųŵŷźżžǎǐǒǔ\x{01E5}\x{01E7}\x{01E9}\x{01EF}ə\x{0292}ẁẃẅỳ]{1,63}$/iu'),
-        'NET' => 'Zend/Validate/Hostname/Com.php',
+        'NET' => 'AsaZend/Validate/Hostname/Com.php',
         'NO'  => array(1 => '/^[\x{002d}0-9a-zàáä-éêñ-ôöøüčđńŋšŧž]{1,63}$/iu'),
-        'NU'  => 'Zend/Validate/Hostname/Com.php',
+        'NU'  => 'AsaZend/Validate/Hostname/Com.php',
         'ORG' => array(1 => '/^[\x{002d}0-9a-záéíñóúü]{1,63}$/iu',
             2 => '/^[\x{002d}0-9a-zóąćęłńśźż]{1,63}$/iu',
             3 => '/^[\x{002d}0-9a-záäåæéëíðóöøúüýþ]{1,63}$/iu',
@@ -286,14 +286,14 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
         'SJ'  => array(1 => '/^[\x{002d}0-9a-zàáä-éêñ-ôöøüčđńŋšŧž]{1,63}$/iu'),
         'TH'  => array(1 => '/^[\x{002d}0-9a-z\x{0E01}-\x{0E3A}\x{0E40}-\x{0E4D}\x{0E50}-\x{0E59}]{1,63}$/iu'),
         'TM'  => array(1 => '/^[\x{002d}0-9a-zà-öø-ÿāăąćĉċčďđēėęěĝġģĥħīįĵķĺļľŀłńņňŋőœŕŗřśŝşšţťŧūŭůűųŵŷźżž]{1,63}$/iu'),
-        'TW'  => 'Zend/Validate/Hostname/Cn.php',
+        'TW'  => 'AsaZend/Validate/Hostname/Cn.php',
         'TR'  => array(1 => '/^[\x{002d}0-9a-zğıüşöç]{1,63}$/iu'),
         'VE'  => array(1 => '/^[\x{002d}0-9a-záéíóúüñ]{1,63}$/iu'),
         'VN'  => array(1 => '/^[ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚÝàáâãèéêìíòóôõùúýĂăĐđĨĩŨũƠơƯư\x{1EA0}-\x{1EF9}]{1,63}$/iu'),
         'ایران' => array(1 => '/^[\x{0621}-\x{0624}\x{0626}-\x{063A}\x{0641}\x{0642}\x{0644}-\x{0648}\x{067E}\x{0686}\x{0698}\x{06A9}\x{06AF}\x{06CC}\x{06F0}-\x{06F9}]{1,30}$/iu'),
-        '中国' => 'Zend/Validate/Hostname/Cn.php',
-        '公司' => 'Zend/Validate/Hostname/Cn.php',
-        '网络' => 'Zend/Validate/Hostname/Cn.php'
+        '中国' => 'AsaZend/Validate/Hostname/Cn.php',
+        '公司' => 'AsaZend/Validate/Hostname/Cn.php',
+        '网络' => 'AsaZend/Validate/Hostname/Cn.php'
     );
 
     protected $_idnLength = array(
@@ -325,13 +325,13 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
      * @param integer          $allow       OPTIONAL Set what types of hostname to allow (default ALLOW_DNS)
      * @param boolean          $validateIdn OPTIONAL Set whether IDN domains are validated (default true)
      * @param boolean          $validateTld OPTIONAL Set whether the TLD element of a hostname is validated (default true)
-     * @param Zend_Validate_Ip $ipValidator OPTIONAL
+     * @param AsaZend_Validate_Ip $ipValidator OPTIONAL
      * @return void
      * @see http://www.iana.org/cctld/specifications-policies-cctlds-01apr02.htm  Technical Specifications for ccTLDs
      */
     public function __construct($options = array())
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } else if (!is_array($options)) {
             $options = func_get_args();
@@ -369,7 +369,7 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
      * Sets the options for this validator
      *
      * @param array $options
-     * @return Zend_Validate_Hostname
+     * @return AsaZend_Validate_Hostname
      */
     public function setOptions($options)
     {
@@ -395,7 +395,7 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
     /**
      * Returns the set ip validator
      *
-     * @return Zend_Validate_Ip
+     * @return AsaZend_Validate_Ip
      */
     public function getIpValidator()
     {
@@ -403,13 +403,13 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
     }
 
     /**
-     * @param Zend_Validate_Ip $ipValidator OPTIONAL
+     * @param AsaZend_Validate_Ip $ipValidator OPTIONAL
      * @return void;
      */
-    public function setIpValidator(Zend_Validate_Ip $ipValidator = null)
+    public function setIpValidator(AsaZend_Validate_Ip $ipValidator = null)
     {
         if ($ipValidator === null) {
-            $ipValidator = new Zend_Validate_Ip();
+            $ipValidator = new AsaZend_Validate_Ip();
         }
 
         $this->_options['ip'] = $ipValidator;
@@ -430,7 +430,7 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
      * Sets the allow option
      *
      * @param  integer $allow
-     * @return Zend_Validate_Hostname Provides a fluent interface
+     * @return AsaZend_Validate_Hostname Provides a fluent interface
      */
     public function setAllow($allow)
     {
@@ -485,12 +485,12 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the $value is a valid hostname with respect to the current allow option
      *
      * @param  string $value
-     * @throws Zend_Validate_Exception if a fatal error occurs for validation process
+     * @throws AsaZend_Validate_Exception if a fatal error occurs for validation process
      * @return boolean
      */
     public function isValid($value)
@@ -546,7 +546,7 @@ class Zend_Validate_Hostname extends Zend_Validate_Abstract
                     /**
                      * Match against IDN hostnames
                      * Note: Keep label regex short to avoid issues with long patterns when matching IDN hostnames
-                     * @see Zend_Validate_Hostname_Interface
+                     * @see AsaZend_Validate_Hostname_Interface
                      */
                     $regexChars = array(0 => '/^[a-z0-9\x2d]{1,63}$/i');
                     if ($this->_options['idn'] &&  isset($this->_validIdns[strtoupper($this->_tld)])) {

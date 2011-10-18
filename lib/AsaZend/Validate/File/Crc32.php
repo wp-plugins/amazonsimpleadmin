@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: Crc32.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_File_Hash
+ * @see AsaZend_Validate_File_Hash
  */
-require_once 'Zend/Validate/File/Hash.php';
+require_once 'AsaZend/Validate/File/Hash.php';
 
 /**
  * Validator for the crc32 hash of given files
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
+class AsaZend_Validate_File_Crc32 extends AsaZend_Validate_File_Hash
 {
     /**
      * @const string Error constants
@@ -60,18 +60,18 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
     /**
      * Sets validator options
      *
-     * @param  string|array|Zend_Config $options
+     * @param  string|array|AsaZend_Config $options
      * @return void
      */
     public function __construct($options)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } elseif (is_scalar($options)) {
             $options = array('hash1' => $options);
         } elseif (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid options to validator provided');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid options to validator provided');
         }
 
         $this->setCrc32($options);
@@ -91,7 +91,7 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
      * Sets the crc32 hash for one or multiple files
      *
      * @param  string|array $options
-     * @return Zend_Validate_File_Hash Provides a fluent interface
+     * @return AsaZend_Validate_File_Hash Provides a fluent interface
      */
     public function setHash($options)
     {
@@ -108,7 +108,7 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
      * Sets the crc32 hash for one or multiple files
      *
      * @param  string|array $options
-     * @return Zend_Validate_File_Hash Provides a fluent interface
+     * @return AsaZend_Validate_File_Hash Provides a fluent interface
      */
     public function setCrc32($options)
     {
@@ -120,7 +120,7 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
      * Adds the crc32 hash for one or multiple files
      *
      * @param  string|array $options
-     * @return Zend_Validate_File_Hash Provides a fluent interface
+     * @return AsaZend_Validate_File_Hash Provides a fluent interface
      */
     public function addHash($options)
     {
@@ -137,7 +137,7 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
      * Adds the crc32 hash for one or multiple files
      *
      * @param  string|array $options
-     * @return Zend_Validate_File_Hash Provides a fluent interface
+     * @return AsaZend_Validate_File_Hash Provides a fluent interface
      */
     public function addCrc32($options)
     {
@@ -146,19 +146,19 @@ class Zend_Validate_File_Crc32 extends Zend_Validate_File_Hash
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the given file confirms the set hash
      *
      * @param  string $value Filename to check for hash
-     * @param  array  $file  File data from Zend_File_Transfer
+     * @param  array  $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }
 

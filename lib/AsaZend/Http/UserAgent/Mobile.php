@@ -13,29 +13,29 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
 
-require_once 'Zend/Http/UserAgent/AbstractDevice.php';
+require_once 'AsaZend/Http/UserAgent/AbstractDevice.php';
 
 /**
  * Mobile browser type matcher
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage UserAgent
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Http_UserAgent_Mobile extends Zend_Http_UserAgent_AbstractDevice
+class AsaZend_Http_UserAgent_Mobile extends AsaZend_Http_UserAgent_AbstractDevice
 {
 
-    const DEFAULT_FEATURES_ADAPTER_CLASSNAME = 'Zend_Http_UserAgent_Features_Adapter_WurflApi';
+    const DEFAULT_FEATURES_ADAPTER_CLASSNAME = 'AsaZend_Http_UserAgent_Features_Adapter_WurflApi';
 
-    const DEFAULT_FEATURES_ADAPTER_PATH = 'Zend/Http/UserAgent/Features/Adapter/WurflApi.php';
+    const DEFAULT_FEATURES_ADAPTER_PATH = 'AsaZend/Http/UserAgent/Features/Adapter/WurflApi.php';
 
     /**
      * User Agent Signatures
