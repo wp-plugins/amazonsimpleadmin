@@ -3,7 +3,7 @@ Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
 Tested up to: 3.2.1
-Stable tag: 0.9.10
+Stable tag: 0.9.10.1
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -13,6 +13,14 @@ Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] 
 AmazonSimpleAdmin lets you easily integrate Amazon products into your wordpress pages.
 By using the template feature, you can present the products in different styles on different pages. All by typing simple BBCode tags.
 AmazonSimpleAdmin requires `PHP5`.
+
+For the latest information visit the plugin homepage:
+
+http://www.wp-amazon-plugin.com/
+
+Here you can find a detailed documentation:
+
+http://www.wp-amazon-plugin.com/guide/
 
 Features:
 
@@ -27,13 +35,6 @@ Features:
 * Since version 0.9.6 compatible with Amazons Product Advertising API changes by August 15, 2009 which require all requests to be authenticated using request signatures
 * Version 0.9.7 supports customer reviews again!
 
-For the latest information visit the plugin homepage:
-
-http://www.wp-amazon-plugin.com/
-
-Here you can find a detailed documentation:
-
-http://www.wp-amazon-plugin.com/guide/
 
 == Installation ==
 
@@ -51,6 +52,9 @@ Here you can find a detailed documentation:
 http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+= 0.9.10.1 =
+* Fix: Fixed error: Class 'Asa' not found in .../AsaCore.php on line 384 
+
 = 0.9.10 =
 * Fix: Update to API version 2011-08-01. The associate tag is now mandatory!
 * New: Support of Amazon Italy, Spain and China

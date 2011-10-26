@@ -381,7 +381,6 @@ class AmazonSimpleAdmin {
 	protected function _getBackupDestination()
 	{
 	    $tmp = get_temp_dir() . 'amazonsimpleadmin_tpl_backup' . DIRECTORY_SEPARATOR;
-	    Asa::debug($tmp);
 	    return $tmp;
 	}
 	
