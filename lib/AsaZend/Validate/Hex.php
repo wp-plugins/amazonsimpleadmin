@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Hex.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Hex extends Zend_Validate_Abstract
+class AsaZend_Validate_Hex extends AsaZend_Validate_Abstract
 {
     const INVALID = 'hexInvalid';
     const NOT_HEX = 'notHex';
@@ -46,7 +46,7 @@ class Zend_Validate_Hex extends Zend_Validate_Abstract
     );
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if $value contains only hexadecimal digit characters
      *

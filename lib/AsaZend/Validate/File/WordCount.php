@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: WordCount.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_File_Count
+ * @see AsaZend_Validate_File_Count
  */
-require_once 'Zend/Validate/File/Count.php';
+require_once 'AsaZend/Validate/File/Count.php';
 
 /**
  * Validator for counting all words in a file
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_WordCount extends Zend_Validate_File_Count
+class AsaZend_Validate_File_WordCount extends AsaZend_Validate_File_Count
 {
     /**#@+
      * @const string Error constants
@@ -52,20 +52,20 @@ class Zend_Validate_File_WordCount extends Zend_Validate_File_Count
     );
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the counted words are at least min and
      * not bigger than max (when max is not null).
      *
      * @param  string $value Filename to check for word count
-     * @param  array  $file  File data from Zend_File_Transfer
+     * @param  array  $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }
 

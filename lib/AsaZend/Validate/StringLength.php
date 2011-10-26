@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: StringLength.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_StringLength extends Zend_Validate_Abstract
+class AsaZend_Validate_StringLength extends AsaZend_Validate_Abstract
 {
     const INVALID   = 'stringLengthInvalid';
     const TOO_SHORT = 'stringLengthTooShort';
@@ -79,12 +79,12 @@ class Zend_Validate_StringLength extends Zend_Validate_Abstract
     /**
      * Sets validator options
      *
-     * @param  integer|array|Zend_Config $options
+     * @param  integer|array|AsaZend_Config $options
      * @return void
      */
     public function __construct($options = array())
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } else if (!is_array($options)) {
             $options     = func_get_args();
@@ -128,17 +128,17 @@ class Zend_Validate_StringLength extends Zend_Validate_Abstract
      * Sets the min option
      *
      * @param  integer $min
-     * @throws Zend_Validate_Exception
-     * @return Zend_Validate_StringLength Provides a fluent interface
+     * @throws AsaZend_Validate_Exception
+     * @return AsaZend_Validate_StringLength Provides a fluent interface
      */
     public function setMin($min)
     {
         if (null !== $this->_max && $min > $this->_max) {
             /**
-             * @see Zend_Validate_Exception
+             * @see AsaZend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception("The minimum must be less than or equal to the maximum length, but $min >"
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception("The minimum must be less than or equal to the maximum length, but $min >"
                                             . " $this->_max");
         }
         $this->_min = max(0, (integer) $min);
@@ -159,8 +159,8 @@ class Zend_Validate_StringLength extends Zend_Validate_Abstract
      * Sets the max option
      *
      * @param  integer|null $max
-     * @throws Zend_Validate_Exception
-     * @return Zend_Validate_StringLength Provides a fluent interface
+     * @throws AsaZend_Validate_Exception
+     * @return AsaZend_Validate_StringLength Provides a fluent interface
      */
     public function setMax($max)
     {
@@ -168,10 +168,10 @@ class Zend_Validate_StringLength extends Zend_Validate_Abstract
             $this->_max = null;
         } else if ($max < $this->_min) {
             /**
-             * @see Zend_Validate_Exception
+             * @see AsaZend_Validate_Exception
              */
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception("The maximum must be greater than or equal to the minimum length, but "
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception("The maximum must be greater than or equal to the minimum length, but "
                                             . "$max < $this->_min");
         } else {
             $this->_max = (integer) $max;
@@ -194,7 +194,7 @@ class Zend_Validate_StringLength extends Zend_Validate_Abstract
      * Sets a new encoding to use
      *
      * @param string $encoding
-     * @return Zend_Validate_StringLength
+     * @return AsaZend_Validate_StringLength
      */
     public function setEncoding($encoding = null)
     {
@@ -202,8 +202,8 @@ class Zend_Validate_StringLength extends Zend_Validate_Abstract
             $orig   = iconv_get_encoding('internal_encoding');
             $result = iconv_set_encoding('internal_encoding', $encoding);
             if (!$result) {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception('Given encoding not supported on this OS!');
+                require_once 'AsaZend/Validate/Exception.php';
+                throw new AsaZend_Validate_Exception('Given encoding not supported on this OS!');
             }
 
             iconv_set_encoding('internal_encoding', $orig);
@@ -214,7 +214,7 @@ class Zend_Validate_StringLength extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the string length of $value is at least the min option and
      * no greater than the max option (when the max option is not null).

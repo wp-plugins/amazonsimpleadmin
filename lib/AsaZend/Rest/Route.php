@@ -13,31 +13,31 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Route.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 /**
- * @see Zend_Controller_Router_Route_Interface
+ * @see AsaZend_Controller_Router_Route_Interface
  */
-require_once 'Zend/Controller/Router/Route/Interface.php';
+require_once 'AsaZend/Controller/Router/Route/Interface.php';
 
 /**
- * @see Zend_Controller_Router_Route_Module
+ * @see AsaZend_Controller_Router_Route_Module
  */
-require_once 'Zend/Controller/Router/Route/Module.php';
+require_once 'AsaZend/Controller/Router/Route/Module.php';
 
 /**
- * @see Zend_Controller_Dispatcher_Interface
+ * @see AsaZend_Controller_Dispatcher_Interface
  */
-require_once 'Zend/Controller/Dispatcher/Interface.php';
+require_once 'AsaZend/Controller/Dispatcher/Interface.php';
 
 /**
- * @see Zend_Controller_Request_Abstract
+ * @see AsaZend_Controller_Request_Abstract
  */
-require_once 'Zend/Controller/Request/Abstract.php';
+require_once 'AsaZend/Controller/Request/Abstract.php';
 
 /**
  * Rest Route
@@ -45,11 +45,11 @@ require_once 'Zend/Controller/Request/Abstract.php';
  * Request-aware route for RESTful modular routing
  *
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
+class AsaZend_Rest_Route extends AsaZend_Controller_Router_Route_Module
 {
     /**
      * Specific Modules to receive RESTful routes
@@ -64,18 +64,18 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
     protected $_restfulControllers = null;
 
     /**
-     * @var Zend_Controller_Front
+     * @var AsaZend_Controller_Front
      */
     protected $_front;
 
     /**
      * Constructor
      *
-     * @param Zend_Controller_Front $front Front Controller object
+     * @param AsaZend_Controller_Front $front Front Controller object
      * @param array $defaults Defaults for map variables with keys as variable names
      * @param array $responders Modules or controllers to receive RESTful routes
      */
-    public function __construct(Zend_Controller_Front $front,
+    public function __construct(AsaZend_Controller_Front $front,
         array $defaults = array(),
         array $responders = array()
     ) {
@@ -90,11 +90,11 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
     }
 
     /**
-     * Instantiates route based on passed Zend_Config structure
+     * Instantiates route based on passed AsaZend_Config structure
      */
-    public static function getInstance(Zend_Config $config)
+    public static function getInstance(AsaZend_Config $config)
     {
-        $frontController = Zend_Controller_Front::getInstance();
+        $frontController = AsaZend_Controller_Front::getInstance();
         $defaultsArray = array();
         $restfulConfigArray = array();
         foreach ($config as $key => $values) {
@@ -118,12 +118,12 @@ class Zend_Rest_Route extends Zend_Controller_Router_Route_Module
      * setControllerName(), and setActionName() accessors to set those values.
      * Always returns the values as an array.
      *
-     * @param Zend_Controller_Request_Http $request Request used to match against this routing ruleset
+     * @param AsaZend_Controller_Request_Http $request Request used to match against this routing ruleset
      * @return array An array of assigned values or a false on a mismatch
      */
     public function match($request, $partial = false)
     {
-        if (!$request instanceof Zend_Controller_Request_Http) {
+        if (!$request instanceof AsaZend_Controller_Request_Http) {
             $request = $this->_front->getRequest();
         }
         $this->_request = $request;

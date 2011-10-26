@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Iban.php 22400 2010-06-09 19:25:02Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * Validates IBAN Numbers (International Bank Account Numbers)
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Iban extends Zend_Validate_Abstract
+class AsaZend_Validate_Iban extends AsaZend_Validate_Abstract
 {
     const NOTSUPPORTED = 'ibanNotSupported';
     const FALSEFORMAT  = 'ibanFalseFormat';
@@ -52,7 +52,7 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
     /**
      * Optional locale
      *
-     * @var string|Zend_Locale|null
+     * @var string|AsaZend_Locale|null
      */
     protected $_locale;
 
@@ -106,12 +106,12 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
     /**
      * Sets validator options
      *
-     * @param  string|Zend_Config|Zend_Locale $locale OPTIONAL
+     * @param  string|AsaZend_Config|AsaZend_Locale $locale OPTIONAL
      * @return void
      */
     public function __construct($locale = null)
     {
-        if ($locale instanceof Zend_Config) {
+        if ($locale instanceof AsaZend_Config) {
             $locale = $locale->toArray();
         }
 
@@ -124,9 +124,9 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
         }
 
         if (empty($locale)) {
-            require_once 'Zend/Registry.php';
-            if (Zend_Registry::isRegistered('Zend_Locale')) {
-                $locale = Zend_Registry::get('Zend_Locale');
+            require_once 'AsaZend/Registry.php';
+            if (AsaZend_Registry::isRegistered('AsaZend_Locale')) {
+                $locale = AsaZend_Registry::get('AsaZend_Locale');
             }
         }
 
@@ -138,7 +138,7 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
     /**
      * Returns the locale option
      *
-     * @return string|Zend_Locale|null
+     * @return string|AsaZend_Locale|null
      */
     public function getLocale()
     {
@@ -148,17 +148,17 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
     /**
      * Sets the locale option
      *
-     * @param  string|Zend_Locale $locale
-     * @return Zend_Validate_Date provides a fluent interface
+     * @param  string|AsaZend_Locale $locale
+     * @return AsaZend_Validate_Date provides a fluent interface
      */
     public function setLocale($locale = null)
     {
         if ($locale !== false) {
-            require_once 'Zend/Locale.php';
-            $locale = Zend_Locale::findLocale($locale);
+            require_once 'AsaZend/Locale.php';
+            $locale = AsaZend_Locale::findLocale($locale);
             if (strlen($locale) < 4) {
-                require_once 'Zend/Validate/Exception.php';
-                throw new Zend_Validate_Exception('Region must be given for IBAN validation');
+                require_once 'AsaZend/Validate/Exception.php';
+                throw new AsaZend_Validate_Exception('Region must be given for IBAN validation');
             }
         }
 
@@ -167,7 +167,7 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if $value is a valid IBAN
      *
@@ -182,7 +182,7 @@ class Zend_Validate_Iban extends Zend_Validate_Abstract
         if (empty($this->_locale)) {
             $region = substr($value, 0, 2);
         } else {
-            $region = new Zend_Locale($this->_locale);
+            $region = new AsaZend_Locale($this->_locale);
             $region = $region->getRegion();
         }
 

@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Apc.php 20096 2010-01-06 02:05:09Z bkarwin $
@@ -22,41 +22,41 @@
 
 
 /**
- * @see Zend_Cache_Backend_Interface
+ * @see AsaZend_Cache_Backend_Interface
  */
-require_once 'Zend/Cache/Backend/ExtendedInterface.php';
+require_once 'AsaZend/Cache/Backend/ExtendedInterface.php';
 
 /**
- * @see Zend_Cache_Backend
+ * @see AsaZend_Cache_Backend
  */
-require_once 'Zend/Cache/Backend.php';
+require_once 'AsaZend/Cache/Backend.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
+class AsaZend_Cache_Backend_Apc extends AsaZend_Cache_Backend implements AsaZend_Cache_Backend_ExtendedInterface
 {
     /**
      * Log message
      */
-    const TAGS_UNSUPPORTED_BY_CLEAN_OF_APC_BACKEND = 'Zend_Cache_Backend_Apc::clean() : tags are unsupported by the Apc backend';
-    const TAGS_UNSUPPORTED_BY_SAVE_OF_APC_BACKEND =  'Zend_Cache_Backend_Apc::save() : tags are unsupported by the Apc backend';
+    const TAGS_UNSUPPORTED_BY_CLEAN_OF_APC_BACKEND = 'AsaZend_Cache_Backend_Apc::clean() : tags are unsupported by the Apc backend';
+    const TAGS_UNSUPPORTED_BY_SAVE_OF_APC_BACKEND =  'AsaZend_Cache_Backend_Apc::save() : tags are unsupported by the Apc backend';
 
     /**
      * Constructor
      *
      * @param  array $options associative array of options
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function __construct(array $options = array())
     {
         if (!extension_loaded('apc')) {
-            Zend_Cache::throwException('The apc extension must be loaded for using this backend !');
+            AsaZend_Cache::throwException('The apc extension must be loaded for using this backend !');
         }
         parent::__construct($options);
     }
@@ -139,25 +139,25 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
      *
      * @param  string $mode clean mode
      * @param  array  $tags array of tags
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return boolean true if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = AsaZend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         switch ($mode) {
-            case Zend_Cache::CLEANING_MODE_ALL:
+            case AsaZend_Cache::CLEANING_MODE_ALL:
                 return apc_clear_cache('user');
                 break;
-            case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_Apc::clean() : CLEANING_MODE_OLD is unsupported by the Apc backend");
+            case AsaZend_Cache::CLEANING_MODE_OLD:
+                $this->_log("AsaZend_Cache_Backend_Apc::clean() : CLEANING_MODE_OLD is unsupported by the Apc backend");
                 break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
                 $this->_log(self::TAGS_UNSUPPORTED_BY_CLEAN_OF_APC_BACKEND);
                 break;
             default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
+                AsaZend_Cache::throwException('Invalid mode for clean() method');
                 break;
         }
     }
@@ -178,7 +178,7 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
     /**
      * Return the filling percentage of the backend storage
      *
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return int integer between 0 and 100
      */
     public function getFillingPercentage()
@@ -188,7 +188,7 @@ class Zend_Cache_Backend_Apc extends Zend_Cache_Backend implements Zend_Cache_Ba
         $memAvailable= $mem['avail_mem'];
         $memUsed = $memSize - $memAvailable;
         if ($memSize == 0) {
-            Zend_Cache::throwException('can\'t get apc memory size');
+            AsaZend_Cache::throwException('can\'t get apc memory size');
         }
         if ($memUsed > $memSize) {
             return 100;

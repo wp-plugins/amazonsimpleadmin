@@ -1,6 +1,6 @@
 <?php
 
-class Zend_Service_Amazon_Language
+class AsaZend_Service_Amazon_Language
 {
 	protected $_itemXml;
 	

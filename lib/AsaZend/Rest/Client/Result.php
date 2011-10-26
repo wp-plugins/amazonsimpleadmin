@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @subpackage Client
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -22,12 +22,12 @@
 
 /**
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @subpackage Client
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Rest_Client_Result implements IteratorAggregate {
+class AsaZend_Rest_Client_Result implements IteratorAggregate {
     /**
      * @var SimpleXMLElement
      */
@@ -57,8 +57,8 @@ class Zend_Rest_Client_Result implements IteratorAggregate {
                 $message = "REST Response Error: " . $this->_errstr;
                 $this->_errstr = null;
             }
-            require_once "Zend/Rest/Client/Result/Exception.php";
-            throw new Zend_Rest_Client_Result_Exception($message);
+            require_once "AsaZend/Rest/Client/Result/Exception.php";
+            throw new AsaZend_Rest_Client_Result_Exception($message);
         }
     }
 
@@ -94,7 +94,7 @@ class Zend_Rest_Client_Result implements IteratorAggregate {
      * Get Property Overload
      *
      * @param string $name
-     * @return null|SimpleXMLElement|array Null if not found, SimpleXMLElement if only one value found, array of Zend_Rest_Client_Result objects otherwise
+     * @return null|SimpleXMLElement|array Null if not found, SimpleXMLElement if only one value found, array of AsaZend_Rest_Client_Result objects otherwise
      */
     public function __get($name)
     {

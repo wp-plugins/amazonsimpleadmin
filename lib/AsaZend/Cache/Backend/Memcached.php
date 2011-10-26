@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Memcached.php 22207 2010-05-20 16:47:16Z mabe $
@@ -22,23 +22,23 @@
 
 
 /**
- * @see Zend_Cache_Backend_Interface
+ * @see AsaZend_Cache_Backend_Interface
  */
-require_once 'Zend/Cache/Backend/ExtendedInterface.php';
+require_once 'AsaZend/Cache/Backend/ExtendedInterface.php';
 
 /**
- * @see Zend_Cache_Backend
+ * @see AsaZend_Cache_Backend
  */
-require_once 'Zend/Cache/Backend.php';
+require_once 'AsaZend/Cache/Backend.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Cache_Backend_ExtendedInterface
+class AsaZend_Cache_Backend_Memcached extends AsaZend_Cache_Backend implements AsaZend_Cache_Backend_ExtendedInterface
 {
     /**
      * Default Values
@@ -55,8 +55,8 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
     /**
      * Log message
      */
-    const TAGS_UNSUPPORTED_BY_CLEAN_OF_MEMCACHED_BACKEND = 'Zend_Cache_Backend_Memcached::clean() : tags are unsupported by the Memcached backend';
-    const TAGS_UNSUPPORTED_BY_SAVE_OF_MEMCACHED_BACKEND =  'Zend_Cache_Backend_Memcached::save() : tags are unsupported by the Memcached backend';
+    const TAGS_UNSUPPORTED_BY_CLEAN_OF_MEMCACHED_BACKEND = 'AsaZend_Cache_Backend_Memcached::clean() : tags are unsupported by the Memcached backend';
+    const TAGS_UNSUPPORTED_BY_SAVE_OF_MEMCACHED_BACKEND =  'AsaZend_Cache_Backend_Memcached::save() : tags are unsupported by the Memcached backend';
 
     /**
      * Available options
@@ -114,13 +114,13 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
      * Constructor
      *
      * @param array $options associative array of options
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function __construct(array $options = array())
     {
         if (!extension_loaded('memcache')) {
-            Zend_Cache::throwException('The memcache extension must be loaded for using this backend !');
+            AsaZend_Cache::throwException('The memcache extension must be loaded for using this backend !');
         }
         parent::__construct($options);
         if (isset($this->_options['servers'])) {
@@ -253,25 +253,25 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
      *
      * @param  string $mode Clean mode
      * @param  array  $tags Array of tags
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return boolean True if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array())
+    public function clean($mode = AsaZend_Cache::CLEANING_MODE_ALL, $tags = array())
     {
         switch ($mode) {
-            case Zend_Cache::CLEANING_MODE_ALL:
+            case AsaZend_Cache::CLEANING_MODE_ALL:
                 return $this->_memcache->flush();
                 break;
-            case Zend_Cache::CLEANING_MODE_OLD:
-                $this->_log("Zend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
+            case AsaZend_Cache::CLEANING_MODE_OLD:
+                $this->_log("AsaZend_Cache_Backend_Memcached::clean() : CLEANING_MODE_OLD is unsupported by the Memcached backend");
                 break;
-            case Zend_Cache::CLEANING_MODE_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
-            case Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_NOT_MATCHING_TAG:
+            case AsaZend_Cache::CLEANING_MODE_MATCHING_ANY_TAG:
                 $this->_log(self::TAGS_UNSUPPORTED_BY_CLEAN_OF_MEMCACHED_BACKEND);
                 break;
                default:
-                Zend_Cache::throwException('Invalid mode for clean() method');
+                AsaZend_Cache::throwException('Invalid mode for clean() method');
                    break;
         }
     }
@@ -290,7 +290,7 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
      * Set the frontend directives
      *
      * @param  array $directives Assoc of directives
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return void
      */
     public function setDirectives($directives)
@@ -314,7 +314,7 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
      */
     public function getIds()
     {
-        $this->_log("Zend_Cache_Backend_Memcached::save() : getting the list of cache ids is unsupported by the Memcache backend");
+        $this->_log("AsaZend_Cache_Backend_Memcached::save() : getting the list of cache ids is unsupported by the Memcache backend");
         return array();
     }
 
@@ -374,7 +374,7 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
     /**
      * Return the filling percentage of the backend storage
      *
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      * @return int integer between 0 and 100
      */
     public function getFillingPercentage()
@@ -400,7 +400,7 @@ class Zend_Cache_Backend_Memcached extends Zend_Cache_Backend implements Zend_Ca
         }
 
         if ($memSize === null || $memUsed === null) {
-            Zend_Cache::throwException('Can\'t get filling percentage');
+            AsaZend_Cache::throwException('Can\'t get filling percentage');
         }
 
         return ((int) (100. * ($memUsed / $memSize)));

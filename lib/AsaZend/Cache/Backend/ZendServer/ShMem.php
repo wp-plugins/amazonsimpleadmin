@@ -13,39 +13,39 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: ShMem.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 
-/** @see Zend_Cache_Backend_Interface */
-require_once 'Zend/Cache/Backend/Interface.php';
+/** @see AsaZend_Cache_Backend_Interface */
+require_once 'AsaZend/Cache/Backend/Interface.php';
 
-/** @see Zend_Cache_Backend_ZendServer */
-require_once 'Zend/Cache/Backend/ZendServer.php';
+/** @see AsaZend_Cache_Backend_ZendServer */
+require_once 'AsaZend/Cache/Backend/ZendServer.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Backend_ZendServer_ShMem extends Zend_Cache_Backend_ZendServer implements Zend_Cache_Backend_Interface
+class AsaZend_Cache_Backend_ZendServer_ShMem extends AsaZend_Cache_Backend_ZendServer implements AsaZend_Cache_Backend_Interface
 {
     /**
      * Constructor
      *
      * @param  array $options associative array of options
-     * @throws Zend_Cache_Exception
+     * @throws AsaZend_Cache_Exception
      */
     public function __construct(array $options = array())
     {
         if (!function_exists('zend_shm_cache_store')) {
-            Zend_Cache::throwException('Zend_Cache_ZendServer_ShMem backend has to be used within Zend Server environment.');
+            AsaZend_Cache::throwException('AsaZend_Cache_ZendServer_ShMem backend has to be used within Zend Server environment.');
         }
         parent::__construct($options);
     }

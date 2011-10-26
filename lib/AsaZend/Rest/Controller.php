@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Rest
+ * @package    AsaZend_Rest
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Controller.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
-/** Zend_Controller_Action */
-require_once 'Zend/Controller/Action.php';
+/** AsaZend_Controller_Action */
+require_once 'AsaZend/Controller/Action.php';
 
 /**
  * An abstract class to guide implementation of action controllers for use with
- * Zend_Rest_Route.
+ * AsaZend_Rest_Route.
  *
  * @category   Zend
- * @package Zend_Rest
- * @see Zend_Rest_Route
+ * @package AsaZend_Rest
+ * @see AsaZend_Rest_Route
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-abstract class Zend_Rest_Controller extends Zend_Controller_Action
+abstract class AsaZend_Rest_Controller extends AsaZend_Controller_Action
 {
     /**
      * The index action handles index/list requests; it should respond with a

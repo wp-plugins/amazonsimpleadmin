@@ -13,24 +13,24 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Upca.php 20096 2010-01-06 02:05:09Z bkarwin $
  */
 
 /**
- * @see Zend_Validate_Barcode_AdapterAbstract
+ * @see AsaZend_Validate_Barcode_AdapterAbstract
  */
-require_once 'Zend/Validate/Barcode/AdapterAbstract.php';
+require_once 'AsaZend/Validate/Barcode/AdapterAbstract.php';
 
 /**
  * @category   Zend
- * @package    Zend_Validate
+ * @package    AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_Barcode_Upca extends Zend_Validate_Barcode_AdapterAbstract
+class AsaZend_Validate_Barcode_Upca extends AsaZend_Validate_Barcode_AdapterAbstract
 {
     /**
      * Allowed barcode lengths

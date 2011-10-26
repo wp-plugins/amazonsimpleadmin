@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Capture.php 22662 2010-07-24 17:37:36Z mabe $
@@ -22,18 +22,18 @@
 
 
 /**
- * @see Zend_Cache_Core
+ * @see AsaZend_Cache_Core
  */
-require_once 'Zend/Cache/Core.php';
+require_once 'AsaZend/Cache/Core.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Frontend_Capture extends Zend_Cache_Core
+class AsaZend_Cache_Frontend_Capture extends AsaZend_Cache_Core
 {
     /**
      * Page identifiers
@@ -76,7 +76,7 @@ class Zend_Cache_Frontend_Capture extends Zend_Cache_Core
     {
         $id = array_pop($this->_idStack);
         if ($id === null) {
-            Zend_Cache::throwException('use of _flush() without a start()');
+            AsaZend_Cache::throwException('use of _flush() without a start()');
         }
         if ($this->_extension) {
             $this->save(serialize(array($data, $this->_extension)), $id, $this->_tags);

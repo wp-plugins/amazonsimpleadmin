@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -24,12 +24,12 @@
 
 /**
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_Accessories
+class AsaZend_Service_Amazon_Accessories
 {
     /**
      * @var string
@@ -50,7 +50,7 @@ class Zend_Service_Amazon_Accessories
     public function __construct(DOMElement $dom)
     {
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. Asa_Service_Amazon::$api_version);
         foreach (array('ASIN', 'Title') as $el) {
             $this->$el = (string) $xpath->query("./az:$el/text()", $dom)->item(0)->data;
         }

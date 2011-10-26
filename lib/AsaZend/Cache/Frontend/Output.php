@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Output.php 20096 2010-01-06 02:05:09Z bkarwin $
@@ -22,18 +22,18 @@
 
 
 /**
- * @see Zend_Cache_Core
+ * @see AsaZend_Cache_Core
  */
-require_once 'Zend/Cache/Core.php';
+require_once 'AsaZend/Cache/Core.php';
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Frontend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Frontend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Cache_Frontend_Output extends Zend_Cache_Core
+class AsaZend_Cache_Frontend_Output extends AsaZend_Cache_Core
 {
 
     private $_idStack = array();
@@ -95,7 +95,7 @@ class Zend_Cache_Frontend_Output extends Zend_Cache_Core
         }
         $id = array_pop($this->_idStack);
         if ($id === null) {
-            Zend_Cache::throwException('use of end() without a start()');
+            AsaZend_Cache::throwException('use of end() without a start()');
         }
         $this->save($data, $id, $tags, $specificLifetime, $priority);
         if ($echoData) {

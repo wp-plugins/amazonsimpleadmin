@@ -13,26 +13,26 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  * @version   $Id: Hash.php 22668 2010-07-25 14:50:46Z thomas $
  */
 
 /**
- * @see Zend_Validate_Abstract
+ * @see AsaZend_Validate_Abstract
  */
-require_once 'Zend/Validate/Abstract.php';
+require_once 'AsaZend/Validate/Abstract.php';
 
 /**
  * Validator for the hash of given files
  *
  * @category  Zend
- * @package   Zend_Validate
+ * @package   AsaZend_Validate
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Validate_File_Hash extends Zend_Validate_Abstract
+class AsaZend_Validate_File_Hash extends AsaZend_Validate_Abstract
 {
     /**
      * @const string Error constants
@@ -65,13 +65,13 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
      */
     public function __construct($options)
     {
-        if ($options instanceof Zend_Config) {
+        if ($options instanceof AsaZend_Config) {
             $options = $options->toArray();
         } elseif (is_scalar($options)) {
             $options = array('hash1' => $options);
         } elseif (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception('Invalid options to validator provided');
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception('Invalid options to validator provided');
         }
 
         if (1 < func_num_args()) {
@@ -95,7 +95,7 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
      * Sets the hash for one or multiple files
      *
      * @param  string|array $options
-     * @return Zend_Validate_File_Hash Provides a fluent interface
+     * @return AsaZend_Validate_File_Hash Provides a fluent interface
      */
     public function setHash($options)
     {
@@ -109,15 +109,15 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
      * Adds the hash for one or multiple files
      *
      * @param  string|array $options
-     * @return Zend_Validate_File_Hash Provides a fluent interface
+     * @return AsaZend_Validate_File_Hash Provides a fluent interface
      */
     public function addHash($options)
     {
         if (is_string($options)) {
             $options = array($options);
         } else if (!is_array($options)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception("False parameter given");
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception("False parameter given");
         }
 
         $known = hash_algos();
@@ -129,8 +129,8 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
         }
 
         if (!in_array($algorithm, $known)) {
-            require_once 'Zend/Validate/Exception.php';
-            throw new Zend_Validate_Exception("Unknown algorithm '{$algorithm}'");
+            require_once 'AsaZend/Validate/Exception.php';
+            throw new AsaZend_Validate_Exception("Unknown algorithm '{$algorithm}'");
         }
 
         foreach ($options as $value) {
@@ -141,19 +141,19 @@ class Zend_Validate_File_Hash extends Zend_Validate_Abstract
     }
 
     /**
-     * Defined by Zend_Validate_Interface
+     * Defined by AsaZend_Validate_Interface
      *
      * Returns true if and only if the given file confirms the set hash
      *
      * @param  string $value Filename to check for hash
-     * @param  array  $file  File data from Zend_File_Transfer
+     * @param  array  $file  File data from AsaZend_File_Transfer
      * @return boolean
      */
     public function isValid($value, $file = null)
     {
         // Is file readable ?
-        require_once 'Zend/Loader.php';
-        if (!Zend_Loader::isReadable($value)) {
+        require_once 'AsaZend/Loader.php';
+        if (!AsaZend_Loader::isReadable($value)) {
             return $this->_throw($file, self::NOT_FOUND);
         }
 

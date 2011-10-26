@@ -13,7 +13,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Crypt.php 23089 2010-10-12 17:05:31Z padraic $
@@ -21,11 +21,11 @@
 
 /**
  * @category   Zend
- * @package    Zend_Crypt
+ * @package    AsaZend_Crypt
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Crypt
+class AsaZend_Crypt
 {
 
     const TYPE_OPENSSL = 'openssl';
@@ -92,7 +92,7 @@ class Zend_Crypt
 
     /**
      * @param string $algorithm
-     * @throws Zend_Crypt_Exception
+     * @throws AsaZend_Crypt_Exception
      */
     protected static function _detectHashSupport($algorithm)
     {
@@ -118,10 +118,10 @@ class Zend_Crypt
             }
         }
         /**
-         * @see Zend_Crypt_Exception
+         * @see AsaZend_Crypt_Exception
          */
-        require_once 'Zend/Crypt/Exception.php';
-        throw new Zend_Crypt_Exception('\'' . $algorithm . '\' is not supported by any available extension or native function');
+        require_once 'AsaZend/Crypt/Exception.php';
+        throw new AsaZend_Crypt_Exception('\'' . $algorithm . '\' is not supported by any available extension or native function');
     }
 
     /**

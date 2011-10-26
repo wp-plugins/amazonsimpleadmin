@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -23,19 +23,19 @@
 
 
 /**
- * @see Zend_Service_Amazon_Item
+ * @see AsaZend_Service_Amazon_Item
  */
-require_once 'Zend/Service/Amazon/Item.php';
+require_once 'AsaZend/Service/Amazon/Item.php';
 
 
 /**
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_ResultSet implements SeekableIterator
+class AsaZend_Service_Amazon_ResultSet implements SeekableIterator
 {
     /**
      * A DOMNodeList of <Item> elements
@@ -66,7 +66,7 @@ class Zend_Service_Amazon_ResultSet implements SeekableIterator
     protected $_currentIndex = 0;
 
     /**
-     * Create an instance of Zend_Service_Amazon_ResultSet and create the necessary data objects
+     * Create an instance of AsaZend_Service_Amazon_ResultSet and create the necessary data objects
      *
      * @param  DOMDocument $dom
      * @return void
@@ -75,7 +75,7 @@ class Zend_Service_Amazon_ResultSet implements SeekableIterator
     {
         $this->_dom = $dom;
         $this->_xpath = new DOMXPath($dom);
-        $this->_xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $this->_xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. Asa_Service_Amazon::$api_version);
         $this->_results = $this->_xpath->query('//az:Item');
     }
 
@@ -104,11 +104,11 @@ class Zend_Service_Amazon_ResultSet implements SeekableIterator
     /**
      * Implement SeekableIterator::current()
      *
-     * @return Zend_Service_Amazon_Item
+     * @return AsaZend_Service_Amazon_Item
      */
     public function current()
     {
-        return new Zend_Service_Amazon_Item($this->_results->item($this->_currentIndex));
+        return new AsaZend_Service_Amazon_Item($this->_results->item($this->_currentIndex));
     }
 
     /**

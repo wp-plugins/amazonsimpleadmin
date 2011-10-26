@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
@@ -24,12 +24,12 @@
 
 /**
  * @category   Zend
- * @package    Zend_Service
+ * @package    AsaZend_Service
  * @subpackage Amazon
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-class Zend_Service_Amazon_OfferSet
+class AsaZend_Service_Amazon_OfferSet
 {
     /**
      * @var string
@@ -82,7 +82,7 @@ class Zend_Service_Amazon_OfferSet
     public $TotalRefurbished;
 
     /**
-     * @var Zend_Service_Amazon_Offer[]
+     * @var AsaZend_Service_Amazon_Offer[]
      */
     public $Offers;
 
@@ -95,7 +95,7 @@ class Zend_Service_Amazon_OfferSet
     public function __construct(DOMElement $dom)
     {
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. Asa_Service_Amazon::$api_version);
 
         $offer = $xpath->query('./az:OfferSummary', $dom);
         if ($offer->length == 1) {
@@ -119,11 +119,11 @@ class Zend_Service_Amazon_OfferSet
         $offers = $xpath->query('./az:Offers/az:Offer', $dom);
         if ($offers->length >= 1) {
             /**
-             * @see Zend_Service_Amazon_Offer
+             * @see AsaZend_Service_Amazon_Offer
              */
-            require_once 'Zend/Service/Amazon/Offer.php';
+            require_once 'AsaZend/Service/Amazon/Offer.php';
             foreach ($offers as $offer) {
-                $this->Offers[] = new Zend_Service_Amazon_Offer($offer);
+                $this->Offers[] = new AsaZend_Service_Amazon_Offer($offer);
             }
         }
     }

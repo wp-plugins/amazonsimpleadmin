@@ -13,8 +13,8 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  * @version    $Id: Interface.php 20096 2010-01-06 02:05:09Z bkarwin $
@@ -22,12 +22,12 @@
 
 
 /**
- * @package    Zend_Cache
- * @subpackage Zend_Cache_Backend
+ * @package    AsaZend_Cache
+ * @subpackage AsaZend_Cache_Backend
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Cache_Backend_Interface
+interface AsaZend_Cache_Backend_Interface
 {
     /**
      * Set the frontend directives
@@ -81,19 +81,19 @@ interface Zend_Cache_Backend_Interface
      * Clean some cache records
      *
      * Available modes are :
-     * Zend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
-     * Zend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
+     * AsaZend_Cache::CLEANING_MODE_ALL (default)    => remove all cache entries ($tags is not used)
+     * AsaZend_Cache::CLEANING_MODE_OLD              => remove too old cache entries ($tags is not used)
+     * AsaZend_Cache::CLEANING_MODE_MATCHING_TAG     => remove cache entries matching all given tags
      *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
+     * AsaZend_Cache::CLEANING_MODE_NOT_MATCHING_TAG => remove cache entries not {matching one of the given tags}
      *                                               ($tags can be an array of strings or a single string)
-     * Zend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
+     * AsaZend_Cache::CLEANING_MODE_MATCHING_ANY_TAG => remove cache entries matching any given tags
      *                                               ($tags can be an array of strings or a single string)
      *
      * @param  string $mode Clean mode
      * @param  array  $tags Array of tags
      * @return boolean true if no problem
      */
-    public function clean($mode = Zend_Cache::CLEANING_MODE_ALL, $tags = array());
+    public function clean($mode = AsaZend_Cache::CLEANING_MODE_ALL, $tags = array());
 
 }

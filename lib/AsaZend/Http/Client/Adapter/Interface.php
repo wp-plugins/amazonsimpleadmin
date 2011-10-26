@@ -14,7 +14,7 @@
  * to license@zend.com so we can send you a copy immediately.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage Client_Adapter
  * @version    $Id: Interface.php 20096 2010-01-06 02:05:09Z bkarwin $
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
@@ -22,18 +22,18 @@
  */
 
 /**
- * An interface description for Zend_Http_Client_Adapter classes.
+ * An interface description for AsaZend_Http_Client_Adapter classes.
  *
- * These classes are used as connectors for Zend_Http_Client, performing the
+ * These classes are used as connectors for AsaZend_Http_Client, performing the
  * tasks of connecting, writing, reading and closing connection to the server.
  *
  * @category   Zend
- * @package    Zend_Http
+ * @package    AsaZend_Http
  * @subpackage Client_Adapter
  * @copyright  Copyright (c) 2005-2010 Zend Technologies USA Inc. (http://www.zend.com)
  * @license    http://framework.zend.com/license/new-bsd     New BSD License
  */
-interface Zend_Http_Client_Adapter_Interface
+interface AsaZend_Http_Client_Adapter_Interface
 {
     /**
      * Set the configuration array for the adapter
@@ -55,7 +55,7 @@ interface Zend_Http_Client_Adapter_Interface
      * Send request to the remote server
      *
      * @param string        $method
-     * @param Zend_Uri_Http $url
+     * @param AsaZend_Uri_Http $url
      * @param string        $http_ver
      * @param array         $headers
      * @param string        $body
