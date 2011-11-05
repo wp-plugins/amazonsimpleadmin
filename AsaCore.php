@@ -29,6 +29,8 @@ class AmazonSimpleAdmin {
 		'UK'	=> 'http://www.amazon.co.uk/exec/obidos/ASIN/%s/%s',
 		'US'	=> 'http://www.amazon.com/exec/obidos/ASIN/%s/%s',
 		'IT'	=> 'http://www.amazon.it/exec/obidos/ASIN/%s/%s',
+		'ES'	=> 'http://www.amazon.es/exec/obidos/ASIN/%s/%s',
+		'CN'	=> 'http://www.amazon.cn/exec/obidos/ASIN/%s/%s',
 	);
 	
 	/**
@@ -689,20 +691,22 @@ class AmazonSimpleAdmin {
 				
 				if (count($_POST) > 0 && isset($_POST['info_update'])) {
 					
-					$_asa_amazon_api_key 		= strip_tags($_POST['_asa_amazon_api_key']);
-					$_asa_amazon_api_secret_key	= base64_encode(strip_tags($_POST['_asa_amazon_api_secret_key']));
-					$_asa_amazon_tracking_id 	= strip_tags($_POST['_asa_amazon_tracking_id']);					
-					$_asa_product_preview		= strip_tags($_POST['_asa_product_preview']);
-					$_asa_parse_comments		= strip_tags($_POST['_asa_parse_comments']);
-					$_asa_hide_meta_link		= strip_tags($_POST['_asa_hide_meta_link']);
-		
+					$_asa_amazon_api_key 		 = strip_tags($_POST['_asa_amazon_api_key']);
+					$_asa_amazon_api_secret_key	 = base64_encode(strip_tags($_POST['_asa_amazon_api_secret_key']));
+					$_asa_amazon_tracking_id 	 = strip_tags($_POST['_asa_amazon_tracking_id']);
+					$_asa_product_preview		 = strip_tags($_POST['_asa_product_preview']);
+					$_asa_parse_comments		 = strip_tags($_POST['_asa_parse_comments']);
+					$_asa_hide_meta_link		 = strip_tags($_POST['_asa_hide_meta_link']);
+					$_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
+
 					update_option('_asa_amazon_api_key', $_asa_amazon_api_key);
 					update_option('_asa_amazon_api_secret_key', $_asa_amazon_api_secret_key);
 					update_option('_asa_amazon_tracking_id', $_asa_amazon_tracking_id);
 					update_option('_asa_product_preview', $_asa_product_preview);
 					update_option('_asa_parse_comments', $_asa_parse_comments);
 					update_option('_asa_hide_meta_link', $_asa_hide_meta_link);
-					
+					update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
+
 					if (isset($_POST['_asa_amazon_country_code'])) {
 						$_asa_amazon_country_code = strip_tags($_POST['_asa_amazon_country_code']);						
 						if (!Asa_Service_Amazon::isSupportedCountryCode($_asa_amazon_country_code)) {
@@ -1054,6 +1058,9 @@ class AmazonSimpleAdmin {
 	
 		<label for="_asa_hide_meta_link"><?php _e('Hide link to Asa-Homepage from Meta widget:') ?></label>
         <input type="checkbox" name="_asa_hide_meta_link" id="_asa_hide_meta_link" value="1"<?php echo ((get_option('_asa_hide_meta_link') == true) ? 'checked="checked"' : '') ?> />
+        <br /><br />
+		<label for="_asa_use_short_amazon_links"><?php _e('Use short Amazon links:') ?></label>
+        <input type="checkbox" name="_asa_use_short_amazon_links" id="_asa_use_short_amazon_links" value="1"<?php echo ((get_option('_asa_use_short_amazon_links') == true) ? 'checked="checked"' : '') ?> />
 	
 		<p class="submit">
 		<input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
@@ -1463,7 +1470,14 @@ class AmazonSimpleAdmin {
 			$platform = $item->Platform;
 			if (is_array($platform)) {
 				$platform = implode(', ', $platform);
-			}			
+			}
+
+            if (get_option('_asa_use_short_amazon_links')) {
+                $amazon_url = sprintf($this->amazon_url[$this->_amazon_country_code],
+					$item->ASIN, $this->amazon_tracking_id);
+            } else {
+                $amazon_url = $item->DetailPageURL;
+            }
 			
 
 			
@@ -1486,7 +1500,7 @@ class AmazonSimpleAdmin {
 				$item->Publisher,
 				$item->Studio,
 				$item->Title,
-				$item->DetailPageURL,
+				$amazon_url,
 				empty($totalOffers) ? '0' : $totalOffers,
 				empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
 				$lowestOfferCurrency,
