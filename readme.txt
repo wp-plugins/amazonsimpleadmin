@@ -3,7 +3,7 @@ Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
 Tested up to: 3.2.1
-Stable tag: 0.9.10.1
+Stable tag: 0.9.10.2
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -52,6 +52,13 @@ Here you can find a detailed documentation:
 http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+= 0.9.10.2 =
+* Added: Option for using shorter Amazon links (as they were in previous versions)
+* Added: Debugging mode (you can activate it on the setup panel)
+* Added: Better error handling/reporting on connection/setup errors
+* Fix: Removing whitespace on updating Amazon credentials (trim)
+* Fix: Minor bugfixes
+
 = 0.9.10.1 =
 * Fix: Fixed error: Class 'Asa' not found in .../AsaCore.php on line 384 
 
