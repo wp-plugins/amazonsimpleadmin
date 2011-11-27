@@ -108,9 +108,11 @@ class AsaCustomerReviews {
         		$this->averageRating = $alt[0];        		
         	}
         }      
-
+        
         if (preg_match_all($patternCnt, $contents, $matchCnt)) {
         	$count = explode(' ', $matchCnt[1][1]);
+        	$count = str_replace(',', '', $count);
+        	$count = str_replace('.', '', $count);
             $this->totalReviews = intval($count[0]);
         }
 	}
