@@ -80,7 +80,7 @@ class AsaCustomerReviews {
 	protected function _grabReview ()
 	{
 	    $iframeContents = $this->_getIframeContents();
-        
+     
         if ($iframeContents != '') {
             $this->_getReviewsData($iframeContents);
         }
@@ -126,56 +126,21 @@ class AsaCustomerReviews {
 	{
 		$contents = '';
 		
-		$allow_url_fopen = ini_get('allow_url_fopen');
+		$client = new AsaZend_Http_Client($this->iframeUrl);
 		
-		if (function_exists('curl_init')) {
-			
-			// via curl
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, $this->iframeUrl);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            $html = curl_exec($ch);
-            curl_close($ch);
-            $html = explode(PHP_EOL, $html);
-            
-            $saveBuffer = false;
-            foreach($html as $line) {
-	            if (trim($line) == '<div class="crIFrameNumCustReviews">') {
-	                $saveBuffer = true;
-	            }
-	            if ($saveBuffer == true && trim($line) == '</div>') {
-	                $saveBuffer = false;
-	            }
-	       
-	            if ($saveBuffer == true) {
-	                $contents .= $line;
-	            }   
-            }
-            
-        } else if (!empty($allow_url_fopen)) {
-			
-			// via fopen
-			$handle = fopen($this->iframeUrl, 'r');
-			
-			if (!empty($handle)) {
-			    			            
-    			$saveBuffer = false;
-    			while(!feof($handle)) { 
-    			
-    			       $buffer = trim(fgets($handle, 4096));
-    			       if ($buffer == '<div class="crIFrameNumCustReviews">') {
-    			           $saveBuffer = true;
-    			       } else if ($saveBuffer == true && $buffer == '</div>') {
-    			           $saveBuffer = false;
-    			       }
-    			       
-    			       if ($saveBuffer == true) {
-    			          $contents .= $buffer;
-    			       }   
-    			}
-    			fclose($handle);
-			}
-			
+		$result = $client->request('GET');
+
+		foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
+		    if (trim($line) == '<div class="crIFrameNumCustReviews">') {
+		        $saveBuffer = true;
+		    }
+		    if ($saveBuffer == true && trim($line) == '</div>') {
+		        $saveBuffer = false;
+		    }
+		    
+		    if ($saveBuffer == true) {
+		        $contents .= $line;
+		    }
 		}
 		
 		return $contents;
