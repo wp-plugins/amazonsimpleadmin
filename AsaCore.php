@@ -203,6 +203,16 @@ class AmazonSimpleAdmin {
      * the cache object
      */
     protected $cache;
+
+    /**
+     * @var Asa_Debugger
+     */
+    protected $_debugger;
+
+    /**
+     * @var debugger error message
+     */
+    protected $_debugger_error;
     	
 	
 	/**
@@ -213,11 +223,9 @@ class AmazonSimpleAdmin {
 		$libdir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib';
 		set_include_path(get_include_path() . PATH_SEPARATOR . $libdir);
 		
-        //require_once 'Asa/Asa.php';
         require_once 'AsaZend/Uri/Http.php';
         require_once 'AsaZend/Service/Amazon.php';
         require_once 'AsaZend/Service/Amazon/Accessories.php';
-        //require_once 'AsaZend/Service/Amazon/CustomerReview.php';
         require_once 'AsaZend/Service/Amazon/EditorialReview.php';
         require_once 'AsaZend/Service/Amazon/Image.php';
         require_once 'AsaZend/Service/Amazon/Item.php';        
@@ -228,6 +236,10 @@ class AmazonSimpleAdmin {
         require_once 'AsaZend/Service/Amazon/ResultSet.php';
         require_once 'AsaZend/Service/Amazon/SimilarProduct.php';
         require_once dirname(__FILE__) . '/AsaWidget.php';
+
+        if ($this->isDebug()) {
+            $this->_initDebugger();
+        }
 		
 		if (isset($_GET['task'])) {
 			$this->task = strip_tags($_GET['task']);
@@ -245,6 +257,9 @@ class AmazonSimpleAdmin {
 		// Hook for adding content filter
 		add_filter('the_content', array($this, 'parseContent'), 1);
 		add_filter('the_excerpt', array($this, 'parseContent'), 1);
+		
+		// register shortcode handler for [asa] tags
+		add_shortcode( 'asa', 'asa_shortcode_handler' );
 		
 		if (!get_option('_asa_hide_meta_link')) {
 		    add_action('wp_meta', array($this, 'addMetaLink'));
@@ -264,7 +279,7 @@ class AmazonSimpleAdmin {
 		
 		add_filter('upgrader_pre_install', array($this, 'onPreInstall'), 10, 2);
 		add_filter('upgrader_post_install', array($this, 'onPostInstall'), 10, 2);
-		
+				
 		
 		$this->amazon = $this->connect();		
 		
@@ -400,11 +415,13 @@ class AmazonSimpleAdmin {
                 $this->amazon_tracking_id, 
                 $this->_amazon_country_code
             );
-			
+
 			return $amazon;
 				
-		} catch (Exception $e) {			
-			//echo $e->getMessage();
+		} catch (Exception $e) {
+            if ($this->isDebug() && $this->_debugger != null) {
+                $this->_debugger->write($e->getMessage());
+            }
 			return null;
 		}
 	}
@@ -462,6 +479,27 @@ class AmazonSimpleAdmin {
 	    
 	    return false;
 	}
+
+    /**
+     * @return bool
+     */
+    public function isDebug()
+    {
+        return get_option('_asa_debug');
+    }
+
+    /**
+     * @return void
+     */
+    protected function _initDebugger()
+    {
+        require_once 'Asa/Debugger.php';
+        try {
+            $this->_debugger = Asa_Debugger::factory();
+        } catch (Exception $e) {
+            $this->_debugger_error = $e->getMessage();
+        }
+    }
 	
 	/**
 	 * action function for above hook
@@ -533,6 +571,9 @@ class AmazonSimpleAdmin {
         $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;"><p>Please visit the <a href="http://www.wp-amazon-plugin.com/" target="_blank">AmazonSimpleAdmin-Homepage</a> to stay informed about the development and to give me feedback.</p></div>';
         if (!$this->_isCache()) {
             $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #aa0000;"><p>It is highly recommended to activate the <a href="'. $this->plugin_url .'&task=cache">cache</a>!</p></div>';
+        }
+        if ($this->isDebug()) {
+            $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #aa0000;"><p>Debugging mode is active. Be sure to deactivate it when you do not need it anymore.</p></div>';
         }
         return $nav;
 	}
@@ -691,13 +732,14 @@ class AmazonSimpleAdmin {
 				
 				if (count($_POST) > 0 && isset($_POST['info_update'])) {
 					
-					$_asa_amazon_api_key 		 = strip_tags($_POST['_asa_amazon_api_key']);
-					$_asa_amazon_api_secret_key	 = base64_encode(strip_tags($_POST['_asa_amazon_api_secret_key']));
-					$_asa_amazon_tracking_id 	 = strip_tags($_POST['_asa_amazon_tracking_id']);
+					$_asa_amazon_api_key 		 = strip_tags(trim($_POST['_asa_amazon_api_key']));
+					$_asa_amazon_api_secret_key	 = base64_encode(strip_tags(trim($_POST['_asa_amazon_api_secret_key'])));
+					$_asa_amazon_tracking_id 	 = strip_tags(trim($_POST['_asa_amazon_tracking_id']));
 					$_asa_product_preview		 = strip_tags($_POST['_asa_product_preview']);
 					$_asa_parse_comments		 = strip_tags($_POST['_asa_parse_comments']);
 					$_asa_hide_meta_link		 = strip_tags($_POST['_asa_hide_meta_link']);
 					$_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
+					$_asa_debug                  = strip_tags($_POST['_asa_debug']);
 
 					update_option('_asa_amazon_api_key', $_asa_amazon_api_key);
 					update_option('_asa_amazon_api_secret_key', $_asa_amazon_api_secret_key);
@@ -706,6 +748,7 @@ class AmazonSimpleAdmin {
 					update_option('_asa_parse_comments', $_asa_parse_comments);
 					update_option('_asa_hide_meta_link', $_asa_hide_meta_link);
 					update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
+					update_option('_asa_debug', $_asa_debug);
 
 					if (isset($_POST['_asa_amazon_country_code'])) {
 						$_asa_amazon_country_code = strip_tags($_POST['_asa_amazon_country_code']);						
@@ -713,7 +756,15 @@ class AmazonSimpleAdmin {
 							$_asa_amazon_country_code = 'US';
 						}
 						update_option('_asa_amazon_country_code', $_asa_amazon_country_code);
-					}				
+					}
+
+                    if ($this->isDebug()) {
+                        $this->_initDebugger();
+                        if (!empty($_POST['_asa_debug_clear'])) {
+                            $this->_debugger->clear();
+                        }
+
+                    }
 				}
 				
 				echo $this->_getSubMenu($task);
@@ -733,7 +784,7 @@ class AmazonSimpleAdmin {
 	}
 	
 	/**
-	 * collections setup screen
+	 * collections asasetup screen
 	 *
 	 */
 	protected function _displayCollectionsSetup ()	 
@@ -992,7 +1043,7 @@ class AmazonSimpleAdmin {
 		try {
 			$this->amazon = $this->connect();
 			if ($this->amazon != null) {
-			    $this->amazon->itemSearch(array('SearchIndex' => 'Books', 'Keywords' => 'php'));
+			    $this->amazon->testConnection();
 			    $_asa_status = true;
 			} else {
 			     throw new Exception('Connection to Amazon Webservice failed. Please check the mandatory data.');   
@@ -1010,6 +1061,7 @@ class AmazonSimpleAdmin {
 		<?php
 		if (!empty($_asa_error)) {
 			echo '<p><strong>Error:</strong> '. $_asa_error . '</p>';	
+			echo '<p><b>Get help</b> at <a href="http://www.wp-amazon-plugin.com/faq/#setup_errors" target="_blank">http://www.wp-amazon-plugin.com/faq/#setup_errors</a></p>';	
 		}
 		?>
 		
@@ -1042,7 +1094,8 @@ class AmazonSimpleAdmin {
 		</select> <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/amazon_'. $this->_amazon_country_code .'_small.gif'); ?>" />(Default: US)
 		
 		<p class="submit">
-		<input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
+		<input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
+        <!-- <input type="submit" name="info_clear" value="<?php _e('Clear Settings') ?> &raquo;" /> -->
 		</p>
 				
 		<h3>Options</h3>
@@ -1061,9 +1114,23 @@ class AmazonSimpleAdmin {
         <br /><br />
 		<label for="_asa_use_short_amazon_links"><?php _e('Use short Amazon links:') ?></label>
         <input type="checkbox" name="_asa_use_short_amazon_links" id="_asa_use_short_amazon_links" value="1"<?php echo ((get_option('_asa_use_short_amazon_links') == true) ? 'checked="checked"' : '') ?> />
-	
+
+            <br /><br />
+		<label for="_asa_debug"><?php _e('Activate debugging:') ?></label>
+        <input type="checkbox" name="_asa_debug" id="_asa_debug" value="1"<?php echo ((get_option('_asa_debug') == true) ? 'checked="checked"' : '') ?> />
+        <?php if ($this->isDebug()): ?>
+            <?php if ($this->_debugger_error != null): ?>
+            <p><b>Debugger error: </b><?php echo $this->_debugger_error; ?></p>
+            <?php else:?>
+            <a href="<?php echo $this->plugin_url; ?>">refresh</a>
+            <br />
+            <textarea name="debug_contents" id="debug_contents" rows="20" cols="100"><?php if (!empty($this->_debugger)) echo $this->_debugger->read(); ?></textarea>
+            <br />
+            <input type="checkbox" name="_asa_debug_clear" id="_asa_debug_clear" value="1" /><label for="_asa_debug_clear"><?php _e('Clear debugging data') ?></label>
+            <?php endif; ?>
+        <?php endif; ?>
 		<p class="submit">
-		<input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
+		<input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
 		</p>
 		
 		</fieldset>
@@ -1119,7 +1186,7 @@ class AmazonSimpleAdmin {
         <br />        
     
         <p class="submit">
-        <input type="submit" name="info_update" value="<?php _e('Update Options') ?> &raquo;" />
+        <input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
         <input type="submit" name="clean_cache" value="<?php _e('Clear Cache') ?> &raquo;" />
         </p>
         
@@ -1863,7 +1930,7 @@ class AmazonSimpleAdmin {
             $tpl = 'sidebar_item';
         }
         
-        $tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/'. $tpl .'.htm');
+        $tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/built-in/'. $tpl .'.htm');
         
         $item_html .= $this->_parseTpl(trim($asin), $tpl_src);
         
@@ -1892,4 +1959,32 @@ function asa_item ($asin, $tpl=false)
     global $asa;
     echo $asa->getItem($asin, $tpl);
 }
+
+/**
+ * return the rendered product template
+ * @param string $asin
+ * @param string $tpl
+ */
+function asa_get_item($asin, $tpl=false)
+{
+    global $asa;
+    return $asa->getItem($asin, $tpl);
+}
+
+/**
+ * shortcode handler for [asa] tags
+ * @param array $atts
+ * @param string $content
+ * @param string $code
+ * @return string
+ */
+function asa_shortcode_handler($atts, $content=null, $code="") 
+{
+    $tpl = false;
+    if (!empty($atts[0])) {
+        $tpl = $atts[0];
+    }
+    return asa_get_item($content, $tpl);
+}
+
 ?>
