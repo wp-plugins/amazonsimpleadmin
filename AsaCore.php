@@ -1527,7 +1527,7 @@ class AmazonSimpleAdmin {
             }
             
             if (empty($amazonPriceFormatted)) {
-                $amazonPriceFormatted = $lowestOfferFormattedPrice;  
+                $amazonPriceFormatted = $lowestOfferPrice;  
             }
             $listPriceFormatted = $item->ListPriceFormatted;
             
