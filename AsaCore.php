@@ -57,7 +57,9 @@ class AmazonSimpleAdmin {
         'LowestOfferPrice',
         'LowestOfferCurrency',
         'LowestOfferFormattedPrice',
+        'LowestNewPrice',
         'LowestNewOfferFormattedPrice',
+        'LowestUsedPrice',
         'LowestUsedOfferFormattedPrice',
         'AmazonPrice',
         'AmazonPriceFormatted',
@@ -1239,10 +1241,10 @@ class AmazonSimpleAdmin {
                 $asin           = $matches[2][$i]; 
 
                 $params         = preg_replace($this->_regex_param_separator, $this->_internal_param_delimit, strip_tags(trim($matches[1][$i])));
-                $params            = explode($this->_internal_param_delimit, $params);
+                $params         = explode($this->_internal_param_delimit, $params);
                 $params         = array_map('trim', $params);
                 $parse_params   = array();
-                
+
                 if (!empty($params[0])) {
                     foreach ($params as $param) {
                         if (!strstr($param, '=')) {
@@ -1250,8 +1252,7 @@ class AmazonSimpleAdmin {
                         } else {
                             if (strstr($param, 'comment=')) {
                                 // the comment feature
-                                $param = substr($param, 7);
-                                preg_match('/"([^"\r\n]*)"/', $param, $comment_match);
+                                preg_match('/comment="([^"\r\n]*)"/', $param, $comment_match);
                                 $parse_params['comment'] = $comment_match[1];
                             } else {
                                 $tp = explode('=', $param);
@@ -1260,7 +1261,7 @@ class AmazonSimpleAdmin {
                         }
                     }
                 }
-                
+              
                 $tpl = $this->_getTpl($tpl_file, $tpl_src);
                 
                 if (!empty($asin)) {
@@ -1515,20 +1516,25 @@ class AmazonSimpleAdmin {
             }
             
             $lowestOfferPrice = $this->_formatPrice($lowestOfferPrice);
+            $lowestNewPrice = $this->_formatPrice($item->Offers->LowestNewPrice);
             $lowestNewOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
+            $lowestUsedPrice = $this->_formatPrice($item->Offers->LowestUsedPrice);
             $lowestUsedOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
+            
 
             if ($item->Offers->Offers[0]->Price != null) {
                 $amazonPrice = $item->Offers->Offers[0]->Price;
                 $amazonPrice = $this->_formatPrice($amazonPrice);
                 $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
-            } else {
-                $amazonPrice = $lowestOfferFormattedPrice;
+            } elseif (!empty($lowestNewPrice)) {
+                $amazonPrice = $lowestNewPrice;
+                $amazonPriceFormatted = $lowestNewOfferFormattedPrice;
+            } elseif (!empty($lowestUsedPrice)) {
+                $amazonPrice = $lowestUsedPrice;
+                $amazonPriceFormatted = $lowestUsedOfferFormattedPrice;
             }
+            $amazonPrice = $this->_formatPrice($amazonPrice);
             
-            if (empty($amazonPriceFormatted)) {
-                $amazonPriceFormatted = $lowestOfferPrice;  
-            }
             $listPriceFormatted = $item->ListPriceFormatted;
             
             $totalOffers = $item->Offers->TotalNew + $item->Offers->TotalUsed + 
@@ -1572,7 +1578,9 @@ class AmazonSimpleAdmin {
                 empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
                 $lowestOfferCurrency,
                 str_replace('$', '\$', $lowestOfferFormattedPrice),
+                empty($lowestNewPrice) ? '---' : $lowestNewPrice,
                 str_replace('$', '\$', $lowestNewOfferFormattedPrice),
+                empty($lowestUsedPrice) ? '---' : $lowestUsedPrice,
                 str_replace('$', '\$', $lowestUsedOfferFormattedPrice),
                 empty($amazonPrice) ? '---' : str_replace('$', '\$', $amazonPrice),
                 empty($amazonPriceFormatted) ? '---' : str_replace('$', '\$', $amazonPriceFormatted),
