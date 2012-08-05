@@ -259,6 +259,7 @@ class AmazonSimpleAdmin {
         // Hook for adding content filter
         add_filter('the_content', array($this, 'parseContent'), 1);
         add_filter('the_excerpt', array($this, 'parseContent'), 1);
+        add_filter('widget_text', array($this, 'parseContent'), 1);
         
         // register shortcode handler for [asa] tags
         add_shortcode( 'asa', 'asa_shortcode_handler' );
