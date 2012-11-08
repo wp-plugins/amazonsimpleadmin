@@ -540,8 +540,10 @@ class AmazonSimpleAdmin {
         $nav  = '<ul id="asa_navigation">';
         $nav .= '<li><a href="'. $this->plugin_url .'"'. ((in_array($task, array(null, 'checkDonation'))) ? 'class="active"' : '') .'>Setup</a></li>';
         $nav .= '<li><a href="'. $this->plugin_url .'&task=collections"'. (($task == 'collections') ? 'class="active"' : '') .'>Collections</a></li>';
-        $nav .= '<li><a href="'. $this->plugin_url .'&task=usage"'. (($task == 'usage') ? 'class="active"' : '') .'>Usage</a></li>';
         $nav .= '<li><a href="'. $this->plugin_url .'&task=cache"'. (($task == 'cache') ? 'class="active"' : '') .'>Cache</a></li>';
+        $nav .= '<li><a href="'. $this->plugin_url .'&task=usage"'. (($task == 'usage') ? 'class="active"' : '') .'>Usage</a></li>';
+        $nav .= '<li><a href="'. $this->plugin_url .'&task=faq"'. (($task == 'faq') ? 'class="active"' : '') .'>FAQ</a></li>';
+
         $nav .= '</ul>';        
         return $nav;
     }
@@ -702,6 +704,13 @@ class AmazonSimpleAdmin {
                 
                 $this->_displayUsagePage();
                 break;
+
+            case 'faq':
+
+                echo $this->_getSubMenu($task);
+
+                $this->_displayFaqPage();
+                break;
                 
             case 'cache':
                 
@@ -858,7 +867,8 @@ class AmazonSimpleAdmin {
         <label for="collection">to collection:</label>
         
         <?php
-        echo $this->collection->getSelectField('collection', $collection_id);        
+        $collection_id = trim($_POST['collection']);
+        echo $this->collection->getSelectField('collection', $collection_id);
         ?>
         
         <p style="margin:0; display: inline;">
@@ -1032,6 +1042,25 @@ class AmazonSimpleAdmin {
         </div>
         <?php
     }
+
+
+    /**
+     * the actual options page content
+     *
+     */
+    protected function _displayFaqPage ()
+    {
+        $faqUrl = 'http://www.wp-amazon-plugin.com/faq-remote/';
+
+        $client = new AsaZend_Http_Client($faqUrl);
+        $response = $client->request('GET');
+
+        if ($response->isSuccessful()) {
+            echo $response->getBody();
+        } else {
+            echo '<p>Could not load FAQ from '. $faqUrl . '</p>';
+        }
+    }
     
     /**
      * the actual options page content
@@ -1099,8 +1128,11 @@ class AmazonSimpleAdmin {
         <p class="submit">
         <input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
         <!-- <input type="submit" name="info_clear" value="<?php _e('Clear Settings') ?> &raquo;" /> -->
+            <br /><br />
+            <b>Notice:</b><br />
+            If your status is ready but your implemented Amazon product boxes do not show any data, check the FAQ panel for more information (first entry).<br />
         </p>
-                
+
         <h3>Options</h3>
         
         <label for="_asa_parse_comments"><?php _e('Allow parsing [asa] tags in user comments:') ?></label>
@@ -1254,7 +1286,7 @@ class AmazonSimpleAdmin {
                             if (strstr($param, 'comment=')) {
                                 // the comment feature
                                 preg_match('/comment="([^"\r\n]*)"/', $param, $comment_match);
-                                $parse_params['comment'] = $comment_match[1];
+                                $parse_params['comment'] = html_entity_decode($comment_match[1]);
                             } else {
                                 $tp = explode('=', $param);
                                 $parse_params[$tp[0]] = $tp[1];
@@ -1490,10 +1522,12 @@ class AmazonSimpleAdmin {
                 if (strstr($averageRating, ',')) {
                     $averageRating = str_replace(',', '.', $averageRating);   
                 }
-            } else {
-                $averageRating = '';
+
             }
-            
+            if (empty($averageRating)) {
+                $averageRating = 0;
+            }
+
             if ($item->Offers->LowestUsedPrice && $item->Offers->LowestNewPrice) {
                 
                 $lowestOfferPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
@@ -1603,9 +1637,9 @@ class AmazonSimpleAdmin {
                 is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
                 $item->Edition,
                 $averageRating,
-                ($customerReviews->totalReviews != null) ? $customerReviews->totalReviews : '',
-                ($customerReviews->imgTag != null) ? $customerReviews->imgTag : '',
-                ($customerReviews->imgSrc != null) ? $customerReviews->imgSrc : get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_reviews.gif',
+                ($customerReviews->totalReviews != null) ? $customerReviews->totalReviews : 0,
+                ($customerReviews->imgTag != null) ? $customerReviews->imgTag : '<img src="'. get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-0.gif' .'" class="asa_rating_stars" />',
+                ($customerReviews->imgSrc != null) ? $customerReviews->imgSrc : get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-0.gif',
                 is_array($item->Director) ? implode(', ', $item->Director) : $item->Director,
                 is_array($item->Actor) ? implode(', ', $item->Actor) : $item->Actor,
                 $item->RunningTime,
