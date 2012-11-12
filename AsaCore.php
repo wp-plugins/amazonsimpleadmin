@@ -1600,7 +1600,8 @@ class AmazonSimpleAdmin {
      */
     public function parseTpl ($asin, $tpl, $parse_params=null, $tpl_file=null)
     {
-        if ($this->_isAsync() && !defined('ASA_ASYNC_REQUEST')) {
+        if (($this->_isAsync() && !defined('ASA_ASYNC_REQUEST') && !isset($parse_params['no_ajax'])) ||
+            (!$this->_isAsync() && isset($parse_params['force_ajax']))) {
             // on AJAX request
             return $this->_getAsyncContent($asin, $tpl_file, $parse_params);
         }
