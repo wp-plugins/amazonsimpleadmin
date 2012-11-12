@@ -2130,9 +2130,14 @@ class AmazonSimpleAdmin {
     {
         $containerID = 'asa-' . md5(uniqid(mt_rand()));
         $params = json_encode($parse_params);
+        $nonce = wp_create_nonce('amazonsimpleadmin');
+        $site_url = site_url();
+        if (defined(WP_ALLOW_MULTISITE) && WP_ALLOW_MULTISITE == true) {
+            $site_url = network_site_url();
+        }
 
         $output = '<span id="'. $containerID .'" class="asa_async_container"></span>';
-        $output .= "<script type='text/javascript'>jQuery(document).ready(function($){var data={action:'asa_async_load',asin:'$asin',tpl:'$tpl',params:'$params'};if(typeof ajaxurl=='undefined'){var ajaxurl='wp-admin/admin-ajax.php'}$.post(ajaxurl,data,function(response){jQuery('#$containerID').html(response)})});</script>";
+        $output .= "<script type='text/javascript'>jQuery(document).ready(function($){var data={action:'asa_async_load',asin:'$asin',tpl:'$tpl',params:'$params',nonce:'$nonce'};if(typeof ajaxurl=='undefined'){var ajaxurl='$site_url/wp-admin/admin-ajax.php'}$.post(ajaxurl,data,function(response){jQuery('#$containerID').html(response)})});</script>";
         return $output;
     }
 
@@ -2196,6 +2201,7 @@ add_action('wp_ajax_nopriv_asa_async_load', 'my_action_callback');
  */
 function asa_async_load_callback() {
     global $asa;
+    check_ajax_referer('amazonsimpleadmin', 'nonce');
     define('ASA_ASYNC_REQUEST', 1);
 
     $asin = esc_attr($_POST['asin']);
