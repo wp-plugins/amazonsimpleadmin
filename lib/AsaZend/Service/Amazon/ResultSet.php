@@ -75,7 +75,7 @@ class AsaZend_Service_Amazon_ResultSet implements SeekableIterator
     {
         $this->_dom = $dom;
         $this->_xpath = new DOMXPath($dom);
-        $this->_xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $this->_xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. Asa_Service_Amazon::$api_version);
         $this->_results = $this->_xpath->query('//az:Item');
     }
 

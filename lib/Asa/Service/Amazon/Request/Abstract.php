@@ -25,8 +25,8 @@ abstract class Asa_Service_Amazon_Request_Abstract
     protected $_request_url;
     
     /**
-     * The response
-     * @var string
+     * The response object
+     * @var AsaZend_Http_Response
      */
     protected $_response;
     
@@ -46,7 +46,40 @@ abstract class Asa_Service_Amazon_Request_Abstract
      * @param array
      * @return string
      */
-    abstract public function send(array $url_params);
+    public function send(array $url_params)
+    {
+        $this->build($url_params);
+        
+        if (!$request_url = $this->getRequestUrl()) {
+            throw new Asa_Service_Amazon_Request_Exception('Error in building request url');
+        }
+        
+        $this->_response = $this->_send($request_url); 
+
+        if ($this->_response->isError()) {
+            require_once 'Asa/Service/Amazon/Request/Exception.php';
+            
+            $xml_response = new SimpleXMLElement($this->_response->getBody());
+            
+            $error = $xml_response->Error->Code . ': '. $xml_response->Error->Message;
+            throw new Asa_Service_Amazon_Request_Exception($error);            
+        }
+ 
+        
+        if ($this->_response->isSuccessful()) {
+            $response_body = $this->_response->getBody();
+            return $response_body;
+        }
+        
+        return null;        
+    }
+    
+    /**
+     * Must be implemented by the concrete request class, sends the request
+     * @param string
+     * @return AsaZend_Http_Response|null
+     */
+    abstract protected function _send($request_url);
     
     /**
      * Builds the request url
@@ -109,15 +142,40 @@ abstract class Asa_Service_Amazon_Request_Abstract
 		
 		return true;	                
     }
-    
+
+    /**
+     * @return string
+     * @obsolete
+     */
     public function getRequest()
     {
         return $this->_request_url;
     }
-    
+
+    /**
+     * Retrieves the request url
+     * @return string
+     */
+    public function getRequestUrl()
+    {
+        return $this->_request_url;
+    }
+
+    /**
+     * Retrieves AsaZend_Http_Response object
+     * @return AsaZend_Http_Response
+     */
     public function getResponse()
     {
         return $this->_response;
+    }
+    
+    /**
+     * 
+     */
+    public function getResponseBody()
+    {
+        return $this->_response->getBody();
     }
 }
 

@@ -139,7 +139,8 @@ class AsaZend_Service_Amazon_Item
     	$this->_xml = str_replace('xmlns=', 'ns=', $xml_response);
     	
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+//        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. AsaZend_Service_Amazon::$api_version);
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. Asa_Service_Amazon::$api_version);
         $this->_xpath = $xpath;
         $this->_dom   = $dom;
         
@@ -176,6 +177,7 @@ class AsaZend_Service_Amazon_Item
 
         foreach (array('SmallImage', 'MediumImage', 'LargeImage') as $im) {
             $result = $xpath->query("./az:ImageSets/az:ImageSet[position() = 1]/az:$im", $dom);
+            
             if ($result->length == 1) {
                 /**
                  * @see AsaZend_Service_Amazon_Image
@@ -350,6 +352,7 @@ class AsaZend_Service_Amazon_Item
 	        if (count($result[0]) > 0) {
 	            return $this->_showResultArray($result[0]);
 	        }
+	        
 	        return (string)$result[0];
 	    } else if (count($result) > 1) {
 	        return $this->_showResultArray($result);
