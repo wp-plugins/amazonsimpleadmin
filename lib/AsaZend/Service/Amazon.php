@@ -71,6 +71,12 @@ class AsaZend_Service_Amazon
      * @var AsaZend_Rest_Client
      */
     protected $_rest = null;
+    
+    /**
+     * The API version
+     * @var string
+     */
+    public static  $api_version = '2011-08-01';
 
 
     /**
@@ -158,7 +164,7 @@ class AsaZend_Service_Amazon
         $options = $this->_prepareOptions('ItemLookup', $options, $defaultOptions);
 
         $response = $client->restGet('/onca/xml', $options);
-        
+      
         if (getenv('ASA_APPLICATION_ENV') == 'development') {
             file_put_contents(getenv('ASA_DEBUG_PATH') . date('YmdHis') . '.xml', substr(var_export($response->getBody(), true), 1, -1));
         } 
@@ -178,7 +184,7 @@ class AsaZend_Service_Amazon
         $dom->loadXML($xml_response);
         self::_checkErrors($dom);
         $xpath = new DOMXPath($dom);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. self::$api_version);
         $items = $xpath->query('//az:Items/az:Item');
 
         if ($items->length == 1) {
@@ -234,9 +240,11 @@ class AsaZend_Service_Amazon
     protected function _prepareOptions($query, array $options, array $defaultOptions)
     {
         $options['AWSAccessKeyId'] = $this->appId;
+        $options['AssociateTag']   = 'hhessdedasher-21';
         $options['Service']        = 'AWSECommerceService';
         $options['Operation']      = (string) $query;
-        $options['Version']        = '2010-10-01';
+        $options['Version']        = self::$api_version;
+        
 
         // de-canonicalize out sort key
         if (isset($options['ResponseGroup'])) {
@@ -254,6 +262,7 @@ class AsaZend_Service_Amazon
             $options['Timestamp'] = gmdate("Y-m-d\TH:i:s\Z");;
             ksort($options);
             $options['Signature'] = self::computeSignature($this->_baseUri, $this->_secretKey, $options);
+//            $options['AssociateTag'] = 'hhessdedasher-21';
         }
 
         return $options;
@@ -286,12 +295,28 @@ class AsaZend_Service_Amazon
      */
     static public function buildRawSignature($baseUri, $options)
     {
-        ksort($options);
-        $params = array();
-        foreach($options AS $k => $v) {
-            $params[] = $k."=".rawurlencode($v);
+//        ksort($options);
+        $params = array(
+            'AWSAccessKeyId' => '',
+            'AssociateTag' => '',
+            'ItemId' => '',
+            'Operation' => '',
+            'ResponseGroup' => '',
+            'Service' => '',
+            'Timestamp' => '',
+            'Version' => ''
+        );
+        
+        foreach ($params as $k => $v) {
+            $params[$k] = rawurlencode($options[$k]);
         }
-
+//        foreach($options AS $k => $v) {
+//            $params[] = $k."=".rawurlencode($v);
+//        }
+//echo '<pre>';        
+//print_r($params);
+//echo '</pre>';
+//exit;
         return sprintf("GET\n%s\n/onca/xml\n%s",
             str_replace('http://', '', $baseUri),
             implode("&", $params)
@@ -309,7 +334,7 @@ class AsaZend_Service_Amazon
     protected static function _checkErrors(DOMDocument $dom)
     {
         $xpath = new DOMXPath($dom);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2005-10-05');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. self::$api_version);
 
         if ($xpath->query('//az:Error')->length >= 1) {
             $code = $xpath->query('//az:Error/az:Code/text()')->item(0)->data;

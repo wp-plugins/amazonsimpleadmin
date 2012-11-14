@@ -112,13 +112,14 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
     public static function factory($access_key, $secret, $tag, $locale)
     {
         $Asa = new Asa_Service_Amazon($access_key, $secret, $tag, $locale);
-        
-		if (getenv('ASA_APPLICATION_ENV') == 'development') {
+
+ 		if (getenv('ASA_APPLICATION_ENV') == 'development' || get_option('_asa_debug') == true) {
+//		if (get_option('_asa_debug') == true) {
 		    require_once 'Asa/Service/Amazon/Debug.php';
 		    $AsaDebug = new Asa_Service_Amazon_Debug($Asa);
 		    return $AsaDebug;
 		}
-            
+        
         return $Asa;
     }    
 
@@ -195,7 +196,7 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
         
         // get the response
         $response = $this->_request->send($url_params);
-        
+
         if (!$response) {
             return false;
         }        
@@ -210,6 +211,15 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
         require_once 'AsaZend/Service/Amazon/ResultSet.php';
         return new AsaZend_Service_Amazon_ResultSet($dom);
     }    
+
+    /**
+     * (non-PHPdoc)
+     * @see Asa_Service_Amazon_Interface::testConnection()
+     */
+    public function testConnection()
+    {
+        $this->itemSearch(array('SearchIndex' => 'Books', 'Keywords' => 'php'));
+    }
 	
 	/**
 	 * Sets the associate tag

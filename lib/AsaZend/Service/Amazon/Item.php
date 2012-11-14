@@ -121,28 +121,29 @@ class AsaZend_Service_Amazon_Item
      *
      * @param  null|DOMElement $dom
      * @return void
-     * @throws	AsaZend_Service_Amazon_Exception
-     * 
+     * @throws    AsaZend_Service_Amazon_Exception
+     *
      * @group ZF-9547
      */
     public function __construct($dom, $xml_response)
     {
-    	if (null === $dom) {
-    		require_once 'AsaZend/Service/Amazon/Exception.php';
-    		throw new AsaZend_Service_Amazon_Exception('Item element is empty');
-    	}
-    	if (!$dom instanceof DOMElement) {
-    		require_once 'AsaZend/Service/Amazon/Exception.php';
-    		throw new AsaZend_Service_Amazon_Exception('Item is not a valid DOM element');
-    	}
-    	
-    	$this->_xml = str_replace('xmlns=', 'ns=', $xml_response);
-    	
+        if (null === $dom) {
+            require_once 'AsaZend/Service/Amazon/Exception.php';
+            throw new AsaZend_Service_Amazon_Exception('Item element is empty');
+        }
+        if (!$dom instanceof DOMElement) {
+            require_once 'AsaZend/Service/Amazon/Exception.php';
+            throw new AsaZend_Service_Amazon_Exception('Item is not a valid DOM element');
+        }
+
+        $this->_xml = str_replace('xmlns=', 'ns=', $xml_response);
+
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+//        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. AsaZend_Service_Amazon::$api_version);
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. Asa_Service_Amazon::$api_version);
         $this->_xpath = $xpath;
         $this->_dom   = $dom;
-        
+
         $this->ASIN = $xpath->query('./az:ASIN/text()', $dom)->item(0)->data;
 
         $result = $xpath->query('./az:DetailPageURL/text()', $dom);
@@ -158,10 +159,10 @@ class AsaZend_Service_Amazon_Item
         }
 
         $result = $xpath->query('./az:ItemAttributes/az:*/text()', $dom);
-        
+
         if ($result->length >= 1) {
             foreach ($result as $v) {
-            	
+
                 if (isset($this->{$v->parentNode->tagName})) {
                     if (is_array($this->{$v->parentNode->tagName})) {
                         array_push($this->{$v->parentNode->tagName}, (string) $v->data);
@@ -176,6 +177,7 @@ class AsaZend_Service_Amazon_Item
 
         foreach (array('SmallImage', 'MediumImage', 'LargeImage') as $im) {
             $result = $xpath->query("./az:ImageSets/az:ImageSet[position() = 1]/az:$im", $dom);
+
             if ($result->length == 1) {
                 /**
                  * @see AsaZend_Service_Amazon_Image
@@ -191,9 +193,9 @@ class AsaZend_Service_Amazon_Item
         }
 
 //        $result = $xpath->query('./az:CustomerReviews/az:IFrameURL', $dom);
-                        
-//        if ($result->length >= 1) { 	
-//        	
+
+//        if ($result->length >= 1) {
+//
 //            /**
 //             * @see AsaZend_Service_Amazon_CustomerReview
 //             */
@@ -208,20 +210,20 @@ class AsaZend_Service_Amazon_Item
         // custommization
         $result = $xpath->query('./az:CustomerReviews/az:IFrameURL/text()', $dom);
         if ($result->length == 1) {
-            $this->CustomerReviewsIFrameURL = $result->item(0)->data;            
+            $this->CustomerReviewsIFrameURL = $result->item(0)->data;
         }
-        
+
         $result = $xpath->query('./az:EditorialReviews/az:*', $dom);
-        
+
         if ($result->length >= 1) {
             /**
              * @see AsaZend_Service_Amazon_EditorialReview
              */
-        	
+
             require_once 'AsaZend/Service/Amazon/EditorialReview.php';
             foreach ($result as $r) {
-                $this->EditorialReviews[] = new AsaZend_Service_Amazon_EditorialReview($r);                
-            }            
+                $this->EditorialReviews[] = new AsaZend_Service_Amazon_EditorialReview($r);
+            }
         }
 
         $result = $xpath->query('./az:SimilarProducts/az:*', $dom);
@@ -268,7 +270,7 @@ class AsaZend_Service_Amazon_Item
              * @see AsaZend_Service_Amazon_OfferSet
              */
             require_once 'AsaZend/Service/Amazon/OfferSet.php';
-            $this->Offers = new AsaZend_Service_Amazon_OfferSet($dom);            
+            $this->Offers = new AsaZend_Service_Amazon_OfferSet($dom);
         }
 
         $result = $xpath->query('./az:Accessories/*', $dom);
@@ -280,19 +282,19 @@ class AsaZend_Service_Amazon_Item
             foreach ($result as $r) {
                 $this->Accessories[] = new AsaZend_Service_Amazon_Accessories($r);
             }
-        }    
-        
-        
+        }
+
+
     }
-    
+
     /**
-     * 
+     *
      * Enter description here ...
      * @param $name
      */
     public function __get ($name)
     {
-    	if (in_array($name, array(
+        if (in_array($name, array(
             'ASIN', 'SmallImageUrl', 'SmallImageWidth', 'SmallImageHeight',
             'MediumImageUrl', 'MediumImageWidth', 'MediumImageHeight',
             'LargeImageUrl', 'LargeImageWidth', 'LargeImageHeight', 'Label',
@@ -304,69 +306,70 @@ class AsaZend_Service_Amazon_Item
             'ReleaseDate', 'Binding', 'Author', 'Creator', 'Edition',
             'AverageRating', 'TotalReviews', 'RatingStars', 'RatingStarsSrc',
             'Director', 'Actors', 'Actor', 'RunningTime', 'Format', 'Studio',
-            'CustomRating', 'ProductDescription', 'AmazonDescription', 
+            'CustomRating', 'ProductDescription', 'AmazonDescription',
             'EditorialReviews', 'Artist'
         ))) {
-	    	if (isset($this->$name)) {
-	    		return $this->$name;
-	    	}
+            if (isset($this->$name)) {
+                return $this->$name;
+            }
         } else {
-        
-	        $itemXml = new SimpleXMLElement($this->_xml);
-	        if (strstr($name, '->')) {
-	        	$name = str_replace('->', '/', $name);
-	        }
-	        $result = $this->_searchValue($itemXml, $name);
-        
-	        if (!empty($result)) {
-	            return $result;
-	        }
-	        
-	        return '';
+
+            $itemXml = new SimpleXMLElement($this->_xml);
+            if (strstr($name, '->')) {
+                $name = str_replace('->', '/', $name);
+            }
+            $result = $this->_searchValue($itemXml, $name);
+
+            if (!empty($result)) {
+                return $result;
+            }
+
+            return '';
         }
 
     }
-    
-    
-	protected function _searchValue ($itemXml, $s) 
-	{
-		switch ($s) {
-			case 'Languages':
-				require_once 'AsaZend/Service/Amazon/Language.php';
-				$resultObj = new AsaZend_Service_Amazon_Language($itemXml);
-				return $resultObj->getResult();
-				break;
-			case 'Subtitles':
-				require_once 'AsaZend/Service/Amazon/Subtitles.php';
-				$resultObj = new AsaZend_Service_Amazon_Subtitles($itemXml);
-				return $resultObj->getResult();
-				break;
-		}
-		
-		
-	    $result = $itemXml->xpath('//'.$s);
 
-	    if (count($result) == 1) {
-	        if (count($result[0]) > 0) {
-	            return $this->_showResultArray($result[0]);
-	        }
-	        return (string)$result[0];
-	    } else if (count($result) > 1) {
-	        return $this->_showResultArray($result);
-	    }   
-	}
-    
-	protected function _showResultArray ($a) 
-	{	    
-	    $show = '';
-	    foreach ($a as $k => $v) {
-	        if (is_string($k)) {
-	            $show .= $k .': ';
-	        }
-	        $show .= $v . ', ';
-	    }
-	    return substr(trim($show), 0, -1);
-	}    
+
+    protected function _searchValue ($itemXml, $s)
+    {
+        switch ($s) {
+            case 'Languages':
+                require_once 'AsaZend/Service/Amazon/Language.php';
+                $resultObj = new AsaZend_Service_Amazon_Language($itemXml);
+                return $resultObj->getResult();
+                break;
+            case 'Subtitles':
+                require_once 'AsaZend/Service/Amazon/Subtitles.php';
+                $resultObj = new AsaZend_Service_Amazon_Subtitles($itemXml);
+                return $resultObj->getResult();
+                break;
+        }
+
+
+        $result = $itemXml->xpath('//'.$s);
+
+        if (count($result) == 1) {
+            if (count($result[0]) > 0) {
+                return $this->_showResultArray($result[0]);
+            }
+
+            return (string)$result[0];
+        } else if (count($result) > 1) {
+            return $this->_showResultArray($result);
+        }
+    }
+
+    protected function _showResultArray ($a)
+    {
+        $show = '';
+        foreach ($a as $k => $v) {
+            if (is_string($k)) {
+                $show .= $k .': ';
+            }
+            $show .= $v . ', ';
+        }
+        return substr(trim($show), 0, -1);
+    }
 
 
     /**

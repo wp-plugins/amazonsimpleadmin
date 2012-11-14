@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.2.1
-Stable tag: 0.9.10.2
+Tested up to: 3.4.2
+Stable tag: 0.9.11.1
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -34,6 +34,7 @@ Features:
 * New with version 0.9.6: Parsing [asa] tags in user comments 
 * Since version 0.9.6 compatible with Amazons Product Advertising API changes by August 15, 2009 which require all requests to be authenticated using request signatures
 * Version 0.9.7 supports customer reviews again!
+* Version 0.9.11 brings AJAX mode (optional) for faster page load
 
 
 == Installation ==
@@ -52,6 +53,20 @@ Here you can find a detailed documentation:
 http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+= 0.9.11.1 =
+* Bugfix: Functions asa_item und asa_get_item resulted in an error when used with custom templates (file_get_contents warning)
+* Bugfix: Placeholder {$PercentageSaved} should show 0 if nothing is saved instead of it being blank
+* Added: Custom CSS class for Ajax container called "asa_async_container_" + template name. So you can add a custom Ajax loading image per template.
+
+= 0.9.11 =
+* Added: AJAX mode for asynchronous loading to improve page load speed
+* Added: HTML tag support for $Comment placeholder
+* Added: Shortcode handler for better integration with other plugins / widgets
+* Added: Options panel
+* Added: FAQ panel
+* Fixed: Behavious of {$AmazonPrice}
+* Fixed: On adding items to collections, the collection name stays selected
+
 = 0.9.10.2 =
 * Added: Option for using shorter Amazon links (as they were in previous versions)
 * Added: Debugging mode (you can activate it on the setup panel)
@@ -170,6 +185,11 @@ I suspect that loading php_domxml.dll (on Windows) in your php.ini is the cause 
 == Screenshots ==
 
 1. Setup screen
-2. Collections manager panel
-3. Page integration examples
+2. Options panel
+3. Collections manager panel
+4. Collection rendered in post
+5. Widget
+6. Widget rendered on page
+7. Integrated help
+8. For more information visit http://www.wp-amazon-plugin.com/
 

@@ -61,7 +61,7 @@ class AsaZend_Service_Amazon_Image
     public function __construct(DOMElement $dom)
     {
         $xpath = new DOMXPath($dom->ownerDocument);
-        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/2010-10-01');
+        $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. Asa_Service_Amazon::$api_version);
         $this->Url = AsaZend_Uri::factory($xpath->query('./az:URL/text()', $dom)->item(0)->data);
         $this->Height = (int) $xpath->query('./az:Height/text()', $dom)->item(0)->data;
         $this->Width = (int) $xpath->query('./az:Width/text()', $dom)->item(0)->data;
