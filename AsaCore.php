@@ -2104,8 +2104,8 @@ class AmazonSimpleAdmin {
         if ($tpl == false) {
             $tpl = 'sidebar_item';
         }
-        
-        $tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/built-in/'. $tpl .'.htm');
+
+        $tpl_src = $this->getTpl($tpl);
         
         $item_html .= $this->parseTpl(trim($asin), $tpl_src, null, $tpl);
         
@@ -2136,7 +2136,7 @@ class AmazonSimpleAdmin {
             $site_url = network_site_url();
         }
 
-        $output = '<span id="'. $containerID .'" class="asa_async_container"></span>';
+        $output = '<span id="'. $containerID .'" class="asa_async_container asa_async_container_'. $tpl .'"></span>';
         $output .= "<script type='text/javascript'>jQuery(document).ready(function($){var data={action:'asa_async_load',asin:'$asin',tpl:'$tpl',params:'$params',nonce:'$nonce'};if(typeof ajaxurl=='undefined'){var ajaxurl='$site_url/wp-admin/admin-ajax.php'}$.post(ajaxurl,data,function(response){jQuery('#$containerID').html(response)})});</script>";
         return $output;
     }
