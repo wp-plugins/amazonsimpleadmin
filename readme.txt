@@ -3,7 +3,7 @@ Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
 Tested up to: 3.4.2
-Stable tag: 0.9.11.1
+Stable tag: 0.9.11.2
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -53,6 +53,11 @@ Here you can find a detailed documentation:
 http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+= 0.9.11.2 =
+* Bugfix: Ajax mode did not work for not logged-in users
+* Bugfix: Removed double usage of Amazon price formatting function
+* Added: Placeholders {$Prime}, {$PrimePic}
+
 = 0.9.11.1 =
 * Bugfix: Functions asa_item und asa_get_item resulted in an error when used with custom templates (file_get_contents warning)
 * Bugfix: Placeholder {$PercentageSaved} should show 0 if nothing is saved instead of it being blank
