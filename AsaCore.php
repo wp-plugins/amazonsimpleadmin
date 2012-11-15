@@ -90,7 +90,10 @@ class AmazonSimpleAdmin {
         'ProductDescription',
         'AmazonDescription',
         'Artist',
-        'Comment'
+        'Comment',
+        'PercentageSaved',
+        'Prime',
+        'PrimePic'
     );
     
     /**
@@ -176,6 +179,12 @@ class AmazonSimpleAdmin {
      * @var bool
      */
     protected $_async_load = false;
+
+    /**
+     * use only amazon prices for placeholder $AmazonPrice
+     * @var bool
+     */
+    protected $_asa_use_amazon_price_only = false;
     
     /**
      * internal param delimiter
@@ -757,6 +766,7 @@ class AmazonSimpleAdmin {
                     $_asa_async_load             = strip_tags($_POST['_asa_async_load']);
                     $_asa_hide_meta_link         = strip_tags($_POST['_asa_hide_meta_link']);
                     $_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
+                    $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
                     $_asa_debug                  = strip_tags($_POST['_asa_debug']);
 
                     update_option('_asa_product_preview', $_asa_product_preview);
@@ -764,6 +774,7 @@ class AmazonSimpleAdmin {
                     update_option('_asa_async_load', $_asa_async_load);
                     update_option('_asa_hide_meta_link', $_asa_hide_meta_link);
                     update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
+                    update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
                     update_option('_asa_debug', $_asa_debug);
                 }
 
@@ -1149,6 +1160,17 @@ class AmazonSimpleAdmin {
                     <p class="description">Activates the short version of affiliate links like http://www.amazon.com/exec/obidos/ASIN/123456789/trackingid-12</p>
                 </td>
             </tr>
+
+            <!--<tr valign="top">
+                <th scope="row">
+                    <label for="_asa_use_amazon_price_only"><?php _e('Only use Amazon price for placeholder {$AmazonPrice}:') ?></label>
+                </th>
+                <td>
+                    <input type="checkbox" name="_asa_use_amazon_price_only" id="_asa_use_amazon_price_only" value="1"<?php echo ((get_option('_asa_use_amazon_price_only') == true) ? 'checked="checked"' : '') ?> />
+                    <p class="description">If this option is not active, LowestNewOffer or LowestUsedOffer will be used for placeholder {$AmazonPrice} if the item is not in stock at Amazon.<br />
+                    Set this option if you do not want to have other merchant prices listed for placeholder {$AmazonPrice}.</p>
+                </td>
+            </tr>-->
 
             <tr valign="top">
                 <th scope="row">
@@ -1675,10 +1697,8 @@ class AmazonSimpleAdmin {
             $lowestUsedPrice = $this->_formatPrice($item->Offers->LowestUsedPrice);
             $lowestUsedOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
             
-
             if ($item->Offers->Offers[0]->Price != null) {
                 $amazonPrice = $item->Offers->Offers[0]->Price;
-                $amazonPrice = $this->_formatPrice($amazonPrice);
                 $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
             } elseif (!empty($lowestNewPrice)) {
                 $amazonPrice = $lowestNewPrice;
@@ -1687,7 +1707,10 @@ class AmazonSimpleAdmin {
                 $amazonPrice = $lowestUsedPrice;
                 $amazonPriceFormatted = $lowestUsedOfferFormattedPrice;
             }
-            $amazonPrice = $this->_formatPrice($amazonPrice);
+
+            if (isset($amazonPrice)) {
+                $amazonPrice = $this->_formatPrice($amazonPrice);
+            }
             
             $listPriceFormatted = $item->ListPriceFormatted;
             
@@ -1705,9 +1728,9 @@ class AmazonSimpleAdmin {
             } else {
                 $amazon_url = $item->DetailPageURL;
             }
-            
 
-            
+            $percentageSaved = $item->PercentageSaved;
+
             $replace = array(
                 $item->ASIN,
                 ($item->SmallImage != null) ? $item->SmallImage->Url->getUri() : 
@@ -1768,10 +1791,12 @@ class AmazonSimpleAdmin {
                 !empty($item->EditorialReviews[1]) ? $item->EditorialReviews[1]->Content : '',
                 is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist,
                 !empty($parse_params['comment']) ? $parse_params['comment'] : '',
-                
-                
+                !empty($percentageSaved) ? $percentageSaved : 0,
+                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? 'AmazonPrime' : '',
+                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_prime.png" class="asa_prime_pic" />' : ''
             );
-            $result =  preg_replace($search, $replace, $tpl);
+
+            $result = preg_replace($search, $replace, $tpl);
 
             // check for unresolved
             preg_match_all('/\{\$([a-z0-9\-\>]*)\}/i', $result, $matches);
@@ -1779,7 +1804,7 @@ class AmazonSimpleAdmin {
             $unresolved = $matches[1];
             
             if (count($unresolved) > 0) {
-                
+
                 $unresolved_names        = $matches[1];
                 $unresolved_placeholders = $matches[0];
                 
@@ -1790,6 +1815,7 @@ class AmazonSimpleAdmin {
                 for ($i=0; $i<count($unresolved_names);$i++) {
 
                     $value = $item->$unresolved_names[$i];
+
                     if (strstr($value, '$')) {
                         $value = str_replace('$', '\$', $value);
                     }
@@ -1854,7 +1880,7 @@ class AmazonSimpleAdmin {
     {
         $this->_amazon_api_key            = get_option('_asa_amazon_api_key');
         $this->_amazon_api_secret_key     = base64_decode(get_option('_asa_amazon_api_secret_key'));
-        $this->amazon_tracking_id           = get_option('_asa_amazon_tracking_id');
+        $this->amazon_tracking_id         = get_option('_asa_amazon_tracking_id');
 
         $amazon_country_code = get_option('_asa_amazon_country_code');
         if (!empty($amazon_country_code)) {
@@ -1886,6 +1912,13 @@ class AmazonSimpleAdmin {
             $this->_async_load = false;
         } else {
             $this->_async_load = true;
+        }
+
+        $_asa_use_amazon_price_only = get_option('_asa_use_amazon_price_only');
+        if (empty($_asa_use_amazon_price_only)) {
+            $this->_asa_use_amazon_price_only = false;
+        } else {
+            $this->_asa_use_amazon_price_only = true;
         }
     }
     
@@ -2104,8 +2137,8 @@ class AmazonSimpleAdmin {
         if ($tpl == false) {
             $tpl = 'sidebar_item';
         }
-        
-        $tpl_src = file_get_contents(dirname(__FILE__) .'/tpl/built-in/'. $tpl .'.htm');
+
+        $tpl_src = $this->getTpl($tpl);
         
         $item_html .= $this->parseTpl(trim($asin), $tpl_src, null, $tpl);
         
@@ -2136,7 +2169,7 @@ class AmazonSimpleAdmin {
             $site_url = network_site_url();
         }
 
-        $output = '<span id="'. $containerID .'" class="asa_async_container"></span>';
+        $output = '<span id="'. $containerID .'" class="asa_async_container asa_async_container_'. $tpl .'"></span>';
         $output .= "<script type='text/javascript'>jQuery(document).ready(function($){var data={action:'asa_async_load',asin:'$asin',tpl:'$tpl',params:'$params',nonce:'$nonce'};if(typeof ajaxurl=='undefined'){var ajaxurl='$site_url/wp-admin/admin-ajax.php'}$.post(ajaxurl,data,function(response){jQuery('#$containerID').html(response)})});</script>";
         return $output;
     }
@@ -2194,7 +2227,7 @@ function asa_shortcode_handler($atts, $content=null, $code="")
 
 // add the ajax actions
 add_action('wp_ajax_asa_async_load', 'asa_async_load_callback');
-add_action('wp_ajax_nopriv_asa_async_load', 'my_action_callback');
+add_action('wp_ajax_nopriv_asa_async_load', 'asa_async_load_callback');
 
 /**
  * Load asynchronous
