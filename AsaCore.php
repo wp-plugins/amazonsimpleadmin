@@ -91,7 +91,9 @@ class AmazonSimpleAdmin {
         'AmazonDescription',
         'Artist',
         'Comment',
-        'PercentageSaved'
+        'PercentageSaved',
+        'Prime',
+        'PrimePic'
     );
     
     /**
@@ -1697,7 +1699,6 @@ class AmazonSimpleAdmin {
             
             if ($item->Offers->Offers[0]->Price != null) {
                 $amazonPrice = $item->Offers->Offers[0]->Price;
-                $amazonPrice = $this->_formatPrice($amazonPrice);
                 $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
             } elseif (!empty($lowestNewPrice)) {
                 $amazonPrice = $lowestNewPrice;
@@ -1791,6 +1792,8 @@ class AmazonSimpleAdmin {
                 is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist,
                 !empty($parse_params['comment']) ? $parse_params['comment'] : '',
                 !empty($percentageSaved) ? $percentageSaved : 0,
+                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? 'AmazonPrime' : '',
+                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_prime.png" class="asa_prime_pic" />' : ''
             );
 
             $result = preg_replace($search, $replace, $tpl);
@@ -2224,7 +2227,7 @@ function asa_shortcode_handler($atts, $content=null, $code="")
 
 // add the ajax actions
 add_action('wp_ajax_asa_async_load', 'asa_async_load_callback');
-add_action('wp_ajax_nopriv_asa_async_load', 'my_action_callback');
+add_action('wp_ajax_nopriv_asa_async_load', 'asa_async_load_callback');
 
 /**
  * Load asynchronous
