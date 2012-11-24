@@ -1204,6 +1204,42 @@ class AmazonSimpleAdmin {
     }
 
     /**
+     * Tests connection
+     *
+     * @return array
+     */
+    public function testConnection()
+    {
+        $success = false;
+        $message = '';
+
+        try {
+            $this->amazon = $this->connect();
+            if ($this->amazon != null) {
+                $this->amazon->testConnection();
+                $success = true;
+            } else {
+                $message = 'Connection to Amazon Webservice failed. Please check the mandatory data.';
+            }
+        } catch (Exception $e) {
+            $message = $e->getMessage();
+        }
+
+        return array('success' => $success, 'message' => $message);
+    }
+
+    /**
+     * Retrieves connections status
+     *
+     * @return bool
+     */
+    public function getConnectionStatus()
+    {
+        $result = $this->testConnection();
+        return $result['success'] === true;
+    }
+
+    /**
      * Loads setup panel
      *
      */
@@ -1212,18 +1248,25 @@ class AmazonSimpleAdmin {
         $_asa_status = false;
         
         $this->_getAmazonUserData();
-            
-        try {
-            $this->amazon = $this->connect();
-            if ($this->amazon != null) {
-                $this->amazon->testConnection();
-                $_asa_status = true;
-            } else {
-                 throw new Exception('Connection to Amazon Webservice failed. Please check the mandatory data.');   
-            }
-        } catch (Exception $e) {
-            $_asa_error = $e->getMessage();
+
+        $connectionTestResult = $this->testConnection();
+        if ($connectionTestResult['success'] === true) {
+            $_asa_status = true;
+        } else {
+            $_asa_error = $connectionTestResult['message'];
         }
+            
+//        try {
+//            $this->amazon = $this->connect();
+//            if ($this->amazon != null) {
+//                $this->amazon->testConnection();
+//                $_asa_status = true;
+//            } else {
+//                 throw new Exception('Connection to Amazon Webservice failed. Please check the mandatory data.');
+//            }
+//        } catch (Exception $e) {
+//            $_asa_error = $e->getMessage();
+//        }
         ?>
         <div id="asa_setup" class="wrap">
         <form method="post">
@@ -1247,30 +1290,30 @@ class AmazonSimpleAdmin {
             <tbody>
                 <tr valign="top">
                     <th scope="row">
-                        <label for="_asa_amazon_api_key"<?php if (empty($this->_amazon_api_key)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Amazon Access Key ID*:') ?></label>
+                        <label for="_asa_amazon_api_key"<?php if (empty($this->_amazon_api_key)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Amazon Access Key ID*:') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="_asa_amazon_api_key" id="_asa_amazon_api_key" value="<?php echo (!empty($this->_amazon_api_key)) ? $this->_amazon_api_key : ''; ?>" />
+                        <input type="text" name="_asa_amazon_api_key" id="_asa_amazon_api_key" autocomplete="off" value="<?php echo (!empty($this->_amazon_api_key)) ? $this->_amazon_api_key : ''; ?>" />
                         <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/AboutAWSAccounts.html" target="_blank">How do I get one?</a>
                     </td>
                 </tr>
 
                 <tr valign="top">
                     <th scope="row">
-                        <label for="_asa_amazon_api_secret_key"<?php if (empty($this->_amazon_api_secret_key)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Secret Access Key*:') ?></label>
+                        <label for="_asa_amazon_api_secret_key"<?php if (empty($this->_amazon_api_secret_key)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Secret Access Key*:') ?></label>
                     </th>
                     <td>
-                        <input type="password" name="_asa_amazon_api_secret_key" id="_asa_amazon_api_secret_key" value="<?php echo (!empty($this->_amazon_api_secret_key)) ? $this->_amazon_api_secret_key : ''; ?>" />
+                        <input type="password" name="_asa_amazon_api_secret_key" id="_asa_amazon_api_secret_key" autocomplete="off" value="<?php echo (!empty($this->_amazon_api_secret_key)) ? $this->_amazon_api_secret_key : ''; ?>" />
                         <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/ViewingCredentials.html" target="_blank">What is this?</a>
                     </td>
                 </tr>
 
                 <tr valign="top">
                     <th scope="row">
-                        <label for="_asa_amazon_tracking_id"<?php if (empty($this->amazon_tracking_id)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Amazon Tracking ID*:') ?></label>
+                        <label for="_asa_amazon_tracking_id"<?php if (empty($this->amazon_tracking_id)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Amazon Tracking ID*:') ?></label>
                     </th>
                     <td>
-                        <input type="text" name="_asa_amazon_tracking_id" id="_asa_amazon_tracking_id" value="<?php echo (!empty($this->amazon_tracking_id)) ? $this->amazon_tracking_id : ''; ?>" />
+                        <input type="text" name="_asa_amazon_tracking_id" id="_asa_amazon_tracking_id" autocomplete="off" value="<?php echo (!empty($this->amazon_tracking_id)) ? $this->amazon_tracking_id : ''; ?>" />
                         <a href="http://amazon.com/associates" target="_blank">Where do I get one?</a>
                     </td>
                 </tr>
@@ -1611,13 +1654,18 @@ class AmazonSimpleAdmin {
         }
         return $tpl;
     }
-    
+
+
     /**
      * parses the choosen template
-     * 
-     * @param     string        amazon asin
-     * @param     string        the template contents
-     * 
+     *
+     * @param $asin
+     * @param $tpl
+     * @param null $parse_params
+     * @param null $tpl_file
+     * @internal param \amazon $string asin
+     * @internal param \the $string template contents
+     *
      * @return     string        the parsed template
      */
     public function parseTpl ($asin, $tpl, $parse_params=null, $tpl_file=null)
@@ -1654,20 +1702,23 @@ class AmazonSimpleAdmin {
                     $tracking_id = $this->my_tacking_id[$this->_amazon_country_code];
                 }
             }
-            
-            if ($item->CustomerReviewsIFrameURL != null) {
-                require_once(dirname(__FILE__) . '/AsaCustomerReviews.php');
-                $customerReviews = new AsaCustomerReviews($item->ASIN, $item->CustomerReviewsIFrameURL, $this->cache);
-                
-                $averageRating = $customerReviews->averageRating;
-                if (strstr($averageRating, ',')) {
-                    $averageRating = str_replace(',', '.', $averageRating);   
-                }
 
-            }
-            if (empty($averageRating)) {
-                $averageRating = 0;
-            }
+            // get the customer rating object
+            $customerReviews = $this->getCustomerReviews($item);
+
+
+//            if ($item->CustomerReviewsIFrameURL != null) {
+//                require_once(dirname(__FILE__) . '/AsaCustomerReviews.php');
+//                $customerReviews = new AsaCustomerReviews($item->ASIN, $item->CustomerReviewsIFrameURL, $this->cache);
+//
+//
+//                if (strstr($averageRating, ',')) {
+//                    $averageRating = str_replace(',', '.', $averageRating);
+//                }
+//
+//            }
+
+
 
             if ($item->Offers->LowestUsedPrice && $item->Offers->LowestNewPrice) {
                 
@@ -1697,20 +1748,24 @@ class AmazonSimpleAdmin {
             $lowestUsedPrice = $this->_formatPrice($item->Offers->LowestUsedPrice);
             $lowestUsedOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
             
-            if ($item->Offers->Offers[0]->Price != null) {
-                $amazonPrice = $item->Offers->Offers[0]->Price;
-                $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
-            } elseif (!empty($lowestNewPrice)) {
-                $amazonPrice = $lowestNewPrice;
-                $amazonPriceFormatted = $lowestNewOfferFormattedPrice;
-            } elseif (!empty($lowestUsedPrice)) {
-                $amazonPrice = $lowestUsedPrice;
-                $amazonPriceFormatted = $lowestUsedOfferFormattedPrice;
-            }
+//            if ($item->Offers->Offers[0]->Price != null) {
+//                $amazonPrice = $item->Offers->Offers[0]->Price;
+//                $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
+//            } elseif (!empty($lowestNewPrice)) {
+//                $amazonPrice = $lowestNewPrice;
+//                $amazonPriceFormatted = $lowestNewOfferFormattedPrice;
+//            } elseif (!empty($lowestUsedPrice)) {
+//                $amazonPrice = $lowestUsedPrice;
+//                $amazonPriceFormatted = $lowestUsedOfferFormattedPrice;
+//            }
+//
+//            if (isset($amazonPrice)) {
+//                $amazonPrice = $this->_formatPrice($amazonPrice);
+//            }
 
-            if (isset($amazonPrice)) {
-                $amazonPrice = $this->_formatPrice($amazonPrice);
-            }
+            $amazonPrice = $this->getAmazonPrice($item);
+            $amazonPriceFormatted = $this->getAmazonPrice($item, true);
+
             
             $listPriceFormatted = $item->ListPriceFormatted;
             
@@ -1720,13 +1775,6 @@ class AmazonSimpleAdmin {
             $platform = $item->Platform;
             if (is_array($platform)) {
                 $platform = implode(', ', $platform);
-            }
-
-            if (get_option('_asa_use_short_amazon_links')) {
-                $amazon_url = sprintf($this->amazon_url[$this->_amazon_country_code],
-                    $item->ASIN, $this->amazon_tracking_id);
-            } else {
-                $amazon_url = $item->DetailPageURL;
             }
 
             $percentageSaved = $item->PercentageSaved;
@@ -1750,7 +1798,7 @@ class AmazonSimpleAdmin {
                 $item->Publisher,
                 $item->Studio,
                 $item->Title,
-                $amazon_url,
+                $this->getItemUrl($item),
                 empty($totalOffers) ? '0' : $totalOffers,
                 empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
                 $lowestOfferCurrency,
@@ -1778,7 +1826,7 @@ class AmazonSimpleAdmin {
                 is_array($item->Author) ? implode(', ', $item->Author) : $item->Author,
                 is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
                 $item->Edition,
-                $averageRating,
+                $customerReviews->averageRating,
                 ($customerReviews->totalReviews != null) ? $customerReviews->totalReviews : 0,
                 ($customerReviews->imgTag != null) ? $customerReviews->imgTag : '<img src="'. get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-0.gif' .'" class="asa_rating_stars" />',
                 ($customerReviews->imgSrc != null) ? $customerReviews->imgSrc : get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-0.gif',
@@ -1857,6 +1905,17 @@ class AmazonSimpleAdmin {
         } catch (Exception $e) {
             return null;
         }
+    }
+
+    /**
+     * Public alias for self::_getItem($asin)
+     *
+     * @param $asin
+     * @return object
+     */
+    public function getItemObject($asin)
+    {
+        return $this->_getItem($asin);
     }
     
     /**
@@ -2172,6 +2231,68 @@ class AmazonSimpleAdmin {
         $output = '<span id="'. $containerID .'" class="asa_async_container asa_async_container_'. $tpl .'"></span>';
         $output .= "<script type='text/javascript'>jQuery(document).ready(function($){var data={action:'asa_async_load',asin:'$asin',tpl:'$tpl',params:'$params',nonce:'$nonce'};if(typeof ajaxurl=='undefined'){var ajaxurl='$site_url/wp-admin/admin-ajax.php'}$.post(ajaxurl,data,function(response){jQuery('#$containerID').html(response)})});</script>";
         return $output;
+    }
+
+    /**
+     * @param $item
+     * @param bool $formatted
+     * @return mixed|null
+     */
+    public function getAmazonPrice($item, $formatted=false)
+    {
+        $result = null;
+
+        if ($item->Offers->Offers[0]->Price != null) {
+            if ($formatted === false) {
+                $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
+            } else {
+                $result = $item->Offers->Offers[0]->FormattedPrice;
+            }
+        } elseif (!empty($item->Offers->LowestNewPrice)) {
+            if ($formatted === false) {
+                $result = $this->_formatPrice($item->Offers->LowestNewPrice);
+            } else {
+                $result = $item->Offers->LowestNewPriceFormattedPrice;
+            }
+        } elseif (!empty($item->Offers->LowestUsedPrice)) {
+            if ($formatted === false) {
+                $result = $this->_formatPrice($item->Offers->LowestUsedPrice);
+            } else {
+                $result = $item->Offers->LowestUsedPriceFormattedPrice;
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Retrieve the customer reviews object
+     *
+     * @param $item
+     * @return AsaCustomerReviews|null
+     */
+    public function getCustomerReviews($item)
+    {
+        require_once(dirname(__FILE__) . '/AsaCustomerReviews.php');
+
+        $iframeUrl = ($item->CustomerReviewsIFrameURL != null) ? $item->CustomerReviewsIFrameURL : '';
+
+        return new AsaCustomerReviews($item->ASIN, $iframeUrl, $this->cache);
+    }
+
+    /**
+     * @param $item
+     */
+    public function getItemUrl($item)
+    {
+        if (get_option('_asa_use_short_amazon_links')) {
+            $url = sprintf($this->amazon_url[$this->_amazon_country_code],
+                $item->ASIN, $this->amazon_tracking_id);
+        } else {
+            $url = $item->DetailPageURL;
+        }
+
+        return $url;
     }
 
 }

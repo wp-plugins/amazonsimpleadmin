@@ -39,7 +39,9 @@
     color: #BF0005;
     font-size: 1.3em;
 }
-
+._asa_error_color {
+    color: #BF0005;
+}
 ._asa_success_label {
     color: #1D7100;
     font-size: 1.3em;
