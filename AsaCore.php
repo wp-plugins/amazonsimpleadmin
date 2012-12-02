@@ -708,7 +708,7 @@ class AmazonSimpleAdmin {
                 
                 echo $this->_getSubMenu($task);
                 
-                if ($this->db->get_var("SHOW TABLES LIKE '%asa_collection%'") === null) {                
+                if ($this->db->get_var("SHOW TABLES LIKE '". $this->db->prefix ."asa_collection%'") === null) {
                     $this->_displayCollectionsSetup();
                 } else {
                     $this->_displayCollectionsPage($params);
