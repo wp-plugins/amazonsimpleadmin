@@ -138,6 +138,10 @@ class AsaCustomerReviews {
             $client = new AsaZend_Http_Client($this->iframeUrl);
 
             $result = $client->request('GET');
+            global $asa;
+            if ($asa->isDebug()) {
+                $asa->getDebugger()->write($result->getBody());
+            }
 
             foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
                 if (trim($line) == '<div class="crIFrameNumCustReviews">') {

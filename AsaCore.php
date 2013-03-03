@@ -278,7 +278,7 @@ class AmazonSimpleAdmin {
         
         // register shortcode handler for [asa] tags
         add_shortcode( 'asa', 'asa_shortcode_handler' );
-        
+
         if (!get_option('_asa_hide_meta_link')) {
             add_action('wp_meta', array($this, 'addMetaLink'));
         }
@@ -503,6 +503,11 @@ class AmazonSimpleAdmin {
     public function isDebug()
     {
         return get_option('_asa_debug');
+    }
+
+    public function getDebugger()
+    {
+        return $this->_debugger;
     }
 
     /**
@@ -2226,6 +2231,9 @@ class AmazonSimpleAdmin {
         $site_url = site_url();
         if (defined(WP_ALLOW_MULTISITE) && WP_ALLOW_MULTISITE == true) {
             $site_url = network_site_url();
+        }
+        if (empty($tpl)) {
+            $tpl = 'default';
         }
 
         $output = '<span id="'. $containerID .'" class="asa_async_container asa_async_container_'. $tpl .'"></span>';
