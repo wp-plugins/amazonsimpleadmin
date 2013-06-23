@@ -124,7 +124,7 @@ class AmazonSimpleAdmin {
     /**
      * AmazonSimpleAdmin bb tag regex
      */
-    protected $bb_regex = '#\[asa(.*)\]([\w-]+)\[/asa\]#i';
+    protected $bb_regex = '#\[asa(.[^\]]*|)\]([\w-]+)\[/asa\]#Usi';
     
     /**
      * AmazonSimpleAdmin bb tag regex
@@ -239,7 +239,7 @@ class AmazonSimpleAdmin {
     {
         $libdir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib';
         set_include_path(get_include_path() . PATH_SEPARATOR . $libdir);
-        
+
         require_once 'AsaZend/Uri/Http.php';
         require_once 'AsaZend/Service/Amazon.php';
         require_once 'AsaZend/Service/Amazon/Accessories.php';
@@ -2229,7 +2229,7 @@ class AmazonSimpleAdmin {
         $params = json_encode($parse_params);
         $nonce = wp_create_nonce('amazonsimpleadmin');
         $site_url = site_url();
-        if (defined(WP_ALLOW_MULTISITE) && WP_ALLOW_MULTISITE == true) {
+        if (defined('WP_ALLOW_MULTISITE') && WP_ALLOW_MULTISITE == true) {
             $site_url = network_site_url();
         }
         if (empty($tpl)) {
@@ -2375,4 +2375,36 @@ function asa_async_load_callback() {
 
     echo $asa->parseTpl($asin, $tpl, $params);
     exit;
+}
+
+/**
+ * @param $var
+ */
+function asa_debug($var) {
+
+    $debugFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'asadebug.txt';
+    if (!is_writable($debugFile)) {
+        return false;
+    }
+
+    $bt = debug_backtrace();
+    $info = pathinfo($bt[0]['file']);
+
+    $output = 'File: '. $info['basename'] . PHP_EOL .
+        'Line: '. $bt[0]['line'] . PHP_EOL .
+        'Time: '. date('Y/m/d H:i:s') . PHP_EOL .
+        'Type: '. gettype($var) . PHP_EOL . PHP_EOL;
+
+    if (is_array($var) || is_bool($var) || is_object($var)) {
+        $output .= var_export($var, true);
+    } else {
+        $output .= $var;
+    }
+
+    $output .=
+        PHP_EOL . PHP_EOL .
+            '-------------------------------------------------------'.
+            PHP_EOL . PHP_EOL;
+
+    file_put_contents($debugFile, $output, FILE_APPEND);
 }
