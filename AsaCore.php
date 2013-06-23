@@ -129,7 +129,7 @@ class AmazonSimpleAdmin {
     /**
      * AmazonSimpleAdmin bb tag regex
      */
-    protected $bb_regex_collection = '#\[asa_collection(.*)\]([\w-\s]+)\[/asa_collection\]#i';    
+    protected $bb_regex_collection = '#\[asa_collection(.[^\]]*|)\]([\w-\s]+)\[/asa_collection\]#Usi';
     
     /**
      * param separator regex
