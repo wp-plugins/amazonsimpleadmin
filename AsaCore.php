@@ -32,7 +32,12 @@ class AmazonSimpleAdmin {
         'ES'    => 'http://www.amazon.es/exec/obidos/ASIN/%s/%s',
         'CN'    => 'http://www.amazon.cn/exec/obidos/ASIN/%s/%s',
     );
-    
+
+    /**
+     * @var string
+     */
+    protected $amazon_shop_url;
+
     /**
      * available template placeholders
      */
@@ -94,7 +99,9 @@ class AmazonSimpleAdmin {
         'PercentageSaved',
         'Prime',
         'PrimePic',
-        'ProductReviewsURL'
+        'ProductReviewsURL',
+        'TrackingId',
+        'AmazonShopURL'
     );
     
     /**
@@ -1642,22 +1649,31 @@ class AmazonSimpleAdmin {
     public function getTpl($tpl_file, $default=false)
     {
         if (!empty($tpl_file)) {
-            $tpl_file_custom  = dirname(__FILE__) .'/tpl/'. $tpl_file .'.htm';
-            $tpl_file_builtin = dirname(__FILE__) .'/tpl/built-in/'. $tpl_file .'.htm';
+
+            $tplLocations = array(
+                get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'asa' . DIRECTORY_SEPARATOR,
+                dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR,
+                dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR . 'built-in' . DIRECTORY_SEPARATOR
+            );
+            $tplExtensions = array('htm', 'html');
+
+            foreach (apply_filters('asa_tpl_locations', $tplLocations) as $loc) {
+                foreach (apply_filters('asa_tpl_extensions', $tplExtensions) as $ext) {
+                    $tplPath = $loc . $tpl_file . '.' . $ext;
+                    if (file_exists($tplPath)) {
+                        $tpl = file_get_contents($tplPath);
+                    }
+                }
+                if (isset($tpl)) {
+                    break;
+                }
+            }
+
+            if (!isset($tpl)) {
+                $tpl = $default;
+            }
         }
-        
-        if (!empty($tpl_file) &&
-            file_exists($tpl_file_custom)) {
-            // custom template exists 
-            $tpl = file_get_contents($tpl_file_custom);    
-        } else if (!empty($tpl_file) && 
-            file_exists($tpl_file_builtin)) {
-            // take the built-in template
-            $tpl = file_get_contents($tpl_file_builtin);    
-        } else {
-            // take default template
-            $tpl = $default;    
-        }
+
         return $tpl;
     }
 
@@ -1827,7 +1843,7 @@ class AmazonSimpleAdmin {
                 $item->ISBN,
                 $item->EAN,
                 $item->NumberOfPages,
-                $item->ReleaseDate,
+                $this->getLocalizedDate($item->ReleaseDate),
                 $item->Binding,
                 is_array($item->Author) ? implode(', ', $item->Author) : $item->Author,
                 is_array($item->Creator) ? implode(', ', $item->Creator) : $item->Creator,
@@ -1848,7 +1864,9 @@ class AmazonSimpleAdmin {
                 !empty($percentageSaved) ? $percentageSaved : 0,
                 !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? 'AmazonPrime' : '',
                 !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_prime.png" class="asa_prime_pic" />' : '',
-                $this->getAmazonShopUrl() . 'product-reviews/' . $item->ASIN . '/&tag=' . $this->getTrackingId()
+                $this->getAmazonShopUrl() . 'product-reviews/' . $item->ASIN . '/&tag=' . $this->getTrackingId(),
+                $this->getTrackingId(),
+                $this->getAmazonShopUrl()
             );
 
             $result = preg_replace($search, $replace, $tpl);
@@ -2306,6 +2324,23 @@ class AmazonSimpleAdmin {
     }
 
     /**
+     * @param $date
+     * @return bool|string
+     */
+    public function getLocalizedDate($date)
+    {
+        if (!empty($date)) {
+            $dt = new DateTime($date);
+
+            $format = get_option('date_format');
+
+            $date = date($format, $dt->format('U'));
+        }
+
+        return $date;
+    }
+
+    /**
      * @return string
      */
     public function getCountryCode()
@@ -2318,8 +2353,11 @@ class AmazonSimpleAdmin {
      */
     public function getAmazonShopUrl()
     {
-        $url = $this->amazon_url[$this->getCountryCode()];
-        return array_shift(explode('exec', $url));
+        if ($this->amazon_shop_url == null) {
+            $url = $this->amazon_url[$this->getCountryCode()];
+            $this->amazon_shop_url = array_shift(explode('exec', $url));
+        }
+        return $this->amazon_shop_url;
     }
 
     /**
