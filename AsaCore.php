@@ -758,10 +758,12 @@ class AmazonSimpleAdmin {
                     $_asa_cache_lifetime      = strip_tags($_POST['_asa_cache_lifetime']);
                     $_asa_cache_dir           = strip_tags($_POST['_asa_cache_dir']);
                     $_asa_cache_active        = strip_tags($_POST['_asa_cache_active']);
+                    $_asa_cache_skip_on_admin = strip_tags($_POST['_asa_cache_skip_on_admin']);
                     update_option('_asa_cache_lifetime', intval($_asa_cache_lifetime));
                     update_option('_asa_cache_dir', $_asa_cache_dir);
                     update_option('_asa_cache_active', intval($_asa_cache_active));
-                    
+                    update_option('_asa_cache_skip_on_admin', intval($_asa_cache_skip_on_admin));
+
                     $this->success['submit_cache'] = 'Cache options updated!';
                 }
                 
@@ -1047,6 +1049,9 @@ class AmazonSimpleAdmin {
         <h2><?php _e('Usage') ?></h2>
         
         <p>Please visit the <a href="http://www.wp-amazon-plugin.com/" target="_blank">plugin's homepage</a> for a more detailed and always up-to-date documentation</a>.</p>
+
+        <h3>Step by Step Guide</h3>
+        <p>Please read the <a href="http://www.wp-amazon-plugin.com/guide/" target="_blank">Step by Step Guide</a> if you are new to this plugin.</p>
         <h3>Tags</h3>
             <p><?php _e('To embed products from Amazon into your post with AmazonSimpleAdmin, easily use tags like this:') ?></p>
             <p><strong>[asa]ASIN[/asa]</strong> where ASIN is the Amazon ASIN number you can find on each product's site, like: <strong>[asa]B000EWN5JM[/asa]</strong></p>
@@ -1372,11 +1377,12 @@ class AmazonSimpleAdmin {
      */
     protected function _displayCachePage () 
     {    
-        $_asa_cache_lifetime  = get_option('_asa_cache_lifetime');
-        $_asa_cache_dir       = get_option('_asa_cache_dir');
-        $_asa_cache_active    = get_option('_asa_cache_active');
-        $current_cache_dir    = (!empty($_asa_cache_dir) ? $_asa_cache_dir : 'cache');
-        
+        $_asa_cache_lifetime      = get_option('_asa_cache_lifetime');
+        $_asa_cache_dir           = get_option('_asa_cache_dir');
+        $_asa_cache_active        = get_option('_asa_cache_active');
+        $_asa_cache_skip_on_admin = get_option('_asa_cache_skip_on_admin');
+        $current_cache_dir        = (!empty($_asa_cache_dir) ? $_asa_cache_dir : 'cache');
+
         ?>
         <div id="asa_cache" class="wrap">
         <form method="post">
@@ -1393,7 +1399,10 @@ class AmazonSimpleAdmin {
         
         <label for="_asa_cache_active"><?php _e('Activate cache:') ?></label>
         <input type="checkbox" name="_asa_cache_active" id="_asa_cache_active" value="1" <?php echo (!empty($_asa_cache_active)) ? 'checked="checked"' : ''; ?> />  
-        <br />       
+        <br />
+        <label for="_asa_cache_skip_on_admin"><?php _e('Do not use cache when logged in as admin:') ?></label>
+        <input type="checkbox" name="_asa_cache_skip_on_admin" id="_asa_cache_skip_on_admin" value="1" <?php echo (!empty($_asa_cache_skip_on_admin)) ? 'checked="checked"' : ''; ?> />
+        <br />
         <label for="_asa_cache_lifetime"><?php _e('Cache Lifetime (in seconds):') ?></label>
         <input type="text" name="_asa_cache_lifetime" id="_asa_cache_lifetime" value="<?php echo (!empty($_asa_cache_lifetime)) ? $_asa_cache_lifetime : '7200'; ?>" />
         <br />  
@@ -1414,7 +1423,7 @@ class AmazonSimpleAdmin {
     
         <p class="submit">
         <input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
-        <input type="submit" name="clean_cache" value="<?php _e('Clear Cache') ?> &raquo;" />
+        <input type="submit" name="clean_cache" value="<?php _e('Clear Cache') ?> &raquo;" class="button" />
         </p>
         
         </fieldset>
@@ -1604,43 +1613,34 @@ class AmazonSimpleAdmin {
      */
     public function getAllTemplates()
     {
-        $tpl_src_custom  = dirname(__FILE__) .'/tpl/';
-        $tpl_src_builtin = dirname(__FILE__) .'/tpl/built-in/';
-        
-        $templates_custom  = array();
-        $templates_builtin = array();
-        
-        $dirIt = new DirectoryIterator($tpl_src_builtin);
-        
-        foreach ($dirIt as $fileinfo) {
-            
-            $filename = $fileinfo->getFilename();
-            
-            if ($fileinfo->isDir() || $fileinfo->isDot()) {
-                continue;
+        $availableTemplates = array();
+
+        foreach($this->getTplLocations() as $loc) {
+
+            $dirIt = new DirectoryIterator($loc);
+
+            foreach ($dirIt as $fileinfo) {
+
+                $filename = $fileinfo->getFilename();
+
+                if ($fileinfo->isDir() || $fileinfo->isDot()) {
+                    continue;
+                }
+
+                $filePathinfo = pathinfo($filename);
+
+                if (!in_array($filePathinfo['extension'], $this->getTplExtensions())) {
+                    continue;
+                }
+
+                array_push($availableTemplates, $filePathinfo['filename']);
             }
-            $fileExtension = strrpos($filename, '.', 1);
-            
-            $templates_builtin[] = strtolower(substr($filename, 0, $fileExtension));
         }
-        
-        $dirIt = new DirectoryIterator($tpl_src_custom);
-        
-        foreach ($dirIt as $fileinfo) {
-            
-            $filename = $fileinfo->getFilename();
-            
-            if ($fileinfo->isDir() || $fileinfo->isDot()) {
-                continue;
-            }
-            $fileExtension = strrpos($filename, '.', 1);
-            
-            $templates_custom[] = strtolower(substr($filename, 0, $fileExtension));
-        }
-        
-        $result = array_merge($templates_custom, $templates_builtin);
-        sort($result);
-        return $result;
+
+        $availableTemplates = array_unique($availableTemplates);
+        sort($availableTemplates);
+
+        return $availableTemplates;
     }
     
     /**
@@ -1657,8 +1657,8 @@ class AmazonSimpleAdmin {
             );
             $tplExtensions = array('htm', 'html');
 
-            foreach (apply_filters('asa_tpl_locations', $tplLocations) as $loc) {
-                foreach (apply_filters('asa_tpl_extensions', $tplExtensions) as $ext) {
+            foreach ($this->getTplLocations() as $loc) {
+                foreach ($this->getTplExtensions() as $ext) {
                     $tplPath = $loc . $tpl_file . '.' . $ext;
                     if (file_exists($tplPath)) {
                         $tpl = file_get_contents($tplPath);
@@ -1675,6 +1675,28 @@ class AmazonSimpleAdmin {
         }
 
         return $tpl;
+    }
+
+    /**
+     * @return mixed|void
+     */
+    public function getTplLocations()
+    {
+        $tplLocations = array(
+            get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'asa' . DIRECTORY_SEPARATOR,
+            dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR,
+            dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR . 'built-in' . DIRECTORY_SEPARATOR
+        );
+        return apply_filters('asa_tpl_locations', $tplLocations);
+    }
+
+    /**
+     * @return mixed|void
+     */
+    public function getTplExtensions()
+    {
+        $tplExtensions = array('htm', 'html');
+        return apply_filters('asa_tpl_extensions', $tplExtensions);
     }
 
 
@@ -1914,10 +1936,9 @@ class AmazonSimpleAdmin {
     {
         try {
                         
-            if ($this->cache == null) {
+            if ($this->cache == null || $this->_useCache() === false) {
                 // if cache could not be initialized
                 $item = $this->_getItemLookup($asin);
-                
             } else if (!$item = $this->cache->load($asin)) {
                 // if asin is not cached yet
                 $item = $this->_getItemLookup($asin);
@@ -2366,6 +2387,17 @@ class AmazonSimpleAdmin {
     public function getTrackingId()
     {
         return $this->amazon_tracking_id;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function _useCache()
+    {
+        if ((int)get_option('_asa_cache_skip_on_admin') === 1 && current_user_can('install_plugins')) {
+            return false;
+        }
+        return true;
     }
 
 }
