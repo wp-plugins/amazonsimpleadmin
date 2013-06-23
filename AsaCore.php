@@ -93,7 +93,8 @@ class AmazonSimpleAdmin {
         'Comment',
         'PercentageSaved',
         'Prime',
-        'PrimePic'
+        'PrimePic',
+        'ProductReviewsURL'
     );
     
     /**
@@ -1846,7 +1847,8 @@ class AmazonSimpleAdmin {
                 !empty($parse_params['comment']) ? $parse_params['comment'] : '',
                 !empty($percentageSaved) ? $percentageSaved : 0,
                 !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? 'AmazonPrime' : '',
-                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_prime.png" class="asa_prime_pic" />' : ''
+                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_prime.png" class="asa_prime_pic" />' : '',
+                $this->getAmazonShopUrl() . 'product-reviews/' . $item->ASIN . '/&tag=' . $this->getTrackingId()
             );
 
             $result = preg_replace($search, $replace, $tpl);
@@ -2301,6 +2303,31 @@ class AmazonSimpleAdmin {
         }
 
         return $url;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCountryCode()
+    {
+        return $this->_amazon_country_code;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getAmazonShopUrl()
+    {
+        $url = $this->amazon_url[$this->getCountryCode()];
+        return array_shift(explode('exec', $url));
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTrackingId()
+    {
+        return $this->amazon_tracking_id;
     }
 
 }
