@@ -144,6 +144,9 @@ class AsaCustomerReviews {
             }
 
             foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
+
+                $saveBuffer = false;
+
                 if (trim($line) == '<div class="crIFrameNumCustReviews">') {
                     $saveBuffer = true;
                 }

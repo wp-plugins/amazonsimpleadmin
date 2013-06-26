@@ -2,7 +2,7 @@
 class AmazonSimpleAdmin {
     
     const DB_COLL         = 'asa_collection';
-    const DB_COLL_ITEM     = 'asa_collection_item';
+    const DB_COLL_ITEM    = 'asa_collection_item';
     
     /**
      * this plugins home directory
@@ -538,7 +538,7 @@ class AmazonSimpleAdmin {
     public function createAdminMenu () 
     {           
         // Add a new submenu under Options:
-        add_options_page('AmazonSimpleAdmin', 'AmazonSimpleAdmin', 8, 'amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'createOptionsPage'));
+        add_options_page('AmazonSimpleAdmin', 'AmazonSimpleAdmin', 'manage_options', 'amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'createOptionsPage'));
         add_action('admin_head', array($this, 'getOptionsHead'));
         wp_enqueue_script( 'listman' );
     }
@@ -588,7 +588,7 @@ class AmazonSimpleAdmin {
     {
         $_asa_donated = get_option('_asa_donated');
         
-        $nav .= '<div style="clear: both"></div>';
+        $nav = '<div style="clear: both"></div>';
         
         if (empty($_asa_donated)) {
             $nav .= '<div style="padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;">';       
@@ -700,8 +700,9 @@ class AmazonSimpleAdmin {
                     
                 } else if (isset($_POST['submit_new_collection'])) {
                     
-                    $collection_label = strip_tags($_POST['new_collection']);
-                    
+                    $collection_label = str_replace(' ', '_', trim($_POST['new_collection']));
+                    $collection_label = preg_replace("/[^a-zA-Z0-9_]+/", "", $collection_label);
+
                     if (empty($collection_label)) {
                         $this->error['submit_new_collection'] = 'Invalid collection label';
                     } else {
@@ -744,7 +745,7 @@ class AmazonSimpleAdmin {
                 
             case 'cache':
                 
-                if ($_POST['clean_cache']) {
+                if (isset($_POST['clean_cache'])) {
                     
                     if (empty($this->cache)) {
                         $this->error['submit_cache'] = 'Cache not activated!';
@@ -886,9 +887,9 @@ class AmazonSimpleAdmin {
         
         <h3>Create new collection</h3>
         <?php
-        if ($this->error['submit_new_collection']) {
+        if (isset($this->error['submit_new_collection'])) {
             $this->_displayError($this->error['submit_new_collection']);    
-        } else if ($this->success['submit_new_collection']) {
+        } else if (isset($this->success['submit_new_collection'])) {
             $this->_displaySuccess($this->success['submit_new_collection']);    
         }
         ?>
@@ -899,14 +900,15 @@ class AmazonSimpleAdmin {
         
         <p style="margin:0; display: inline;">
             <input type="submit" name="submit_new_collection" value="save" class="button" />
-        </p>
+        </p><br>
+            (Only alpha-numeric characters and underscore allowed)
         </form>
         
         <h3>Add to collection</h3>
         <?php
-        if ($this->error['submit_new_asin']) {
+        if (isset($this->error['submit_new_asin'])) {
             $this->_displayError($this->error['submit_new_asin']);    
-        } else if ($this->success['submit_new_asin']) {
+        } else if (isset($this->success['submit_new_asin'])) {
             $this->_displaySuccess($this->success['submit_new_asin']);    
         }
         ?>
@@ -916,7 +918,10 @@ class AmazonSimpleAdmin {
         <label for="collection">to collection:</label>
         
         <?php
-        $collection_id = trim($_POST['collection']);
+        $collection_id = false;
+        if (isset($_POST['collection'])) {
+            $collection_id = trim($_POST['collection']);
+        }
         echo $this->collection->getSelectField('collection', $collection_id);
         ?>
         
@@ -928,9 +933,9 @@ class AmazonSimpleAdmin {
         <a name="manage_collection"></a>
         <h3>Manage collections</h3>
         <?php
-        if ($this->error['manage_collection']) {
+        if (isset($this->error['manage_collection'])) {
             $this->_displayError($this->error['manage_collection']);    
-        } else if ($this->success['manage_collection']) {
+        } else if (isset($this->success['manage_collection'])) {
             $this->_displaySuccess($this->success['manage_collection']);    
         }
         ?>
@@ -938,7 +943,11 @@ class AmazonSimpleAdmin {
         <label for="select_manage_collection">Collection:</label>
         
         <?php
-        echo $this->collection->getSelectField('select_manage_collection', $collection_id);
+        $manage_collection_id = false;
+        if (isset($_POST['select_manage_collection'])) {
+            $manage_collection_id = trim($_POST['select_manage_collection']);
+        }
+        echo $this->collection->getSelectField('select_manage_collection', $manage_collection_id);
         ?>
 
         <p style="margin:0; display: inline;">
@@ -950,7 +959,7 @@ class AmazonSimpleAdmin {
         </form>
         
         <?php
-        if ($collection_items) {
+        if (isset($collection_items) && !empty($collection_items)) {
 
             $table = '';
             $table .= '<form id="collection-filter" action="'.$this->plugin_url .'&task=collections" method="post">';
@@ -1292,6 +1301,7 @@ class AmazonSimpleAdmin {
         <h2><?php _e('Setup') ?></h2>
 
         <p>Please visit the <a href="http://www.wp-amazon-plugin.com/" target="_blank">AmazonSimpleAdmin-Homepage</a> if you need support.</p>
+        <p>Subscribe to the <a href="http://www.wp-amazon-plugin.com/newsletter/" target="_blank">ASA Newsletter</a> and get involved in the development of <b>new features</b> and the upcoming <b>ASA2</b> version.</p>
         <br>
 
         <p><span id="_asa_status_label">Status:</span> <?php echo ($_asa_status == true) ? '<span class="_asa_status_ready">Ready</span>' : '<span class="_asa_status_not_ready">Not Ready</span>'; ?></p>
@@ -1390,9 +1400,9 @@ class AmazonSimpleAdmin {
         <h2><?php _e('Cache') ?></h2>
                        
         <?php
-        if ($this->error['submit_cache']) {
+        if (isset($this->error['submit_cache'])) {
             $this->_displayError($this->error['submit_cache']);    
-        } else if ($this->success['submit_cache']) {
+        } else if (isset($this->success['submit_cache'])) {
             $this->_displaySuccess($this->success['submit_cache']);    
         }
         ?>
@@ -1617,6 +1627,9 @@ class AmazonSimpleAdmin {
 
         foreach($this->getTplLocations() as $loc) {
 
+            if (!is_dir($loc)) {
+                continue;
+            }
             $dirIt = new DirectoryIterator($loc);
 
             foreach ($dirIt as $fileinfo) {
@@ -1658,6 +1671,9 @@ class AmazonSimpleAdmin {
             $tplExtensions = array('htm', 'html');
 
             foreach ($this->getTplLocations() as $loc) {
+                if (!is_dir($loc)) {
+                    continue;
+                }
                 foreach ($this->getTplExtensions() as $ext) {
                     $tplPath = $loc . $tpl_file . '.' . $ext;
                     if (file_exists($tplPath)) {
@@ -1668,10 +1684,10 @@ class AmazonSimpleAdmin {
                     break;
                 }
             }
+        }
 
-            if (!isset($tpl)) {
-                $tpl = $default;
-            }
+        if (!isset($tpl)) {
+            $tpl = $default;
         }
 
         return $tpl;
@@ -1879,7 +1895,7 @@ class AmazonSimpleAdmin {
                 $item->RunningTime,
                 is_array($item->Format) ? implode(', ', $item->Format) : $item->Format,
                 !empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',
-                $item->EditorialReviews[0]->Content,
+                isset($item->EditorialReviews[0]) ? $item->EditorialReviews[0]->Content : '',
                 !empty($item->EditorialReviews[1]) ? $item->EditorialReviews[1]->Content : '',
                 is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist,
                 !empty($parse_params['comment']) ? $parse_params['comment'] : '',
