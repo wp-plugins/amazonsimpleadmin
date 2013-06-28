@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.4.2
-Stable tag: 0.9.11.2
+Tested up to: 3.5.2
+Stable tag: 0.9.12
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -53,6 +53,20 @@ Here you can find a detailed documentation:
 http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+
+= 0.9.12 =
+* New feature: New cache option: Do not use cache when logged in as admin
+* New feature: Now you can place your template files in your theme directory in a subdirectory called "asa". Supported file extensions are ".htm" and ".html". This is optional, the subdirectory "tpl" of the plugin directory will work as usual.
+* New placeholder: {$TrackingId}
+* New placeholder: {$AmazonShopURL}
+* New placeholder: {$ProductReviewsURL}
+* Improvement: Added collection name filtering
+* Improvement: Collections are tested successfully in WordPress Multisite environment
+* Bugfix: asa / asa_collection shortcode regex fix
+* Bugfix: Collection browse select will keep the selected item
+* Fix: Removed PHP notices
+* Fix: PHP Notice: has_cap was called with an argument that is deprecated since version 2.0! on menu creation
+
 = 0.9.11.2 =
 * Bugfix: Ajax mode did not work for not logged-in users
 * Bugfix: Removed double usage of Amazon price formatting function
