@@ -1205,7 +1205,7 @@ class AmazonSimpleAdmin {
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_debug" id="_asa_debug" value="1"<?php echo ((get_option('_asa_debug') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">Important: Use debugging only temporarily if you are facing problems with ASA. Ask the <a href="http://www.wp-amazon-plugin.com/support/" target="_blank">support</a> how to interpret the debugging information.</p>
+                    <p class="description">Important: Use debugging only temporarily if you are facing problems with ASA. Ask the <a href="http://www.wp-amazon-plugin.com/contact/" target="_blank">support</a> how to interpret the debugging information.</p>
                     <?php if ($this->isDebug()): ?>
                     <?php if ($this->_debugger_error != null): ?>
                         <p><b>Debugger error: </b><?php echo $this->_debugger_error; ?></p>
