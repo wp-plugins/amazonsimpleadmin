@@ -56,7 +56,7 @@ http://www.wp-amazon-plugin.com/guide/
 
 = 0.9.12 =
 * New feature: New cache option: Do not use cache when logged in as admin
-* New feature: Now you can place your template files in your theme directory in a subdirectory called "asa". Supported file extensions are ".htm" and ".html". This is optional, the subdirectory "tpl" of the plugin directory will work as usual.
+* New feature: Now you can place your template files in your theme directory in a subdirectory called "wp-content/themes/[your-theme]/asa". Supported file extensions are ".htm" and ".html". This is optional, the subdirectory "tpl" of the plugin directory will work as usual.
 * New placeholder: {$TrackingId}
 * New placeholder: {$AmazonShopURL}
 * New placeholder: {$ProductReviewsURL}
