@@ -143,18 +143,18 @@ class AsaCustomerReviews {
                 $asa->getDebugger()->write($result->getBody());
             }
 
-            foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
+            $saveBuffer = false;
 
-                $saveBuffer = false;
+            foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
 
                 if (trim($line) == '<div class="crIFrameNumCustReviews">') {
                     $saveBuffer = true;
                 }
-                if ($saveBuffer == true && trim($line) == '</div>') {
+                if ($saveBuffer === true && trim($line) == '</div>') {
                     $saveBuffer = false;
                 }
 
-                if ($saveBuffer == true) {
+                if ($saveBuffer === true) {
                     $contents .= $line;
                 }
             }
