@@ -22,6 +22,12 @@ interface Asa_Service_Amazon_Interface
      * @param array $options
      */
     public function itemSearch(array $options);
+
+    /**
+     * Tests the connection to Amazon API
+     * 
+     */
+    public function testConnection();
 }
 
 

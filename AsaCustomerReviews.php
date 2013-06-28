@@ -71,7 +71,14 @@ class AsaCustomerReviews {
                 $this->totalReviews  = $reviewData['totalReviews'];
                 $this->averageRating = $reviewData['averageRating'];
             }
-        }        
+        }
+
+        if (strstr($this->averageRating, ',')) {
+            $this->averageRating = str_replace(',', '.', $this->averageRating);
+        }
+        if (empty($this->averageRating)) {
+            $this->averageRating = 0;
+        }
     }
     
     /**
@@ -125,21 +132,31 @@ class AsaCustomerReviews {
     protected function _getIframeContents ()
     {
         $contents = '';
-        
-        $client = new AsaZend_Http_Client($this->iframeUrl);
-        
-        $result = $client->request('GET');
 
-        foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
-            if (trim($line) == '<div class="crIFrameNumCustReviews">') {
-                $saveBuffer = true;
+        if (!empty($this->iframeUrl)) {
+
+            $client = new AsaZend_Http_Client($this->iframeUrl);
+
+            $result = $client->request('GET');
+            global $asa;
+            if ($asa->isDebug()) {
+                $asa->getDebugger()->write($result->getBody());
             }
-            if ($saveBuffer == true && trim($line) == '</div>') {
-                $saveBuffer = false;
-            }
-            
-            if ($saveBuffer == true) {
-                $contents .= $line;
+
+            $saveBuffer = false;
+
+            foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
+
+                if (trim($line) == '<div class="crIFrameNumCustReviews">') {
+                    $saveBuffer = true;
+                }
+                if ($saveBuffer === true && trim($line) == '</div>') {
+                    $saveBuffer = false;
+                }
+
+                if ($saveBuffer === true) {
+                    $contents .= $line;
+                }
             }
         }
         

@@ -13,27 +13,15 @@ require_once 'Asa/Service/Amazon/Request/Abstract.php';
 class Asa_Service_Amazon_Request_Curl extends Asa_Service_Amazon_Request_Abstract 
 {
     
-    public function send(array $url_params)
-    {
-        $this->build($url_params);
-                
-        if (!$request = $this->getRequest()) {
-			return false;
-		}
-		
+    public function _send($request_url)
+    {		
 		$config = array(
             'adapter' => 'AsaZend_Http_Client_Adapter_Curl',
         );
-            
-        $client = new AsaZend_Http_Client($request, $config);
 
-        $response = $client->request('GET');
-        
-        if ($response->isSuccessful()) {
-            $this->_response = $response->getBody();
-        }
-				
-		return $this->_response;
+        $client = new AsaZend_Http_Client($request_url, $config);
+
+        return $client->request('GET');
     }
 }
 ?>

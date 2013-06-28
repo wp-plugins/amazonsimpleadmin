@@ -119,7 +119,7 @@ class AsaZend_Cache_Backend_Libmemcached extends AsaZend_Cache_Backend implement
         }
         $this->_memcache = new Memcached;
 
-        // setup memcached client options
+        // asasetup memcached client options
         foreach ($this->_options['client'] as $name => $value) {
             $optId = null;
             if (is_int($name)) {
@@ -139,7 +139,7 @@ class AsaZend_Cache_Backend_Libmemcached extends AsaZend_Cache_Backend implement
             }
         }
 
-        // setup memcached servers
+        // asasetup memcached servers
         $servers = array();
         foreach ($this->_options['servers'] as $server) {
             if (!array_key_exists('port', $server)) {

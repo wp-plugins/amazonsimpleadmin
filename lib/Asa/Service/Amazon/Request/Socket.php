@@ -13,28 +13,16 @@ require_once 'Asa/Service/Amazon/Request/Abstract.php';
 class Asa_Service_Amazon_Request_Socket extends Asa_Service_Amazon_Request_Abstract 
 {
     
-    public function send(array $url_params)
-    {
-        $this->build($url_params);
-                
-        if (!$request = $this->getRequest()) {
-			return false;
-		}
-		
+    public function _send($request_url)
+    {		
 		$config = array(
     		// socket is default, but for clarity
             'adapter' => 'AsaZend_Http_Client_Adapter_Socket', 
         );
             
-        $client = new AsaZend_Http_Client($request, $config);
+        $client = new AsaZend_Http_Client($request_url, $config);
 
-        $response = $client->request('GET');
-        
-        if ($response->isSuccessful()) {
-            $this->_response = $response->getBody();
-        }
-				
-		return $this->_response;
+        return $client->request('GET');
     }
 }
 ?>
