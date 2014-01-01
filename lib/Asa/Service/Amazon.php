@@ -25,6 +25,7 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
         'DE' => 'http://ecs.amazonaws.de/onca/xml',
         'ES' => 'http://webservices.amazon.es/onca/xml',
         'FR' => 'http://ecs.amazonaws.fr/onca/xml',
+        'IN' => 'http://webservices.amazon.in/onca/xml',
         'IT' => 'http://webservices.amazon.it/onca/xml',
         'JP' => 'http://ecs.amazonaws.jp/onca/xml',
         'UK' => 'http://ecs.amazonaws.co.uk/onca/xml',

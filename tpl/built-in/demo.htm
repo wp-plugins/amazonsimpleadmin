@@ -1,54 +1,64 @@
-<div class="subcolumns">
-<div style="border: 1px solid #000; padding: 5px; margin-bottom: 15px; background: url({$AmazonLogoSmallUrl}) left bottom no-repeat #ffffff;">
-	
-	<div class="subcolumns">
-	<p>
-		<strong><a href="{$AmazonUrl}">{$Title}</a></strong>
-	</p>
-	<br />
-	<p>Model: {$Model}</p>
-	<p>IFrameURL: {$IFrameURL}</p>
-	<p>Availability: {$Availability}</p>
-	<p>PercentageSaved: {$PercentageSaved}</p>
-	<p>AmazonPrice: {$AmazonCurrency} {$AmazonPrice}</p>
-	<p>ListPriceFormatted:  {$ListPriceFormatted}</p>
-	<p>ListPrice CurrencyCode:  {$ListPrice->CurrencyCode}</p>
-	<p>ListPrice Amount:  {$ListPrice->Amount}</p>
-	<p>AmountSaved FormattedPrice: {$AmountSaved->FormattedPrice}</p>
-	<p>AmountSaved CurrencyCode: {$AmountSaved->CurrencyCode}</p>
-	<p>AmountSaved Amount: {$AmountSaved->Amount}</p>
-	<p>LowestOfferFormattedPrice: {$LowestOfferFormattedPrice}</p>
-	<p>LowestNewPriceFormattedPrice: {$LowestNewOfferFormattedPrice}</p>
-	<p>LowestUsedPriceFormattedPrice: {$LowestUsedOfferFormattedPrice}</p>
-	<p>AmazonPriceFormatted: {$AmazonPriceFormatted}</p>
-	<p>ProductDescription: {$ProductDescription}</p>
-	<p>AmazonDescription: {$AmazonDescription}</p>
-	<p>GlancePage: {$GlancePage}</p>
-	<p>Language: {$Language}</p>
-	<p>CustomRating: {$CustomRating}</p>
-	<p>Comment: {$Comment}</p>
-	<p>Artist: {$Artist}</p>
-	<p>Creator: {$Creator}</p>
-	<p>Label: {$Label}</p>
-	<p>Binding: {$Binding}</p>
-	<p>Platform: {$Platform}</p>
-	<p>Format: {$Format}</p>
-	<p>Manufacturer: {$Manufacturer}</p>
-	<p>ProductGroup: {$ProductGroup}</p>
-	<p>ReleaseDate: {$ReleaseDate}</p>
-	<p>Studio: {$Studio}</p>
-	<p>Publisher: {$Publisher}</p>
-	<p>Rating: {$RatingStars} ({$TotalReviews} customer reviews)</p>
-	<p>AverageRating: {$AverageRating}</p>
-	<p>My Rating: {$CustomRating}</p>
-	<p>DetailPageURL: {$DetailPageURL}</p>
-	<p>EAN: {$EAN}</p>
-	<p>Prime: {$Prime}</p>
-	<p>PrimePic: {$PrimePic}</p>
-	<div style="width: {$MediumImageWidth}px; float: right; margin-left: 5px;">
-		<img src="{$MediumImageUrl}" width="{$MediumImageWidth}" height="{$MediumImageHeight}" border="0" />
-	</div>
-	<div style="clear: both;"></div>
-	</div>
-</div>
+<div style="background: url({$AmazonLogoSmallUrl}) right bottom no-repeat;">
+    
+    <div class="subcolumns">
+    <p><a href="{$AmazonUrl}">{$Title}</a></p>
+
+
+    <p><b>&#123;$Title&#125;</b><br>{$Title}</p>
+    <p><b>&#123;$SmallImageUrl&#125;</b><br>{$SmallImageUrl}</p>
+    <img src="{$SmallImageUrl}" width="{$SmallImageWidth}" height="{$SmallImageHeight}" border="0" />
+    <p><b>&#123;$MediumImageUrl&#125;</b><br>{$MediumImageUrl}</p>
+    <img src="{$MediumImageUrl}" width="{$MediumImageWidth}" height="{$MediumImageHeight}" border="0" />
+    <p><b>&#123;$LargeImageUrl&#125;</b><br>{$LargeImageUrl}</p>
+    <img src="{$LargeImageUrl}" width="{$LargeImageWidth}" height="{$LargeImageHeight}" border="0" />
+    <p><b>&#123;$AmazonUrl&#125;</b><br>{$AmazonUrl}</p>
+    <p><b>&#123;$Model&#125;</b><br>{$Model}</p>
+    <p><b>&#123;$ASIN&#125;</b><br> {$ASIN}</p>
+    <p><b>&#123;$TrackingId&#125;</b><br> {$TrackingId}</p>
+    <p><b>&#123;$IFrameURL&#125;</b><br> {$IFrameURL}</p>
+    <p><b>&#123;$ProductReviewsURL&#125;</b><br> {$ProductReviewsURL}</p>
+    <p><b>&#123;$AmazonShopURL&#125;</b><br> {$AmazonShopURL}</p>
+    <p><b>&#123;$Availability&#125;</b><br> {$Availability}</p>
+    <p><b>&#123;$PercentageSaved&#125;</b><br> {$PercentageSaved}</p>
+    <p><b>&#123;$AmazonPrice&#125;</b><br>{$AmazonPrice}</p>
+    <p><b>&#123;$AmazonCurrency&#125;</b><br>{$AmazonCurrency}</p>
+    <p><b>&#123;$ListPriceFormatted&#125;</b><br>{$ListPriceFormatted}</p>
+    <p><b>&#123;$ListPrice->CurrencyCode&#125;</b><br>{$ListPrice->CurrencyCode}</p>
+    <p><b>&#123;$ListPrice->Amount&#125;</b><br>{$ListPrice->Amount}</p>
+    <p><b>&#123;$AmountSaved->FormattedPrice&#125;</b><br>{$AmountSaved->FormattedPrice}</p>
+    <p><b>&#123;$AmountSaved->CurrencyCode&#125;</b><br>{$AmountSaved->CurrencyCode}</p>
+    <p><b>&#123;$AmountSaved->Amount&#125;</b><br>{$AmountSaved->Amount}</p>
+    <p><b>&#123;$LowestOfferFormattedPrice&#125;</b><br>{$LowestOfferFormattedPrice}</p>
+    <p><b>&#123;$LowestNewPriceFormattedPrice&#125;</b><br> {$LowestNewOfferFormattedPrice}</p>
+    <p><b>&#123;$LowestUsedPriceFormattedPrice&#125;</b><br> {$LowestUsedOfferFormattedPrice}</p>
+    <p><b>&#123;$AmazonPriceFormatted&#125;</b><br> {$AmazonPriceFormatted}</p>
+    <p><b>&#123;$SalePrice->FormattedPrice&#125;</b><br> {$SalePrice->FormattedPrice}</p>
+    <p><b>&#123;$ProductDescription&#125;</b><br> {$ProductDescription}</p>
+    <p><b>&#123;$AmazonDescription&#125;</b><br> {$AmazonDescription}</p>
+    <p><b>&#123;$GlancePage&#125;</b><br> {$GlancePage}</p>
+    <p><b>&#123;$Language&#125;</b><br> {$Language}</p>
+    <p><b>&#123;$CustomRating&#125;</b><br> {$CustomRating}</p>
+    <p><b>&#123;$Comment&#125;</b><br> {$Comment}</p>
+    <p><b>&#123;$Artist&#125;</b><br> {$Artist}</p>
+    <p><b>&#123;$Creator&#125;</b><br> {$Creator}</p>
+    <p><b>&#123;$Label&#125;</b><br> {$Label}</p>
+    <p><b>&#123;$Binding&#125;</b><br> {$Binding}</p>
+    <p><b>&#123;$Platform&#125;</b><br> {$Platform}</p>
+    <p><b>&#123;$Format&#125;</b><br> {$Format}</p>
+    <p><b>&#123;$Manufacturer&#125;</b><br> {$Manufacturer}</p>
+    <p><b>&#123;$ProductGroup&#125;</b><br> {$ProductGroup}</p>
+    <p><b>&#123;$ReleaseDate&#125;</b><br> {$ReleaseDate}</p>
+    <p><b>&#123;$Studio&#125;</b><br> {$Studio}</p>
+    <p><b>&#123;$Publisher&#125;</b><br> {$Publisher}</p>
+    <p><b>&#123;$RatingStars&#125;</b><br>{$RatingStars}</p>
+    <p><b>&#123;$TotalReviews&#125;</b><br>{$TotalReviews}</p>
+    <p><b>&#123;$AverageRating&#125;</b><br> {$AverageRating}</p>
+    <p><b>&#123;$CustomRating&#125;</b><br> {$CustomRating}</p>
+    <p><b>&#123;$DetailPageURL&#125;</b><br> {$DetailPageURL}</p>
+    <p><b>&#123;$EAN&#125;</b><br> {$EAN}</p>
+    <p><b>&#123;$Prime&#125;</b><br> {$Prime}</p>
+    <p><b>&#123;$PrimePic&#125;</b><br> {$PrimePic}</p>
+
+    <div style="clear: both;"></div>
+    </div>
 </div>

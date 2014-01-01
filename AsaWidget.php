@@ -116,21 +116,21 @@ class WP_Widget_AmazonSimpleAdmin extends WP_Widget {
         ));
         
         $sort_types = array();
-        $sort_types[1] = 'Latest added on top'; 
-        $sort_types[2] = 'Random'; 
+        $sort_types[1] = __('Latest added on top', 'asa1');
+        $sort_types[2] = __('Random', 'asa1');
         
         $templates = $this->_asa->getAllTemplates();
         
         $asa_items                = strip_tags($instance['asa_collection_items']);
         $title                    = strip_tags($instance['title']);
 ?>
-        <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+        <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:', 'asa1'); ?></label>
         <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo esc_attr($title); ?>" /></p>
 		
 		<p>
-			<label for="<?php echo $this->get_field_id('asa_collection_id'); ?>">Collection: </label>
+			<label for="<?php echo $this->get_field_id('asa_collection_id'); ?>"><?php _e('Collection', 'asa1'); ?>: </label>
 				<select size="1" name="<?php echo $this->get_field_name('asa_collection_id'); ?>" id="<?php echo $this->get_field_id('asa_collection_id'); ?>" class="widefat">
-					<option value="0" <?php if (0 == $instance['asa_collection_id']) echo "selected='selected' "; ?> >- Choose collection -</option>
+					<option value="0" <?php if (0 == $instance['asa_collection_id']) echo "selected='selected' "; ?> >- <?php _e('Choose collection', 'asa1'); ?> -</option>
 <?php
 				if (count($collections) > 0) {
 					foreach($collections as $k => $v) {
@@ -142,11 +142,11 @@ class WP_Widget_AmazonSimpleAdmin extends WP_Widget {
 				</select>
 		</p>
 		
-		<p><label for="<?php echo $this->get_field_id('asa_collection_items'); ?>">Number of items (0 = all):</label>
+		<p><label for="<?php echo $this->get_field_id('asa_collection_items'); ?>"><?php _e('Number of items (0 = all)', 'asa1'); ?>:</label>
         <input size="3" maxlength="2" id="<?php echo $this->get_field_id('asa_collection_items'); ?>" name="<?php echo $this->get_field_name('asa_collection_items'); ?>" type="text" value="<?php echo esc_attr($asa_items); ?>" /></p>
 		
 		<p>
-			<label for="<?php echo $this->get_field_id('asa_collection_sort_type'); ?>">Sort type: </label>
+			<label for="<?php echo $this->get_field_id('asa_collection_sort_type'); ?>"><?php _e('Sort type', 'asa1'); ?>: </label>
 				<select size="1" name="<?php echo $this->get_field_name('asa_collection_sort_type'); ?>" id="<?php echo $this->get_field_id('asa_collection_sort_type'); ?>" class="widefat">
 <?php
 				foreach($sort_types as $k => $v) {
@@ -158,7 +158,7 @@ class WP_Widget_AmazonSimpleAdmin extends WP_Widget {
 		</p>
 		
 		<p>
-			<label for="<?php echo $this->get_field_id('asa_collection_template'); ?>">Template: </label>
+			<label for="<?php echo $this->get_field_id('asa_collection_template'); ?>"><?php _e('Template', 'asa1'); ?>: </label>
 				<select size="1" name="<?php echo $this->get_field_name('asa_collection_template'); ?>" id="<?php echo $this->get_field_id('asa_collection_template'); ?>" class="widefat">
 <?php
 				foreach($templates as $template) {

@@ -3,6 +3,8 @@ class AmazonSimpleAdmin {
     
     const DB_COLL         = 'asa_collection';
     const DB_COLL_ITEM    = 'asa_collection_item';
+
+    const VERSION = '0.9.13';
     
     /**
      * this plugins home directory
@@ -15,7 +17,7 @@ class AmazonSimpleAdmin {
      * supported amazon country IDs
      */
     protected $_amazon_valid_country_codes = array(
-        'CA', 'DE', 'FR', 'JP', 'UK', 'US', 'IT', 'ES', 'CN'
+        'CA', 'DE', 'FR', 'JP', 'UK', 'US', 'IT', 'ES', 'CN', 'IN'
     );
     
     /**
@@ -28,6 +30,7 @@ class AmazonSimpleAdmin {
         'JP'    => 'http://www.amazon.jp/exec/obidos/ASIN/%s/%s',
         'UK'    => 'http://www.amazon.co.uk/exec/obidos/ASIN/%s/%s',
         'US'    => 'http://www.amazon.com/exec/obidos/ASIN/%s/%s',
+        'IN'    => 'http://www.amazon.in/exec/obidos/ASIN/%s/%s',
         'IT'    => 'http://www.amazon.it/exec/obidos/ASIN/%s/%s',
         'ES'    => 'http://www.amazon.es/exec/obidos/ASIN/%s/%s',
         'CN'    => 'http://www.amazon.cn/exec/obidos/ASIN/%s/%s',
@@ -103,17 +106,7 @@ class AmazonSimpleAdmin {
         'TrackingId',
         'AmazonShopURL'
     );
-    
-    /**
-     * my tracking id's which will be used if the user doesn't have one
-     * (for all my good programming work :)
-     */
-    protected $my_tacking_id = array(
-        'DE'    => 'ichdigital-21',
-        'UK'    => 'ichdigitaluk-21',
-        'US'    => 'ichdigitalus-21'
-    );
-    
+
     /**
      * template placeholder prefix
      */
@@ -275,6 +268,9 @@ class AmazonSimpleAdmin {
         $this->db = $wpdb;
         
         $this->cache = $this->_initCache();
+
+        // init translation
+        load_plugin_textdomain('asa1', false, 'amazonsimpleadmin/lang');
                 
         // Hook for adding admin menus
         add_action('admin_menu', array($this, 'createAdminMenu'));
@@ -568,12 +564,12 @@ class AmazonSimpleAdmin {
         $navItemFormat = '<a href="%s" class="nav-tab %s">%s</a>';
 
         $nav  = '<h2 class="nav-tab-wrapper">';
-        $nav .= sprintf($navItemFormat, $this->plugin_url, (in_array($task, array(null, 'checkDonation'))) ? 'nav-tab-active' : '', 'Setup');
-        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=options', (($task == 'options') ? 'nav-tab-active' : ''), 'Options');
-        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=collections', (($task == 'collections') ? 'nav-tab-active' : ''), 'Collections');
-        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=cache', (($task == 'cache') ? 'nav-tab-active' : ''), 'Cache');
-        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=usage', (($task == 'usage') ? 'nav-tab-active' : ''), 'Usage');
-        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=faq', (($task == 'faq') ? 'nav-tab-active' : ''), 'FAQ');
+        $nav .= sprintf($navItemFormat, $this->plugin_url, (in_array($task, array(null, 'checkDonation'))) ? 'nav-tab-active' : '', __('Setup', 'asa1'));
+        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=options', (($task == 'options') ? 'nav-tab-active' : ''), __('Options', 'asa1'));
+        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=collections', (($task == 'collections') ? 'nav-tab-active' : ''), __('Collections', 'asa1'));
+        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=cache', (($task == 'cache') ? 'nav-tab-active' : ''), __('Cache', 'asa1'));
+        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=usage', (($task == 'usage') ? 'nav-tab-active' : ''), __('Usage', 'asa1'));
+        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=faq', (($task == 'faq') ? 'nav-tab-active' : ''), __('FAQ', 'asa1'));
 
         $nav .= '</h2><br />';
         return $nav;
@@ -591,24 +587,49 @@ class AmazonSimpleAdmin {
         $nav = '<div style="clear: both"></div>';
         
         if (empty($_asa_donated)) {
-            $nav .= '<div style="padding: 0 10px; background: #ededed; border: 1px solid #80B5D0;">';       
-            $nav .= '<p style="float: right; padding: 5px 10px;"><form action="'. $this->plugin_url .'&task=checkDonation" method="post" style="display: inline; float: right;"><input type="checkbox" name="asa_donated" id="asa_donated" value="1" />&nbsp;<label for="asa_donated">I donated already, please hide this box.</label><br /><input type="submit" value="send" /></form></p>';
+            $nav .= '<h3>'. __('Donation', 'asa1') .'</h3><div class="asa_info_box asa_info_box_outer">';
+
             $nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">';
-            $nav .= '<p style="margin: 0">If you like this plugin and make some money with it feel free to <a href="javascript:void(0);" onclick="document.getElementById(\'form_paypal\').submit();">support me</a> so that I can keep up the updates! :-)</p>';
+            $nav .= '<p style="margin: 0">'. sprintf( __('If you like this plugin and make some money with it, feel free to <a href="javascript:void(0)" onclick="%s">support me</a> so that I can keep up the updates!', 'asa1'), 'document.getElementById(\'form_paypal\').submit();') . ' :-)</p>';
             $nav .= '<input type="hidden" name="cmd" value="_s-xclick">
-                <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" alt="Jetzt einfach, schnell und sicher online bezahlen – mit PayPal." style="vertical-align: middle">&nbsp;(Thank you!)
+                <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" style="vertical-align: middle">&nbsp;('. __('Thank you', 'asa1') . '!)
                 <img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
                 <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
                 </form>';
+            $nav .= '<p style="float: right;"><form action="'. $this->plugin_url .'&task=checkDonation" method="post" style="display: inline; float: right;"><input type="checkbox" name="asa_donated" id="asa_donated" value="1" />&nbsp;<label for="asa_donated">'. __('I donated already. Please hide this box.', 'asa1') .'</label><br /><input type="submit" value="'. __('Send', 'asa1') .'" /></form></p>';
             $nav .= '<div style="clear:both"></div>';   
             $nav .= '</div>';
         }
+
+        $_asa_newsletter = get_option('_asa_newsletter');
+        if (empty($_asa_newsletter)) :
+            ?>
+            <h3><?php _e('Newsletter', 'asa1') ?></h3>
+
+            <div class="asa_info_box asa_info_box_outer">
+                <div id="asa_newsletter_teaser"><img src="<?php echo plugins_url( 'amazonsimpleadmin/img/newsletter.png'); ?>" /></div>
+                <div id="asa_newsletter_form">
+                    <p><?php _e('Curious about the <b>new features</b> of the upcoming <b>ASA Pro</b> version?<br>Then you should subscribe to the ASA newsletter!', 'asa1'); ?></p>
+
+                    <form action="http://wp-amazon-plugin.us7.list-manage.com/subscribe/post?u=a11948220f94721bb8bcddc8b&amp;id=69a6051b59" method="post" target="_blank" novalidate>
+                        <div class="mc-field-group">
+                            <label for="mce-EMAIL"><?php _e('Email Address (required)', 'asa1'); ?></label>
+                            <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+                        </div>
+                        <input type="submit" value="<?php _e('Subscribe', 'asa1') ?>" name="subscribe" id="mc-embedded-subscribe" class="button">
+                    </form>
+
+                </div>
+                <p style="float: right; padding: 5px 10px;"><form action="<?php echo $this->plugin_url; ?>&task=checkNewsletter" method="post" style="display: inline; float: right;"><input type="checkbox" name="asa_check_newsletter" id="asa_check_newsletter" value="1" />&nbsp;<label for="asa_check_newsletter"><?php _e('I subscribed to the ASA newsletter already. Please hide this box.', 'asa1'); ?></label><br /><input type="submit" value="<?php _e('Send', 'asa1'); ?>" /></form></p>
+            </div>
+        <?php
+        endif;
         
         if (!$this->_isCache()) {
-            $nav .= '<div style="margin-top: 5px; padding: 0 10px; background: #ededed; border: 1px solid #aa0000;"><p>It is highly recommended to activate the <a href="'. $this->plugin_url .'&task=cache">cache</a>!</p></div>';
+            $nav .= '<div class="error"><p>'. sprintf( __('It is highly recommended to activate the <a href="%s">cache</a>!', 'asa1'), $this->plugin_url .'&task=cache') .'</p></div>';
         }
         if ($this->isDebug()) {
-            $nav .= '<div class="asa_box_warning"><p>Debugging mode is active. Be sure to deactivate it when you do not need it anymore.</p></div>';
+            $nav .= '<div class="asa_box_warning"><p>'. __('Debugging mode is active. Be sure to deactivate it when you do not need it anymore.', 'asa1') .'</p></div>';
         }
         return $nav;
     }
@@ -622,6 +643,10 @@ class AmazonSimpleAdmin {
         $_asa_donated = get_option('_asa_donated');
         if ($task == 'checkDonation' && empty($_asa_donated)) {
             $this->_checkDonated();
+        }
+        $_asa_newsletter = get_option('_asa_newsletter');
+        if ($task == 'checkNewsletter' && empty($_asa_newsletter)) {
+            $this->_checkNewsletter();
         }
                 
         
@@ -654,19 +679,23 @@ class AmazonSimpleAdmin {
                     
                     if ($item === null) {                        
                         // invalid asin
-                        $this->error['submit_new_asin'] = 'invalid ASIN';
+                        $this->error['submit_new_asin'] = __('invalid ASIN', 'asa1');
                         
                     } else if ($this->collection->checkAsin($asin, $collection_id) !== null) {
                         // asin already added to this collection
-                        $this->error['submit_new_asin'] = 'ASIN already added to collection <strong>'. 
-                            $this->collection->getLabel($collection_id) . '</strong>';
+                        $this->error['submit_new_asin'] = sprintf(
+                            __('ASIN already added to collection <strong>%s</strong>', 'asa1'),
+                            $this->collection->getLabel($collection_id)
+                        );
                         
                     } else {
                         
                         if ($this->collection->addAsin($asin, $collection_id) === true) {
-                            $this->success['submit_new_asin'] = '<strong>'. $item->Title . 
-                                '</strong> added to collection <strong>'. 
-                            $this->collection->getLabel($collection_id) . '</strong>';
+                            $this->success['submit_new_asin'] = sprintf(
+                                __('<strong>%s</strong> added to collection <strong>%s</strong>', 'asa1'),
+                                $item->Title,
+                                $this->collection->getLabel($collection_id)
+                            );
                         }
                     }
                     
@@ -695,8 +724,10 @@ class AmazonSimpleAdmin {
                         $this->collection->delete($collection_id);
                     }
                     
-                    $this->success['manage_collection'] = 'collection deleted: <strong>'. 
-                        $collection_label . '</strong>';
+                    $this->success['manage_collection'] = sprintf(
+                        __('collection deleted: <strong>%s</strong>', 'asa1'),
+                        $collection_label
+                    );
                     
                 } else if (isset($_POST['submit_new_collection'])) {
                     
@@ -704,13 +735,15 @@ class AmazonSimpleAdmin {
                     $collection_label = preg_replace("/[^a-zA-Z0-9_]+/", "", $collection_label);
 
                     if (empty($collection_label)) {
-                        $this->error['submit_new_collection'] = 'Invalid collection label';
+                        $this->error['submit_new_collection'] = __('Invalid collection label', 'asa1');
                     } else {
                         if ($this->collection->create($collection_label) == true) {
-                            $this->success['submit_new_collection'] = 'New collection '.
-                                '<strong>'. $collection_label . '</strong> created';                
+                            $this->success['submit_new_collection'] = sprintf(
+                                __('New collection <strong>%s</strong> created'),
+                                $collection_label
+                            );
                         } else {
-                            $this->error['submit_new_collection'] = 'This collection already exists';
+                            $this->error['submit_new_collection'] = __('This collection already exists', 'asa1');
                         }
                     }
                 
@@ -748,10 +781,10 @@ class AmazonSimpleAdmin {
                 if (isset($_POST['clean_cache'])) {
                     
                     if (empty($this->cache)) {
-                        $this->error['submit_cache'] = 'Cache not activated!';
+                        $this->error['submit_cache'] = __('Cache not activated!', 'asa1');
                     } else {
                         $this->cache->clean(AsaZend_Cache::CLEANING_MODE_ALL);
-                        $this->success['submit_cache'] = 'Cache cleaned up!';
+                        $this->success['submit_cache'] = __('Cache cleaned up!', 'asa1');
                     }
                     
                 } else if (count($_POST) > 0) {
@@ -765,7 +798,7 @@ class AmazonSimpleAdmin {
                     update_option('_asa_cache_active', intval($_asa_cache_active));
                     update_option('_asa_cache_skip_on_admin', intval($_asa_cache_skip_on_admin));
 
-                    $this->success['submit_cache'] = 'Cache options updated!';
+                    $this->success['submit_cache'] = __('Cache options updated!', 'asa1');
                 }
                 
                 echo $this->_getSubMenu($task);
@@ -792,6 +825,8 @@ class AmazonSimpleAdmin {
                     update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
                     update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
                     update_option('_asa_debug', $_asa_debug);
+
+                    $this->_displaySuccess(__('Settings saved.', 'asa1'));
                 }
 
                 if ($this->isDebug()) {
@@ -825,6 +860,8 @@ class AmazonSimpleAdmin {
                         }
                         update_option('_asa_amazon_country_code', $_asa_amazon_country_code);
                     }
+
+                    $this->_displaySuccess(__('Settings saved.', 'asa1'));
                 }
                 
                 echo $this->_getSubMenu($task);
@@ -842,6 +879,16 @@ class AmazonSimpleAdmin {
             update_option('_asa_donated', '1');            
         }
     }
+
+    /**
+     * check if user wants to hide the newsletter box
+     */
+    protected function _checkNewsletter () {
+
+        if ($_POST['asa_check_newsletter'] == '1') {
+            update_option('_asa_newsletter', '1');
+        }
+    }
     
     /**
      * collections asasetup screen
@@ -854,12 +901,12 @@ class AmazonSimpleAdmin {
         <fieldset class="options">
         <h2><?php _e('Collections') ?></h2>
         
-        <p>Do you want to activate the AmazonSimpleAdmin collections feature?</p>
+        <p><?php _e('Do you want to activate the AmazonSimpleAdmin collections feature?', 'asa1'); ?></p>
         <form name="form_collection_init" action="<?php echo $this->plugin_url .'&task=collections'; ?>" method="post">
         <label for="activate_collections">yes</label>
         <input type="checkbox" name="activate_collections" id="activate_collections" value="1">
         <p class="submit" style="margin:0; display: inline;">
-            <input type="submit" name="submit_collection_init" value="activate" />
+            <input type="submit" name="submit_collection_init" value="<?php _e('Activate', 'asa1'); ?>" />
         </p>
         </form>
         </fieldset>
@@ -881,11 +928,11 @@ class AmazonSimpleAdmin {
         ?>        
         <div id="asa_collections" class="wrap">
         <fieldset class="options">
-        <h2><?php _e('Collections') ?></h2>
+        <h2><?php _e('Collections', 'asa1') ?></h2>
 
-        <p>Check out the <a href="http://www.wp-amazon-plugin.com/guide/" target="_blank">guide</a> if you do not know how to use collections.</p>
+        <p><?php printf( __('Check out the <a href="%s" target="_blank">guide</a> if you do not know how to use collections.', 'asa1'), 'http://www.wp-amazon-plugin.com/guide/'); ?></p>
         
-        <h3>Create new collection</h3>
+        <h3><?php _e('Create new collection', 'asa1'); ?></h3>
         <?php
         if (isset($this->error['submit_new_collection'])) {
             $this->_displayError($this->error['submit_new_collection']);    
@@ -895,16 +942,16 @@ class AmazonSimpleAdmin {
         ?>
         
         <form name="form_new_collection" action="<?php echo $this->plugin_url .'&task=collections'; ?>" method="post">
-        <label for="new_collection">New collection:</label>
+        <label for="new_collection"><?php _e('New collection', 'asa1'); ?>:</label>
         <input type="text" name="new_collection" id="new_collection" />
         
         <p style="margin:0; display: inline;">
-            <input type="submit" name="submit_new_collection" value="save" class="button" />
+            <input type="submit" name="submit_new_collection" value="<?php _e('Save', 'asa1'); ?>" class="button" />
         </p><br>
-            (Only alpha-numeric characters and underscore allowed)
+            (<?php _e('Only alpha-numeric characters and underscore allowed', 'asa1'); ?>)
         </form>
         
-        <h3>Add to collection</h3>
+        <h3><?php _e('Add to collection', 'asa1'); ?></h3>
         <?php
         if (isset($this->error['submit_new_asin'])) {
             $this->_displayError($this->error['submit_new_asin']);    
@@ -913,9 +960,9 @@ class AmazonSimpleAdmin {
         }
         ?>
         <form name="form_new_asin" action="<?php echo $this->plugin_url .'&task=collections'; ?>" method="post">
-        <label for="new_asin"><img src="<?php echo bloginfo('url'); ?><?php echo $this->plugin_dir; ?>/img/misc_add_small.gif" /> Add Amazon item (ASIN):</label>
+        <label for="new_asin"><img src="<?php echo bloginfo('url'); ?><?php echo $this->plugin_dir; ?>/img/misc_add_small.gif" /> <?php _e('Add Amazon item (ASIN)', 'asa1'); ?>:</label>
         <input type="text" name="new_asin" id="new_asin" />
-        <label for="collection">to collection:</label>
+        <label for="collection"><?php _e('to collection', 'asa1'); ?>:</label>
         
         <?php
         $collection_id = false;
@@ -926,12 +973,12 @@ class AmazonSimpleAdmin {
         ?>
         
         <p style="margin:0; display: inline;">
-            <input type="submit" name="submit_new_asin" value="save" class="button" />
+            <input type="submit" name="submit_new_asin" value="<?php _e('Save', 'asa1'); ?>" class="button" />
         </p>
         </form>
         
         <a name="manage_collection"></a>
-        <h3>Manage collections</h3>
+        <h3><?php _e('Manage collections', 'asa1'); ?></h3>
         <?php
         if (isset($this->error['manage_collection'])) {
             $this->_displayError($this->error['manage_collection']);    
@@ -940,7 +987,7 @@ class AmazonSimpleAdmin {
         }
         ?>
         <form name="manage_colection" action="<?php echo $this->plugin_url .'&task=collections'; ?>#manage_collection" method="post">
-        <label for="select_manage_collection">Collection:</label>
+        <label for="select_manage_collection"><?php _e('Collection', 'asa1'); ?>:</label>
         
         <?php
         $manage_collection_id = false;
@@ -951,10 +998,10 @@ class AmazonSimpleAdmin {
         ?>
 
         <p style="margin:0; display: inline;">
-            <input type="submit" name="submit_manage_collection" value="browse" class="button" />
+            <input type="submit" name="submit_manage_collection" value="<?php _e('Browse', 'asa1'); ?>" class="button" />
         </p>
         <p style="margin:0; display: inline;">
-            <input type="submit" name="submit_delete_collection" value="delete collection" onclick="return asa_deleteCollection();" class="button" />
+            <input type="submit" name="submit_delete_collection" value="<?php _e('Delete collection', 'asa1'); ?>" onclick="return asa_deleteCollection();" class="button" />
         </p>
         </form>
         
@@ -966,7 +1013,7 @@ class AmazonSimpleAdmin {
             
             $table .= '<div class="tablenav">
                 <div class="alignleft">
-                <input type="submit" class="button-secondary delete" name="deleteit_collection_item" value="delete selected" onclick="return asa_deleteCollectionItems(\'delete selected collection items from collection?\');"/>
+                <input type="submit" class="button-secondary delete" name="deleteit_collection_item" value="'. __('Delete selected', 'asa1') .'" onclick="return asa_deleteCollectionItems(\''. __("Delete selected collection items from collection?", "asa1") .'\');"/>
                 <input type="hidden" name="submit_manage_collection" value="1" />   
                 <input type="hidden" name="select_manage_collection" value="'. $collection_id .'" />             
                 </div>              
@@ -977,9 +1024,9 @@ class AmazonSimpleAdmin {
             $table .= '<th scope="col" style="text-align: center"><input type="checkbox" onclick="asa_checkAll();"/></th>';
             $table .= '<th scope="col" width="[thumb_width]"></th>';
             $table .= '<th scope="col" width="120">ASIN</th>';
-            $table .= '<th scope="col" width="120">'. __('Price') .'</th>';
-            $table .= '<th scope="col">'. __('Title') .'</th>';
-            $table .= '<th scope="col" width="160">'. __('Timestamp') . '</th>';
+            $table .= '<th scope="col" width="120">'. __('Price', 'asa1') .'</th>';
+            $table .= '<th scope="col">'. __('Title', 'asa1') .'</th>';
+            $table .= '<th scope="col" width="160">'. __('Timestamp', 'asa1') . '</th>';
             $table .= '<th scope="col"></th>';
             $table .= '</tr></thead>';
             $table .= '<tbody id="the-list">';
@@ -1015,7 +1062,7 @@ class AmazonSimpleAdmin {
                 $table .= '<td width="120">'. $item->Offers->Offers[0]->FormattedPrice .'</td>';
                 $table .= '<td><span id="">'. $item->Title .'</span></td>';
                 $table .= '<td width="160">'. date(str_replace(' \<\b\r \/\>', ',', __('Y-m-d \<\b\r \/\> g:i:s a')), $row->timestamp) .'</td>';                
-                $table .= '<td><a href="'. $this->plugin_url .'&task=collections&update_timestamp='. $row->collection_item_id .'&select_manage_collection='. $collection_id .'" class="edit" onclick="return asa_set_latest('. $row->collection_item_id .', \'Set timestamp of &quot;'. $title .'&quot; to actual time?\');" title="update timestamp">latest</a></td>';
+                $table .= '<td><a href="'. $this->plugin_url .'&task=collections&update_timestamp='. $row->collection_item_id .'&select_manage_collection='. $collection_id .'" class="edit" onclick="return asa_set_latest('. $row->collection_item_id .', \''. sprintf(__('Set timestamp of &quot;%s&quot; to actual time?', 'asa1'), $title) . '\');" title="update timestamp">'. __('latest', 'asa1') .'</a></td>';
                 $table .= '</tr>';
                 
                 $thumb_max_width[] = $item->SmallImage->Width;
@@ -1037,7 +1084,7 @@ class AmazonSimpleAdmin {
             echo '<div id="ajax-response"></div>';
         
         } else if (isset($collection_id)) {
-            echo '<p>Nothing found. Add some products.</p>';
+            echo '<p>' . __('Nothing found. Add some products.', 'asa1') .'</p>';
         }
         ?>
         
@@ -1055,42 +1102,16 @@ class AmazonSimpleAdmin {
         ?>        
         <div id="asa_setup" class="wrap">
         <fieldset class="options">
-        <h2><?php _e('Usage') ?></h2>
+        <h2><?php _e('Usage', 'asa1') ?></h2>
         
-        <p>Please visit the <a href="http://www.wp-amazon-plugin.com/" target="_blank">plugin's homepage</a> for a more detailed and always up-to-date documentation</a>.</p>
+        <p><?php printf( __('Please visit the <a href="%s" target="_blank">Usage Guide</a> on the plugin\'s homepage to learn how to use it.', 'asa1'), 'http://www.wp-amazon-plugin.com/usage/' ); ?></a></p>
 
-        <h3>Step by Step Guide</h3>
-        <p>Please read the <a href="http://www.wp-amazon-plugin.com/guide/" target="_blank">Step by Step Guide</a> if you are new to this plugin.</p>
-        <h3>Tags</h3>
-            <p><?php _e('To embed products from Amazon into your post with AmazonSimpleAdmin, easily use tags like this:') ?></p>
-            <p><strong>[asa]ASIN[/asa]</strong> where ASIN is the Amazon ASIN number you can find on each product's site, like: <strong>[asa]B000EWN5JM[/asa]</strong></p>
-            <p><?php _e('Furthermmore you can declare an individual template file within the first [asa] tag, like:') ?></p>
-            <p><strong>[asa mytemplate]ASIN[/asa]</strong> (notice the space after asa!)</p>
-            <p><?php _e('You can create multiple template files and put them into the "tpl" folder in the AmazonSimpleAdmin plugin directory. Template files are simple HTML files with placeholders. See the documentation for more info. Template files must have the extension ".htm". Use the filename without ".htm" for declaration within the [asa] tag. If you do not declare a template file, AmazonSimpleAdmin uses the default template (tpl/default.htm).') ?></p>
-            <p><?php _e('For embedding a whole collection of Amazon products into your post, use the collection tags:');?></p>
-            <p><?php _e('<strong>[asa_collection]my_collection[/asa_collection]</strong> where "my_collection" between the tags stands for the collection label you have created in the collections section.');?></p>
-            <p><?php _e('Like with the simple ASIN tags before, you can also use templates for collections. Declare your template file in the asa_collection tag, like this: <strong>[asa_collection my_template]my_collection[/asa_collection]</strong>');?></p>
-            
-        <h3>Functions</h3>
-        
-        <p><?php _e('AmazonSimpleAdmin features the following functions, which can be used in your sidebar file or everywhere else in PHP code:') ?></p>
-        <ul>
-        <li>string <strong>asa_collection</strong> ($label [, string [$type], string [$tpl]])<br /><br />
-        Displays one or more collection items<br /><br />
-        <em>label</em> is mandatory and stands for the collection label<br />
-        <em>type</em> is optional. "all" lists all collection items sorted by time of adding whereas "latest" only displays the latest added item. Default is "all"<br />
-        <em>tpl</em> is optional. Here you can define your own template file. Default is "collection_sidebar_default"<br />
-        
-        </li>
-        <li>string <strong>asa_item</strong> ($asin [, string [$tpl]])<br /><br />
-        Displays one item defined by $asin<br /><br />
-        <em>asin</em> is mandatory and stands for the amazon ASIN<br />
-        <em>tpl</em> is optional. Here you can define your own template file. Default is "sidebar_item"
-        </ul>
-        
-        <h3>Templates</h3>
+        <h3><?php _e('Step by Step Guide', 'asa1'); ?></h3>
+        <p><?php printf( __('Please read the <a href="%s" target="_blank">Step by Step Guide</a> if you are new to this plugin.', 'asa1'), 'http://www.wp-amazon-plugin.com/guide/'); ?></p>
+
+        <h3><?php _e('Available templates', 'asa1'); ?></h3>
                 
-        <p><?php _e('Available templates in your tpl folder are:') ?></p>
+        <p><?php _e('This is a list of template files, ASA found on your server:', 'asa1') ?></p>
         <ul>
         <?php
         $templates = $this->getAllTemplates();
@@ -1131,7 +1152,7 @@ class AmazonSimpleAdmin {
     {
         $this->_loadOptions();
     ?>
-    <h2><?php _e('Options') ?></h2>
+    <h2><?php _e('Options', 'asa1') ?></h2>
 
     <form method="post">
 
@@ -1139,82 +1160,71 @@ class AmazonSimpleAdmin {
         <tbody>
             <tr valign="top">
                 <th scope="row">
-                    <label for="_asa_async_load"><?php _e('Use asynchronous mode (AJAX):') ?></label><br>
+                    <label for="_asa_async_load"><?php _e('Use asynchronous mode (AJAX):', 'asa1') ?></label><br>
                     (BETA)
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_async_load" id="_asa_async_load" value="1"<?php echo (($this->_async_load == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">Requests to the Amazon webservice will be executed asynchronously. This will improve page load speed.</p>
+                    <p class="description"><?php _e('Requests to the Amazon webservice will be executed asynchronously. This will improve page load speed.', 'asa1'); ?></p>
                 </td>
             </tr>
 
             <tr valign="top">
                 <th scope="row">
-                    <label for="_asa_parse_comments"><?php _e('Parse comments:') ?></label>
+                    <label for="_asa_parse_comments"><?php _e('Parse comments:', 'asa1') ?></label>
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_parse_comments" id="_asa_parse_comments" value="1"<?php echo (($this->_parse_comments == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">[asa] tags in comments will be parsed.</p>
+                    <p class="description"><?php _e('[asa] tags in comments will be parsed.', 'asa1'); ?></p>
                 </td>
             </tr>
 
             <tr valign="top">
                 <th scope="row">
-                    <label for="_asa_product_preview"><?php _e('Enable product preview links:') ?></label>
+                    <label for="_asa_product_preview"><?php _e('Enable product preview links:', 'asa1') ?></label>
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_product_preview" id="_asa_product_preview" value="1"<?php echo (($this->_product_preview == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">Product preview layers are only supported by US, UK and DE so far. This can effect the site to be loaded a bit slower due to link parsing.</p>
+                    <p class="description"><?php _e('Product preview layers are only supported by US, UK and DE so far. This can effect the site to be loaded a bit slower due to link parsing.', 'asa1'); ?></p>
                 </td>
             </tr>
 
             <tr valign="top">
                 <th scope="row">
-                    <label for="_asa_hide_meta_link"><?php _e('Hide ASA link:') ?></label>
+                    <label for="_asa_hide_meta_link"><?php _e('Hide ASA link:', 'asa1') ?></label>
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_hide_meta_link" id="_asa_hide_meta_link" value="1"<?php echo ((get_option('_asa_hide_meta_link') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">Hides link to ASA homepage from Meta widget. Do not hide it to support this plugin.</p>
+                    <p class="description"><?php _e('Hides link to ASA homepage from Meta widget. Do not hide it to support this plugin.', 'asa1'); ?></p>
                 </td>
             </tr>
 
             <tr valign="top">
                 <th scope="row">
-                    <label for="_asa_use_short_amazon_links"><?php _e('Use short Amazon links:') ?></label>
+                    <label for="_asa_use_short_amazon_links"><?php _e('Use short Amazon links:', 'asa1') ?></label>
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_use_short_amazon_links" id="_asa_use_short_amazon_links" value="1"<?php echo ((get_option('_asa_use_short_amazon_links') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">Activates the short version of affiliate links like http://www.amazon.com/exec/obidos/ASIN/123456789/trackingid-12</p>
+                    <p class="description"><?php printf( __('Activates the short version of affiliate links like %s', 'asa1'), 'http://www.amazon.com/exec/obidos/ASIN/123456789/trackingid-12' ); ?></p>
                 </td>
             </tr>
 
-            <!--<tr valign="top">
-                <th scope="row">
-                    <label for="_asa_use_amazon_price_only"><?php _e('Only use Amazon price for placeholder {$AmazonPrice}:') ?></label>
-                </th>
-                <td>
-                    <input type="checkbox" name="_asa_use_amazon_price_only" id="_asa_use_amazon_price_only" value="1"<?php echo ((get_option('_asa_use_amazon_price_only') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">If this option is not active, LowestNewOffer or LowestUsedOffer will be used for placeholder {$AmazonPrice} if the item is not in stock at Amazon.<br />
-                    Set this option if you do not want to have other merchant prices listed for placeholder {$AmazonPrice}.</p>
-                </td>
-            </tr>-->
-
             <tr valign="top">
                 <th scope="row">
-                    <label for="_asa_debug"><?php _e('Activate debugging:') ?></label>
+                    <label for="_asa_debug"><?php _e('Activate debugging:', 'asa1') ?></label>
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_debug" id="_asa_debug" value="1"<?php echo ((get_option('_asa_debug') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description">Important: Use debugging only temporarily if you are facing problems with ASA. Ask the <a href="http://www.wp-amazon-plugin.com/contact/" target="_blank">support</a> how to interpret the debugging information.</p>
+                    <p class="description"><?php printf( __('Important: Use debugging only temporarily if you are facing problems with ASA. Ask the <a href="%s" target="_blank">support</a> how to interpret the debugging information.', 'asa1'), 'http://www.wp-amazon-plugin.com/contact/' ); ?></p>
                     <?php if ($this->isDebug()): ?>
                     <?php if ($this->_debugger_error != null): ?>
-                        <p><b>Debugger error: </b><?php echo $this->_debugger_error; ?></p>
+                        <p><b><?php _e('Debugger error', 'asa1'); ?>: </b><?php echo $this->_debugger_error; ?></p>
                         <?php else:?>
-                        <a href="<?php echo $this->plugin_url; ?>&task=options">refresh</a>
+                        <a href="<?php echo $this->plugin_url; ?>&task=options"><?php _e('Refresh', 'asa1'); ?></a>
                         <br />
                         <textarea name="debug_contents" id="debug_contents" rows="20" cols="100"><?php if (!empty($this->_debugger)) echo $this->_debugger->read(); ?></textarea>
                         <br />
-                        <input type="checkbox" name="_asa_debug_clear" id="_asa_debug_clear" value="1" /><label for="_asa_debug_clear"><?php _e('Clear debugging data') ?></label>
+                        <input type="checkbox" name="_asa_debug_clear" id="_asa_debug_clear" value="1" /><label for="_asa_debug_clear"><?php _e('Clear debugging data', 'asa1') ?></label>
                         <?php endif; ?>
                     <?php endif; ?>
                 </td>
@@ -1223,7 +1233,7 @@ class AmazonSimpleAdmin {
     </table>
 
     <p class="submit">
-        <input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
+        <input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options', 'asa1') ?> &raquo;" />
     </p>
     </form>
 
@@ -1246,7 +1256,7 @@ class AmazonSimpleAdmin {
                 $this->amazon->testConnection();
                 $success = true;
             } else {
-                $message = 'Connection to Amazon Webservice failed. Please check the mandatory data.';
+                $message = __('Connection to Amazon Webservice failed. Please check the mandatory data.', 'asa1');
             }
         } catch (Exception $e) {
             $message = $e->getMessage();
@@ -1296,59 +1306,81 @@ class AmazonSimpleAdmin {
 //        }
         ?>
         <div id="asa_setup" class="wrap">
-        <form method="post">
 
-        <h2><?php _e('Setup') ?></h2>
 
-        <p>Please visit the <a href="http://www.wp-amazon-plugin.com/" target="_blank">AmazonSimpleAdmin-Homepage</a> if you need support.</p>
-        <p>Subscribe to the <a href="http://www.wp-amazon-plugin.com/newsletter/" target="_blank">ASA Newsletter</a> and get involved in the development of <b>new features</b> and the upcoming <b>ASA2</b> version.</p>
-        <br>
+        <h2><?php _e('Setup', 'asa1') ?></h2>
 
-        <p><span id="_asa_status_label">Status:</span> <?php echo ($_asa_status == true) ? '<span class="_asa_status_ready">Ready</span>' : '<span class="_asa_status_not_ready">Not Ready</span>'; ?></p>
+        <h3><?php _e('Need help?', 'asa1') ?></h3>
+
+        <div class="help_item">
+            <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/faq.png'); ?>" />
+            <a href="<?php echo $this->plugin_url?>&task=faq"><?php _e('FAQ', 'asa1') ?></a>
+        </div>
+            <div class="help_item">
+                <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/documentation.png'); ?>" />
+                <a href="http://www.wp-amazon-plugin.com/documentation/" target="_blank"><?php _e('Online documentation', 'asa1') ?></a>
+        </div>
+        <div class="help_item">
+            <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/forums.png'); ?>" />
+            <a href="http://www.wp-amazon-plugin.com/forums/" target="_blank"><?php _e('Forums', 'asa1') ?></a>
+        </div>
+        <div class="help_item">
+            <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/contact.png'); ?>" />
+            <a href="http://www.wp-amazon-plugin.com/contact/" target="_blank"><?php _e('Contact', 'asa1') ?></a>
+        </div>
+
+        <br><br>
+
+        <h3><?php _e('Credentials', 'asa1') ?></h3>
+
+        <p><span id="_asa_status_label"><?php _e('Status', 'asa1') ?>:</span> <?php echo ($_asa_status == true) ? '<span class="_asa_status_ready">'. __('Ready', 'asa1') .'</span>' : '<span class="_asa_status_not_ready">'. __('Not Ready', 'asa1') .'</span>'; ?></p>
+
         <?php
         if (!empty($_asa_error)) {
-            echo '<p><strong>Error:</strong> '. $_asa_error . '</p>';    
-            echo '<p><b>Get help</b> at <a href="http://www.wp-amazon-plugin.com/faq/#setup_errors" target="_blank">http://www.wp-amazon-plugin.com/faq/#setup_errors</a></p>';    
+            echo '<div id="message" class="error"><p><strong>Error:</strong> '. $_asa_error;
+            echo '<br>'. __('Get help at', 'asa1') .' <a href="http://www.wp-amazon-plugin.com/faq/#setup_errors" target="_blank">http://www.wp-amazon-plugin.com/faq/#setup_errors</a></p></div>';
         }
         ?>
-        
-        <p><?php _e('Fields marked with * are mandatory:') ?></p>
 
+        <p><?php _e('Please fill in your Amazon Product Advertising API credentials.', 'asa1') ?></p>
+        <p><?php _e('Fields marked with * are mandatory:', 'asa1') ?></p>
+
+        <form method="post">
         <table class="form-table">
             <tbody>
                 <tr valign="top">
                     <th scope="row">
-                        <label for="_asa_amazon_api_key"<?php if (empty($this->_amazon_api_key)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Amazon Access Key ID*:') ?></label>
+                        <label for="_asa_amazon_api_key"<?php if (empty($this->_amazon_api_key)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Amazon Access Key ID*:', 'asa1') ?></label>
                     </th>
                     <td>
                         <input type="text" name="_asa_amazon_api_key" id="_asa_amazon_api_key" autocomplete="off" value="<?php echo (!empty($this->_amazon_api_key)) ? $this->_amazon_api_key : ''; ?>" />
-                        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/AboutAWSAccounts.html" target="_blank">How do I get one?</a>
+                        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/AboutAWSAccounts.html" target="_blank"><?php _e('How do I get one?', 'asa1'); ?></a>
                     </td>
                 </tr>
 
                 <tr valign="top">
                     <th scope="row">
-                        <label for="_asa_amazon_api_secret_key"<?php if (empty($this->_amazon_api_secret_key)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Secret Access Key*:') ?></label>
+                        <label for="_asa_amazon_api_secret_key"<?php if (empty($this->_amazon_api_secret_key)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Secret Access Key*:', 'asa1'); ?></label>
                     </th>
                     <td>
                         <input type="password" name="_asa_amazon_api_secret_key" id="_asa_amazon_api_secret_key" autocomplete="off" value="<?php echo (!empty($this->_amazon_api_secret_key)) ? $this->_amazon_api_secret_key : ''; ?>" />
-                        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/ViewingCredentials.html" target="_blank">What is this?</a>
+                        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/ViewingCredentials.html" target="_blank"><?php _e('What is this?', 'asa1'); ?></a>
                     </td>
                 </tr>
 
                 <tr valign="top">
                     <th scope="row">
-                        <label for="_asa_amazon_tracking_id"<?php if (empty($this->amazon_tracking_id)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Amazon Tracking ID*:') ?></label>
+                        <label for="_asa_amazon_tracking_id"<?php if (empty($this->amazon_tracking_id)) { echo ' class="_asa_error_color"'; } ?>><?php _e('Your Amazon Tracking ID*:', 'asa1') ?></label>
                     </th>
                     <td>
                         <input type="text" name="_asa_amazon_tracking_id" id="_asa_amazon_tracking_id" autocomplete="off" value="<?php echo (!empty($this->amazon_tracking_id)) ? $this->amazon_tracking_id : ''; ?>" />
-                        <a href="http://amazon.com/associates" target="_blank">Where do I get one?</a>
+                        <a href="http://amazon.com/associates" target="_blank"><?php _e('Where do I get one?', 'asa1'); ?></a>
                     </td>
                 </tr>
 
                 <tr valign="top">
                     <th scope="row">
-                        <label for="_asa_amazon_country_code"<?php if (empty($this->_amazon_country_code)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Amazon Country Code*:') ?></label>
+                        <label for="_asa_amazon_country_code"<?php if (empty($this->_amazon_country_code)) { echo ' class="_asa_status_not_ready"'; } ?>><?php _e('Your Amazon Country Code*:', 'asa1') ?></label>
                     </th>
                     <td>
                         <select name="_asa_amazon_country_code">
@@ -1362,18 +1394,18 @@ class AmazonSimpleAdmin {
                                 echo '<option value="'. $code .'"'.$selected.'>' . $code . '</option>';
                             }
                             ?>
-                        </select> <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/amazon_'. $this->_amazon_country_code .'_small.gif'); ?>" id="selected_store" />(Default: US)
+                        </select> <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/amazon_'. $this->_amazon_country_code .'_small.gif'); ?>" id="selected_store" /> (<?php _e('Default', 'asa1'); ?>: US)
                     </td>
                 </tr>
             </tbody>
         </table>
 
         <p class="submit">
-        <input type="submit" name="setup_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
-        <!-- <input type="submit" name="info_clear" value="<?php _e('Clear Settings') ?> &raquo;" /> -->
+        <input type="submit" name="setup_update" class="button-primary" value="<?php _e('Update Options', 'asa1') ?> &raquo;" />
+        <!-- <input type="submit" name="info_clear" value="<?php _e('Clear Settings', 'asa1') ?> &raquo;" /> -->
             <br /><br />
-            <b>Notice:</b><br />
-            If your status is ready but your implemented Amazon product boxes do not show any data, check the FAQ panel for more information (first entry).<br />
+            <b><?php _e('Notice', 'asa1'); ?>:</b><br />
+            <?php _e('If your status is ready but your implemented Amazon product boxes do not show any data, check the FAQ panel for more information (first entry).', 'asa1'); ?><br />
         </p>
 
         </form>
@@ -1407,33 +1439,33 @@ class AmazonSimpleAdmin {
         }
         ?>
         
-        <label for="_asa_cache_active"><?php _e('Activate cache:') ?></label>
+        <label for="_asa_cache_active"><?php _e('Activate cache:', 'asa1') ?></label>
         <input type="checkbox" name="_asa_cache_active" id="_asa_cache_active" value="1" <?php echo (!empty($_asa_cache_active)) ? 'checked="checked"' : ''; ?> />  
         <br />
-        <label for="_asa_cache_skip_on_admin"><?php _e('Do not use cache when logged in as admin:') ?></label>
+        <label for="_asa_cache_skip_on_admin"><?php _e('Do not use cache when logged in as admin:', 'asa1') ?></label>
         <input type="checkbox" name="_asa_cache_skip_on_admin" id="_asa_cache_skip_on_admin" value="1" <?php echo (!empty($_asa_cache_skip_on_admin)) ? 'checked="checked"' : ''; ?> />
         <br />
-        <label for="_asa_cache_lifetime"><?php _e('Cache Lifetime (in seconds):') ?></label>
+        <label for="_asa_cache_lifetime"><?php _e('Cache Lifetime (in seconds):', 'asa1') ?></label>
         <input type="text" name="_asa_cache_lifetime" id="_asa_cache_lifetime" value="<?php echo (!empty($_asa_cache_lifetime)) ? $_asa_cache_lifetime : '7200'; ?>" />
         <br />  
-        <label for="_asa_cache_dir"><?php _e('Cache directory:') ?></label>
-        <input type="text" name="_asa_cache_dir" id="_asa_cache_dir" value="<?php echo $current_cache_dir; ?>" />(within asa plugin directory / default = "cache" / must be <strong>writable</strong>!)
+        <label for="_asa_cache_dir"><?php _e('Cache directory:', 'asa1') ?></label>
+        <input type="text" name="_asa_cache_dir" id="_asa_cache_dir" value="<?php echo $current_cache_dir; ?>" /> (<?php _e('within asa plugin directory / default = "cache" / must be <strong>writable</strong>!', 'asa1'); ?>)
         <br />
         <div style="border: 1px solid #EDEDED; padding: 4px; background: #F8F8F8;">
         <?php
-        echo dirname(__FILE__) . DIRECTORY_SEPARATOR . $current_cache_dir . ' is ';
+        echo dirname(__FILE__) . DIRECTORY_SEPARATOR . $current_cache_dir . ' ' . __('is', 'asa1') . ' ';
         if (is_writable(dirname(__FILE__) . '/' . $current_cache_dir)) {
-            echo '<strong style="color:#177B31">writable</strong>';    
+            echo '<strong style="color:#177B31">'. __('writable', 'asa1') . '</strong>';
         } else {
-            echo '<strong style="color:#B41216">not writable</strong>';    
+            echo '<strong style="color:#B41216">'. __('not writable', 'asa1') . '</strong>';
         }
         ?>
         </div>
         <br />        
     
         <p class="submit">
-        <input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options') ?> &raquo;" />
-        <input type="submit" name="clean_cache" value="<?php _e('Clear Cache') ?> &raquo;" class="button" />
+        <input type="submit" name="info_update" class="button-primary" value="<?php _e('Update Options', 'asa1') ?> &raquo;" />
+        <input type="submit" name="clean_cache" value="<?php _e('Clear Cache', 'asa1') ?> &raquo;" class="button" />
         </p>
         
         </fieldset>
@@ -1447,7 +1479,7 @@ class AmazonSimpleAdmin {
      */
     protected function _displayError ($error) 
     {
-        echo '<p><span class="_asa_error_label">Error:</span> '. $error .'</p>';    
+        echo '<div class="error"><p>'. __('Error', 'asa1') .': '. $error .'</p></div>';
     }
     
     /**
@@ -1455,7 +1487,7 @@ class AmazonSimpleAdmin {
      */
     protected function _displaySuccess ($success) 
     {
-        echo '<p><span class="_asa_success_label">Success:</span> '. $success .'</p>';    
+        echo '<div class="updated"><p>'. __('Success', 'asa1') .': '. $success .'</p></div>';
     }    
     
     /**
@@ -1491,6 +1523,7 @@ class AmazonSimpleAdmin {
 
                 if (!empty($params[0])) {
                     foreach ($params as $param) {
+                        $param = trim($param);
                         if (!strstr($param, '=')) {
                             $tpl_file = $param;
                         } else {
@@ -1749,18 +1782,11 @@ class AmazonSimpleAdmin {
             
             $lowestOfferPrice = null;
             
-            $tracking_id     = ''; 
+            $tracking_id = '';
             
             if (!empty($this->amazon_tracking_id)) {
-                // use the user's tracking id
+                // set the user's tracking id
                 $tracking_id = $this->amazon_tracking_id;
-            } else {
-                // otherwise use mine (for all my good programming work :)
-                if (empty($this->_amazon_country_code)) {
-                    $tracking_id = $this->my_tacking_id['US'];
-                } else {
-                    $tracking_id = $this->my_tacking_id[$this->_amazon_country_code];
-                }
             }
 
             // get the customer rating object
@@ -2131,8 +2157,8 @@ class AmazonSimpleAdmin {
      */
     public function getOptionsHead ()
     {
-        echo '<link rel="stylesheet" type="text/css" media="screen" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/css/options.css" />';
-        echo '<script type="text/javascript" src="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/js/asa.js"></script>';
+        echo '<link rel="stylesheet" type="text/css" media="screen" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/css/options.css?v='. self::VERSION .'" />';
+        echo '<script type="text/javascript" src="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/js/asa.js?v='. self::VERSION .'"></script>';
     }
     
     /**
@@ -2162,8 +2188,7 @@ class AmazonSimpleAdmin {
             case 'DE':
                 $replace = array(
                     'de',
-                    (!empty($this->amazon_tracking_id) ? $this->amazon_tracking_id : 
-                        $this->my_tacking_id['DE']),
+                    (!empty($this->amazon_tracking_id) ? $this->amazon_tracking_id : ''),
                     '3'
                 );                
                 $js = preg_replace($search, $replace, $js);
@@ -2172,8 +2197,7 @@ class AmazonSimpleAdmin {
             case 'UK':
                 $replace = array(
                     'co.uk',
-                    (!empty($this->amazon_tracking_id) ? $this->amazon_tracking_id : 
-                        $this->my_tacking_id['UK']),
+                    (!empty($this->amazon_tracking_id) ? $this->amazon_tracking_id : ''),
                     '2'
                 );                
                 $js = preg_replace($search, $replace, $js);
@@ -2183,8 +2207,7 @@ class AmazonSimpleAdmin {
             case false:
                 $replace = array(
                     'com',
-                    (!empty($this->amazon_tracking_id) ? $this->amazon_tracking_id : 
-                        $this->my_tacking_id['US']),
+                    (!empty($this->amazon_tracking_id) ? $this->amazon_tracking_id : ''),
                     '1'
                 );
                 
@@ -2392,7 +2415,7 @@ class AmazonSimpleAdmin {
     {
         if ($this->amazon_shop_url == null) {
             $url = $this->amazon_url[$this->getCountryCode()];
-            $this->amazon_shop_url = array_shift(explode('exec', $url));
+            $this->amazon_shop_url = current(explode('exec', $url));
         }
         return $this->amazon_shop_url;
     }
@@ -2429,6 +2452,15 @@ function asa_collection ($label, $type=false, $tpl=false)
 {
     global $asa;
     echo $asa->getCollection($label, $type, $tpl);
+}
+
+/**
+ * returns the rendered collection
+ */
+function asa_get_collection ($label, $type=false, $tpl=false)
+{
+    global $asa;
+    return $asa->getCollection($label, $type, $tpl);
 }
 
 /**

@@ -3,6 +3,31 @@
     background: url("../img/icon-32-grey.png") no-repeat;
 }
 
+#asa_setup .help_item {
+    display: inline-block;
+    margin-right: 10px;
+
+}
+#asa_setup .help_item img {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.asa_info_box {
+    border: 1px solid #0076a0;
+    padding: 10px;
+    margin-bottom: 20px;
+    display: inline-block;
+    width: 100%;
+}
+.asa_info_box_outer {
+    width: 98%;
+}
+#asa_newsletter_teaser {
+    float: left;
+    margin: 0 10px 0 10px;
+}
+
 #asa_setup #_asa_amazon_api_key, #asa_setup #_asa_amazon_tracking_id, #asa_setup #_asa_amazon_api_secret_key {
     width: 300px;
 }
