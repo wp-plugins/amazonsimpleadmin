@@ -1,0 +1,521 @@
+# Copyright (C) 2013 AmazonSimpleAdmin
+# This file is distributed under the same license as the AmazonSimpleAdmin package.
+msgid ""
+msgstr ""
+"Project-Id-Version: AmazonSimpleAdmin 0.9.12\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/amazonsimpleadmin\n"
+"POT-Creation-Date: 2013-12-30 18:27:08+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2013-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: AsaCore.php:567 AsaCore.php:1311
+msgid "Setup"
+msgstr ""
+
+#: AsaCore.php:568 AsaCore.php:1155
+msgid "Options"
+msgstr ""
+
+#: AsaCore.php:569 AsaCore.php:902 AsaCore.php:931
+msgid "Collections"
+msgstr ""
+
+#: AsaCore.php:570 AsaCore.php:1432
+msgid "Cache"
+msgstr ""
+
+#: AsaCore.php:571 AsaCore.php:1105
+msgid "Usage"
+msgstr ""
+
+#: AsaCore.php:572 AsaCore.php:1317
+msgid "FAQ"
+msgstr ""
+
+#: AsaCore.php:590
+msgid "Donation"
+msgstr ""
+
+#: AsaCore.php:593
+msgid ""
+"If you like this plugin and make some money with it, feel free to <a href="
+"\"javascript:void(0)\" onclick=\"%s\">support me</a> so that I can keep up "
+"the updates!"
+msgstr ""
+
+#: AsaCore.php:595
+msgid "Thank you"
+msgstr ""
+
+#: AsaCore.php:599
+msgid "I donated already. Please hide this box."
+msgstr ""
+
+#: AsaCore.php:599 AsaCore.php:623
+msgid "Send"
+msgstr ""
+
+#: AsaCore.php:607
+msgid "Newsletter"
+msgstr ""
+
+#: AsaCore.php:612
+msgid ""
+"Curious about the <b>new features</b> of the upcoming <b>ASA Pro</b> version?"
+"<br>Then you should subscribe to the ASA newsletter!"
+msgstr ""
+
+#: AsaCore.php:616
+msgid "Email Address (required)"
+msgstr ""
+
+#: AsaCore.php:619
+msgid "Subscribe"
+msgstr ""
+
+#: AsaCore.php:623
+msgid "I subscribed to the ASA newsletter already. Please hide this box."
+msgstr ""
+
+#: AsaCore.php:629
+msgid "It is highly recommended to activate the <a href=\"%s\">cache</a>!"
+msgstr ""
+
+#: AsaCore.php:632
+msgid ""
+"Debugging mode is active. Be sure to deactivate it when you do not need it "
+"anymore."
+msgstr ""
+
+#: AsaCore.php:682
+msgid "invalid ASIN"
+msgstr ""
+
+#: AsaCore.php:687
+msgid "ASIN already added to collection <strong>%s</strong>"
+msgstr ""
+
+#: AsaCore.php:695
+msgid "<strong>%s</strong> added to collection <strong>%s</strong>"
+msgstr ""
+
+#: AsaCore.php:728
+msgid "collection deleted: <strong>%s</strong>"
+msgstr ""
+
+#: AsaCore.php:738
+msgid "Invalid collection label"
+msgstr ""
+
+#: AsaCore.php:742
+msgid "New collection <strong>%s</strong> created"
+msgstr ""
+
+#: AsaCore.php:746
+msgid "This collection already exists"
+msgstr ""
+
+#: AsaCore.php:784
+msgid "Cache not activated!"
+msgstr ""
+
+#: AsaCore.php:787
+msgid "Cache cleaned up!"
+msgstr ""
+
+#: AsaCore.php:801
+msgid "Cache options updated!"
+msgstr ""
+
+#: AsaCore.php:829 AsaCore.php:864
+msgid "Settings saved."
+msgstr ""
+
+#: AsaCore.php:904
+msgid "Do you want to activate the AmazonSimpleAdmin collections feature?"
+msgstr ""
+
+#: AsaCore.php:909
+msgid "Activate"
+msgstr ""
+
+#: AsaCore.php:933
+msgid ""
+"Check out the <a href=\"%s\" target=\"_blank\">guide</a> if you do not know "
+"how to use collections."
+msgstr ""
+
+#: AsaCore.php:935
+msgid "Create new collection"
+msgstr ""
+
+#: AsaCore.php:945
+msgid "New collection"
+msgstr ""
+
+#: AsaCore.php:949 AsaCore.php:976
+msgid "Save"
+msgstr ""
+
+#: AsaCore.php:951
+msgid "Only alpha-numeric characters and underscore allowed"
+msgstr ""
+
+#: AsaCore.php:954
+msgid "Add to collection"
+msgstr ""
+
+#: AsaCore.php:963
+msgid "Add Amazon item (ASIN)"
+msgstr ""
+
+#: AsaCore.php:965
+msgid "to collection"
+msgstr ""
+
+#: AsaCore.php:981
+msgid "Manage collections"
+msgstr ""
+
+#: AsaCore.php:990 AsaWidget.php:131
+msgid "Collection"
+msgstr ""
+
+#: AsaCore.php:1001
+msgid "Browse"
+msgstr ""
+
+#: AsaCore.php:1004
+msgid "Delete collection"
+msgstr ""
+
+#: AsaCore.php:1016
+msgid "Delete selected"
+msgstr ""
+
+#: AsaCore.php:1016
+msgid "Delete selected collection items from collection?"
+msgstr ""
+
+#: AsaCore.php:1027
+msgid "Price"
+msgstr ""
+
+#: AsaCore.php:1028
+msgid "Title"
+msgstr ""
+
+#: AsaCore.php:1029
+msgid "Timestamp"
+msgstr ""
+
+#: AsaCore.php:1064
+msgid "Y-m-d \\<\\b\\r \\/\\> g:i:s a"
+msgstr ""
+
+#: AsaCore.php:1065
+msgid "Set timestamp of &quot;%s&quot; to actual time?"
+msgstr ""
+
+#: AsaCore.php:1065
+msgid "latest"
+msgstr ""
+
+#: AsaCore.php:1087
+msgid "Nothing found. Add some products."
+msgstr ""
+
+#: AsaCore.php:1107
+msgid ""
+"Please visit the <a href=\"%s\" target=\"_blank\">Usage Guide</a> on the "
+"plugin's homepage to learn how to use it."
+msgstr ""
+
+#: AsaCore.php:1109
+msgid "Step by Step Guide"
+msgstr ""
+
+#: AsaCore.php:1110
+msgid ""
+"Please read the <a href=\"%s\" target=\"_blank\">Step by Step Guide</a> if "
+"you are new to this plugin."
+msgstr ""
+
+#: AsaCore.php:1112
+msgid "Available templates"
+msgstr ""
+
+#: AsaCore.php:1114
+msgid "This is a list of template files, ASA found on your server:"
+msgstr ""
+
+#: AsaCore.php:1163
+msgid "Use asynchronous mode (AJAX):"
+msgstr ""
+
+#: AsaCore.php:1168
+msgid ""
+"Requests to the Amazon webservice will be executed asynchronously. This will "
+"improve page load speed."
+msgstr ""
+
+#: AsaCore.php:1174
+msgid "Parse comments:"
+msgstr ""
+
+#: AsaCore.php:1178
+msgid "[asa] tags in comments will be parsed."
+msgstr ""
+
+#: AsaCore.php:1184
+msgid "Enable product preview links:"
+msgstr ""
+
+#: AsaCore.php:1188
+msgid ""
+"Product preview layers are only supported by US, UK and DE so far. This can "
+"effect the site to be loaded a bit slower due to link parsing."
+msgstr ""
+
+#: AsaCore.php:1194
+msgid "Hide ASA link:"
+msgstr ""
+
+#: AsaCore.php:1198
+msgid ""
+"Hides link to ASA homepage from Meta widget. Do not hide it to support this "
+"plugin."
+msgstr ""
+
+#: AsaCore.php:1204
+msgid "Use short Amazon links:"
+msgstr ""
+
+#: AsaCore.php:1208
+msgid "Activates the short version of affiliate links like %s"
+msgstr ""
+
+#: AsaCore.php:1214
+msgid "Activate debugging:"
+msgstr ""
+
+#: AsaCore.php:1218
+msgid ""
+"Important: Use debugging only temporarily if you are facing problems with "
+"ASA. Ask the <a href=\"%s\" target=\"_blank\">support</a> how to interpret "
+"the debugging information."
+msgstr ""
+
+#: AsaCore.php:1221
+msgid "Debugger error"
+msgstr ""
+
+#: AsaCore.php:1223
+msgid "Refresh"
+msgstr ""
+
+#: AsaCore.php:1227
+msgid "Clear debugging data"
+msgstr ""
+
+#: AsaCore.php:1236 AsaCore.php:1404 AsaCore.php:1467
+msgid "Update Options"
+msgstr ""
+
+#: AsaCore.php:1259
+msgid ""
+"Connection to Amazon Webservice failed. Please check the mandatory data."
+msgstr ""
+
+#: AsaCore.php:1313
+msgid "Need help?"
+msgstr ""
+
+#: AsaCore.php:1321
+msgid "Online documentation"
+msgstr ""
+
+#: AsaCore.php:1325
+msgid "Forums"
+msgstr ""
+
+#: AsaCore.php:1329
+msgid "Contact"
+msgstr ""
+
+#: AsaCore.php:1334
+msgid "Credentials"
+msgstr ""
+
+#: AsaCore.php:1336
+msgid "Status"
+msgstr ""
+
+#: AsaCore.php:1336
+msgid "Ready"
+msgstr ""
+
+#: AsaCore.php:1336
+msgid "Not Ready"
+msgstr ""
+
+#: AsaCore.php:1341
+msgid "Get help at"
+msgstr ""
+
+#: AsaCore.php:1345
+msgid "Please fill in your Amazon Product Advertising API credentials."
+msgstr ""
+
+#: AsaCore.php:1346
+msgid "Fields marked with * are mandatory:"
+msgstr ""
+
+#: AsaCore.php:1353
+msgid "Your Amazon Access Key ID*:"
+msgstr ""
+
+#: AsaCore.php:1357
+msgid "How do I get one?"
+msgstr ""
+
+#: AsaCore.php:1363
+msgid "Your Secret Access Key*:"
+msgstr ""
+
+#: AsaCore.php:1367
+msgid "What is this?"
+msgstr ""
+
+#: AsaCore.php:1373
+msgid "Your Amazon Tracking ID*:"
+msgstr ""
+
+#: AsaCore.php:1377
+msgid "Where do I get one?"
+msgstr ""
+
+#: AsaCore.php:1383
+msgid "Your Amazon Country Code*:"
+msgstr ""
+
+#: AsaCore.php:1397
+msgid "Default"
+msgstr ""
+
+#: AsaCore.php:1405
+msgid "Clear Settings"
+msgstr ""
+
+#: AsaCore.php:1407
+msgid "Notice"
+msgstr ""
+
+#: AsaCore.php:1408
+msgid ""
+"If your status is ready but your implemented Amazon product boxes do not "
+"show any data, check the FAQ panel for more information (first entry)."
+msgstr ""
+
+#: AsaCore.php:1442
+msgid "Activate cache:"
+msgstr ""
+
+#: AsaCore.php:1445
+msgid "Do not use cache when logged in as admin:"
+msgstr ""
+
+#: AsaCore.php:1448
+msgid "Cache Lifetime (in seconds):"
+msgstr ""
+
+#: AsaCore.php:1451
+msgid "Cache directory:"
+msgstr ""
+
+#: AsaCore.php:1452
+msgid ""
+"within asa plugin directory / default = \"cache\" / must be "
+"<strong>writable</strong>!"
+msgstr ""
+
+#: AsaCore.php:1456
+msgid "is"
+msgstr ""
+
+#: AsaCore.php:1458
+msgid "writable"
+msgstr ""
+
+#: AsaCore.php:1460
+msgid "not writable"
+msgstr ""
+
+#: AsaCore.php:1468
+msgid "Clear Cache"
+msgstr ""
+
+#: AsaCore.php:1482
+msgid "Error"
+msgstr ""
+
+#: AsaCore.php:1490
+msgid "Success"
+msgstr ""
+
+#: AsaWidget.php:119
+msgid "Latest added on top"
+msgstr ""
+
+#: AsaWidget.php:120
+msgid "Random"
+msgstr ""
+
+#: AsaWidget.php:127
+msgid "Title:"
+msgstr ""
+
+#: AsaWidget.php:133
+msgid "Choose collection"
+msgstr ""
+
+#: AsaWidget.php:145
+msgid "Number of items (0 = all)"
+msgstr ""
+
+#: AsaWidget.php:149
+msgid "Sort type"
+msgstr ""
+
+#: AsaWidget.php:161
+msgid "Template"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "AmazonSimpleAdmin"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.wp-amazon-plugin.com/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Lets you easily <strong>embed Amazon products</strong> into your posts by "
+"use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can "
+"choose from various presentation styles and of course create your own "
+"template in a few seconds. Needs PHP 5! <a href=\"options-general.php?"
+"page=amazonsimpleadmin/amazonsimpleadmin.php\">Options panel</a>"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Timo Reith"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "http://www.timoreith.de/"
+msgstr ""
