@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.5.2
-Stable tag: 0.9.12
+Tested up to: 3.8
+Stable tag: 0.9.13
 
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
@@ -26,9 +26,10 @@ Features:
 
 * Ease of use with **BBCode** tags
 * Lets you design your own product **templates**
-* Supports all Amazon webservice **country codes**: CA, CN, DE, ES, FR, IT, JP, UK, US
+* Supports all Amazon webservice **country codes**: CA, CN, DE, ES, FR, IN, IT, JP, UK, US
 * Use your Amazon **tracking ID** for making money
 * Features **collections**. You can define and mangage sets of products as a collection an show them on a page with only one BBCode tag or just the latest added product in your sidebar
+* Backend translation: supported so far are english and german. Contact me to help translate.
 * Supports product **preview layers** (for US, UK and DE so far)
 * New with version 0.9.5: **Caching** Speeds up your blog when adding many products to your posts!
 * New with version 0.9.6: Parsing [asa] tags in user comments 
@@ -53,6 +54,12 @@ Here you can find a detailed documentation:
 http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+
+= 0.9.13 =
+* New feature: Added support for indian country store. You can now advertise with Amazon India.
+* New feature: ASA is ready for translation. It supports english and german so far.
+* Layout adjustments for the new WordPress 3.8 backend.
+* Minor bug fixes
 
 = 0.9.12 =
 * New feature: New cache option: Do not use cache when logged in as admin
