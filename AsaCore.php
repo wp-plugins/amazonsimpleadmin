@@ -241,6 +241,7 @@ class AmazonSimpleAdmin {
         $libdir = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'lib';
         set_include_path(get_include_path() . PATH_SEPARATOR . $libdir);
 
+        require_once dirname(__FILE__) . '/AsaFunctions.php';
         require_once 'AsaZend/Uri/Http.php';
         require_once 'AsaZend/Service/Amazon.php';
         require_once 'AsaZend/Service/Amazon/Accessories.php';
@@ -592,7 +593,7 @@ class AmazonSimpleAdmin {
             $nav .= '<form name="form_paypal" id="form_paypal" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">';
             $nav .= '<p style="margin: 0">'. sprintf( __('If you like this plugin and make some money with it, feel free to <a href="javascript:void(0)" onclick="%s">support me</a> so that I can keep up the updates!', 'asa1'), 'document.getElementById(\'form_paypal\').submit();') . ' :-)</p>';
             $nav .= '<input type="hidden" name="cmd" value="_s-xclick">
-                <input type="image" src="'. get_bloginfo('wpurl') . $this->plugin_dir .'/img/paypal.gif" border="0" name="submit" style="vertical-align: middle">&nbsp;('. __('Thank you', 'asa1') . '!)
+                <input type="image" src="'. asa_plugins_url( 'img/paypal.gif', __FILE__ ) .'" border="0" name="submit" style="vertical-align: middle">&nbsp;('. __('Thank you', 'asa1') . '!)
                 <img alt="" border="0" src="https://www.paypal.com/de_DE/i/scr/pixel.gif" width="1" height="1">
                 <input type="hidden" name="encrypted" value="-----BEGIN PKCS7-----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-----END PKCS7-----">
                 </form>';
@@ -607,7 +608,7 @@ class AmazonSimpleAdmin {
             <h3><?php _e('Newsletter', 'asa1') ?></h3>
 
             <div class="asa_info_box asa_info_box_outer">
-                <div id="asa_newsletter_teaser"><img src="<?php echo plugins_url( 'amazonsimpleadmin/img/newsletter.png'); ?>" /></div>
+                <div id="asa_newsletter_teaser"><img src="<?php echo asa_plugins_url( 'img/newsletter.png', __FILE__); ?>" /></div>
                 <div id="asa_newsletter_form">
                     <p><?php _e('Curious about the <b>new features</b> of the upcoming <b>ASA Pro</b> version?<br>Then you should subscribe to the ASA newsletter!', 'asa1'); ?></p>
 
@@ -960,7 +961,7 @@ class AmazonSimpleAdmin {
         }
         ?>
         <form name="form_new_asin" action="<?php echo $this->plugin_url .'&task=collections'; ?>" method="post">
-        <label for="new_asin"><img src="<?php echo bloginfo('url'); ?><?php echo $this->plugin_dir; ?>/img/misc_add_small.gif" /> <?php _e('Add Amazon item (ASIN)', 'asa1'); ?>:</label>
+        <label for="new_asin"><img src="<?php echo asa_plugins_url( 'img/misc_add_small.gif', __FILE__ ); ?>" /> <?php _e('Add Amazon item (ASIN)', 'asa1'); ?>:</label>
         <input type="text" name="new_asin" id="new_asin" />
         <label for="collection"><?php _e('to collection', 'asa1'); ?>:</label>
         
@@ -1053,7 +1054,7 @@ class AmazonSimpleAdmin {
                 
                 $table .= '<th class="check-column" scope="row" style="text-align: center"><input type="checkbox" value="'. $row->collection_item_id .'" name="delete_collection_item[]"/></th>';
                 if ($item->SmallImage == null) {
-                    $thumbnail = get_bloginfo('url') . $this->plugin_dir . '/img/no_image.gif';
+                    $thumbnail = asa_plugins_url( 'img/no_image.gif', __FILE__ );
                 } else {
                     $thumbnail = $item->SmallImage->Url->getUri();
                 }
@@ -1313,19 +1314,19 @@ class AmazonSimpleAdmin {
         <h3><?php _e('Need help?', 'asa1') ?></h3>
 
         <div class="help_item">
-            <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/faq.png'); ?>" />
+            <img src="<?php echo asa_plugins_url( 'img/faq.png', __FILE__); ?>" />
             <a href="<?php echo $this->plugin_url?>&task=faq"><?php _e('FAQ', 'asa1') ?></a>
         </div>
             <div class="help_item">
-                <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/documentation.png'); ?>" />
+                <img src="<?php echo asa_plugins_url( 'img/documentation.png', __FILE__); ?>" />
                 <a href="http://www.wp-amazon-plugin.com/documentation/" target="_blank"><?php _e('Online documentation', 'asa1') ?></a>
         </div>
         <div class="help_item">
-            <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/forums.png'); ?>" />
+            <img src="<?php echo asa_plugins_url( 'img/forums.png', __FILE__); ?>" />
             <a href="http://www.wp-amazon-plugin.com/forums/" target="_blank"><?php _e('Forums', 'asa1') ?></a>
         </div>
         <div class="help_item">
-            <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/contact.png'); ?>" />
+            <img src="<?php echo asa_plugins_url( 'img/contact.png', __FILE__); ?>" />
             <a href="http://www.wp-amazon-plugin.com/contact/" target="_blank"><?php _e('Contact', 'asa1') ?></a>
         </div>
 
@@ -1394,7 +1395,7 @@ class AmazonSimpleAdmin {
                                 echo '<option value="'. $code .'"'.$selected.'>' . $code . '</option>';
                             }
                             ?>
-                        </select> <img src="<?php echo plugins_url( 'amazonsimpleadmin/img/amazon_'. $this->_amazon_country_code .'_small.gif'); ?>" id="selected_store" /> (<?php _e('Default', 'asa1'); ?>: US)
+                        </select> <img src="<?php echo asa_plugins_url( 'img/amazon_'. $this->_amazon_country_code .'_small.gif', __FILE__); ?>" id="selected_store" /> (<?php _e('Default', 'asa1'); ?>: US)
                     </td>
                 </tr>
             </tbody>
@@ -1865,18 +1866,17 @@ class AmazonSimpleAdmin {
 
             $percentageSaved = $item->PercentageSaved;
 
+            $no_img_url = asa_plugins_url( 'img/no_image.gif', __FILE__ );
+
             $replace = array(
                 $item->ASIN,
-                ($item->SmallImage != null) ? $item->SmallImage->Url->getUri() : 
-                    get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_image.gif',
+                ($item->SmallImage != null) ? $item->SmallImage->Url->getUri() : $no_img_url,
                 ($item->SmallImage != null) ? $item->SmallImage->Width : 60,
                 ($item->SmallImage != null) ? $item->SmallImage->Height : 60,
-                ($item->MediumImage != null) ? $item->MediumImage->Url->getUri() :
-                    get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_image.gif',
+                ($item->MediumImage != null) ? $item->MediumImage->Url->getUri() : $no_img_url,
                 ($item->MediumImage != null) ? $item->MediumImage->Width : 60,
                 ($item->MediumImage != null) ? $item->MediumImage->Height : 60,
-                ($item->LargeImage != null) ? $item->LargeImage->Url->getUri() :
-                    get_bloginfo('wpurl') . $this->plugin_dir . '/img/no_image.gif',
+                ($item->LargeImage != null) ? $item->LargeImage->Url->getUri() : $no_img_url,
                 ($item->LargeImage != null) ? $item->LargeImage->Width : 60,
                 ($item->LargeImage != null) ? $item->LargeImage->Height : 60,
                 $item->Label,
@@ -1898,10 +1898,8 @@ class AmazonSimpleAdmin {
                 empty($listPriceFormatted) ? '---' : str_replace('$', '\$', $listPriceFormatted),
                 $item->Offers->Offers[0]->CurrencyCode,
                 $item->Offers->Offers[0]->Availability,
-                get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_' . 
-                    (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'_small.gif',
-                get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_' . 
-                    (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'.gif', 
+                asa_plugins_url( 'img/amazon_' . (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'_small.gif', __FILE__ ),
+                asa_plugins_url( 'img/amazon_' . (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'.gif', __FILE__ ),
                 $item->DetailPageURL,
                 $platform,
                 $item->ISBN,
@@ -1914,20 +1912,20 @@ class AmazonSimpleAdmin {
                 $item->Edition,
                 $customerReviews->averageRating,
                 ($customerReviews->totalReviews != null) ? $customerReviews->totalReviews : 0,
-                ($customerReviews->imgTag != null) ? $customerReviews->imgTag : '<img src="'. get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-0.gif' .'" class="asa_rating_stars" />',
-                ($customerReviews->imgSrc != null) ? $customerReviews->imgSrc : get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-0.gif',
+                ($customerReviews->imgTag != null) ? $customerReviews->imgTag : '<img src="'. asa_plugins_url( 'img/stars-0.gif', __FILE__ ) .'" class="asa_rating_stars" />',
+                ($customerReviews->imgSrc != null) ? $customerReviews->imgSrc : asa_plugins_url( 'img/stars-0.gif', __FILE__ ),
                 is_array($item->Director) ? implode(', ', $item->Director) : $item->Director,
                 is_array($item->Actor) ? implode(', ', $item->Actor) : $item->Actor,
                 $item->RunningTime,
                 is_array($item->Format) ? implode(', ', $item->Format) : $item->Format,
-                !empty($parse_params['custom_rating']) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/stars-'. $parse_params['custom_rating'] .'.gif" class="asa_rating_stars" />' : '',
+                !empty($parse_params['custom_rating']) ? '<img src="' . asa_plugins_url( 'img/stars-'. $parse_params['custom_rating'] .'.gif', __FILE__ ) .'" class="asa_rating_stars" />' : '',
                 isset($item->EditorialReviews[0]) ? $item->EditorialReviews[0]->Content : '',
                 !empty($item->EditorialReviews[1]) ? $item->EditorialReviews[1]->Content : '',
                 is_array($item->Artist) ? implode(', ', $item->Artist) : $item->Artist,
                 !empty($parse_params['comment']) ? $parse_params['comment'] : '',
                 !empty($percentageSaved) ? $percentageSaved : 0,
                 !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? 'AmazonPrime' : '',
-                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="' . get_bloginfo('wpurl') . $this->plugin_dir . '/img/amazon_prime.png" class="asa_prime_pic" />' : '',
+                !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="'. asa_plugins_url( 'img/amazon_prime.png', __FILE__ )  .'" class="asa_prime_pic" />' : '',
                 $this->getAmazonShopUrl() . 'product-reviews/' . $item->ASIN . '/&tag=' . $this->getTrackingId(),
                 $this->getTrackingId(),
                 $this->getAmazonShopUrl()
@@ -2157,8 +2155,8 @@ class AmazonSimpleAdmin {
      */
     public function getOptionsHead ()
     {
-        echo '<link rel="stylesheet" type="text/css" media="screen" href="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/css/options.css?v='. self::VERSION .'" />';
-        echo '<script type="text/javascript" src="' . get_bloginfo('wpurl') . '/wp-content/plugins/amazonsimpleadmin/js/asa.js?v='. self::VERSION .'"></script>';
+        echo '<link rel="stylesheet" type="text/css" media="screen" href="' . asa_plugins_url( 'css/options.css?v='. self::VERSION , __FILE__ ) .'" />';
+        echo '<script type="text/javascript" src="' . asa_plugins_url( 'js/asa.js?v='. self::VERSION , __FILE__ ) .'"></script>';
     }
     
     /**
