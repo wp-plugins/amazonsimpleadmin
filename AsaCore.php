@@ -104,7 +104,10 @@ class AmazonSimpleAdmin {
         'PrimePic',
         'ProductReviewsURL',
         'TrackingId',
-        'AmazonShopURL'
+        'AmazonShopURL',
+        'SalePriceAmount',
+        'SalePriceCurrencyCode',
+        'SalePriceFormatted',
     );
 
     /**
@@ -1928,7 +1931,10 @@ class AmazonSimpleAdmin {
                 !empty($item->Offers->Offers[0]->IsEligibleForSuperSaverShipping) ? '<img src="'. asa_plugins_url( 'img/amazon_prime.png', __FILE__ )  .'" class="asa_prime_pic" />' : '',
                 $this->getAmazonShopUrl() . 'product-reviews/' . $item->ASIN . '/&tag=' . $this->getTrackingId(),
                 $this->getTrackingId(),
-                $this->getAmazonShopUrl()
+                $this->getAmazonShopUrl(),
+                $this->_formatPrice($item->Offers->SalePriceAmount),
+                $item->Offers->SalePriceCurrencyCode,
+                $item->Offers->SalePriceFormatted,
             );
 
             $result = preg_replace($search, $replace, $tpl);
@@ -2122,7 +2128,7 @@ class AmazonSimpleAdmin {
      */
     protected function _formatPrice ($price)
     {
-        if ($price === null) {
+        if ($price === null || empty($price)) {
             return $price;
         }
         
@@ -2328,17 +2334,23 @@ class AmazonSimpleAdmin {
     {
         $result = null;
 
-        if ($item->Offers->Offers[0]->Price != null) {
+        if ($item->Offers->SalePriceAmount != null) {
             if ($formatted === false) {
-                $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
+                $result = $this->_formatPrice($item->Offers->SalePriceAmount);
             } else {
-                $result = $item->Offers->Offers[0]->FormattedPrice;
+                $result = $item->Offers->SalePriceFormatted;
             }
         } elseif (!empty($item->Offers->LowestNewPrice)) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->LowestNewPrice);
             } else {
                 $result = $item->Offers->LowestNewPriceFormattedPrice;
+            }
+        } elseif ($item->Offers->Offers[0]->Price != null) {
+            if ($formatted === false) {
+                $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
+            } else {
+                $result = $item->Offers->Offers[0]->FormattedPrice;
             }
         } elseif (!empty($item->Offers->LowestUsedPrice)) {
             if ($formatted === false) {

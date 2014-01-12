@@ -62,6 +62,21 @@ class AsaZend_Service_Amazon_OfferSet
     public $LowestUsedPriceFormattedPrice;
 
     /**
+     * @var
+     */
+    public $SalePriceAmount;
+
+    /**
+     * @var
+     */
+    public $SalePriceFormatted;
+
+    /**
+     * @var
+     */
+    public $SalePriceCurrencyCode;
+
+    /**
      * @var int
      */
     public $TotalNew;
@@ -118,6 +133,11 @@ class AsaZend_Service_Amazon_OfferSet
         }
         $offers = $xpath->query('./az:Offers/az:Offer', $dom);
         if ($offers->length >= 1) {
+
+            $this->SalePriceAmount = (int) $xpath->query('./az:Offers/az:Offer/az:OfferListing/az:SalePrice/az:Amount/text()', $dom)->item(0)->data;
+            $this->SalePriceCurrencyCode = $xpath->query('./az:Offers/az:Offer/az:OfferListing/az:SalePrice/az:CurrencyCode/text()', $dom)->item(0)->data;
+            $this->SalePriceFormatted = $xpath->query('./az:Offers/az:Offer/az:OfferListing/az:SalePrice/az:FormattedPrice/text()', $dom)->item(0)->data;
+
             /**
              * @see AsaZend_Service_Amazon_Offer
              */
