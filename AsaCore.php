@@ -2334,18 +2334,18 @@ class AmazonSimpleAdmin {
     {
         $result = null;
 
-        if ($item->Offers->SalePriceAmount != null) {
-            if ($formatted === false) {
-                $result = $this->_formatPrice($item->Offers->SalePriceAmount);
-            } else {
-                $result = $item->Offers->SalePriceFormatted;
-            }
-        } elseif (!empty($item->Offers->LowestNewPrice)) {
+        if (!empty($item->Offers->LowestNewPrice)) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->LowestNewPrice);
             } else {
                 $result = $item->Offers->LowestNewPriceFormattedPrice;
             }
+        } elseif ($item->Offers->SalePriceAmount != null) {
+                if ($formatted === false) {
+                    $result = $this->_formatPrice($item->Offers->SalePriceAmount);
+                } else {
+                    $result = $item->Offers->SalePriceFormatted;
+                }
         } elseif ($item->Offers->Offers[0]->Price != null) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
