@@ -1702,6 +1702,7 @@ class AmazonSimpleAdmin {
 
             $tplLocations = array(
                 get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'asa' . DIRECTORY_SEPARATOR,
+                get_template_directory() . DIRECTORY_SEPARATOR . 'asa' . DIRECTORY_SEPARATOR,
                 dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR,
                 dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR . 'built-in' . DIRECTORY_SEPARATOR
             );
@@ -2320,7 +2321,7 @@ class AmazonSimpleAdmin {
             $tpl = 'default';
         }
 
-        $output = '<span id="'. $containerID .'" class="asa_async_container asa_async_container_'. $tpl .'"></span>';
+        $output = '<div id="'. $containerID .'" class="asa_async_container asa_async_container_'. $tpl .'"></div>';
         $output .= "<script type='text/javascript'>jQuery(document).ready(function($){var data={action:'asa_async_load',asin:'$asin',tpl:'$tpl',params:'$params',nonce:'$nonce'};if(typeof ajaxurl=='undefined'){var ajaxurl='$site_url/wp-admin/admin-ajax.php'}$.post(ajaxurl,data,function(response){jQuery('#$containerID').html(response)})});</script>";
         return $output;
     }
