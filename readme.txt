@@ -2,7 +2,7 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.8
+Tested up to: 3.9
 Stable tag: 0.9.13
 
 
