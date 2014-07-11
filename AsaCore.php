@@ -2524,8 +2524,8 @@ function asa_async_load_callback() {
 
     $asin = esc_attr($_POST['asin']);
     $tpl = $asa->getTpl(esc_attr($_POST['tpl']), $asa->getDefaultTpl());
-    $params = json_decode(esc_attr($_POST['params']));
-
+    $params = json_decode(stripcslashes($_POST['params']), true);
+    $params = array_map('strip_tags', $params);
     // debug
     //echo '<pre>' . print_r($_POST) . '</pre>';
 
@@ -2539,6 +2539,7 @@ function asa_async_load_callback() {
 function asa_debug($var) {
 
     $debugFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'asadebug.txt';
+
     if (!is_writable($debugFile)) {
         return false;
     }
