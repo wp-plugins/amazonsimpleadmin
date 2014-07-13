@@ -108,6 +108,7 @@ class AmazonSimpleAdmin {
         'SalePriceAmount',
         'SalePriceCurrencyCode',
         'SalePriceFormatted',
+        'Class',
     );
 
     /**
@@ -1358,7 +1359,7 @@ class AmazonSimpleAdmin {
                     </th>
                     <td>
                         <input type="text" name="_asa_amazon_api_key" id="_asa_amazon_api_key" autocomplete="off" value="<?php echo (!empty($this->_amazon_api_key)) ? $this->_amazon_api_key : ''; ?>" />
-                        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/AboutAWSAccounts.html" target="_blank"><?php _e('How do I get one?', 'asa1'); ?></a>
+                        <a href="http://www.wp-amazon-plugin.com/register-amazon-affiliate-product-advertising-api/" target="_blank"><?php _e('How do I get one?', 'asa1'); ?></a>
                     </td>
                 </tr>
 
@@ -1368,7 +1369,7 @@ class AmazonSimpleAdmin {
                     </th>
                     <td>
                         <input type="password" name="_asa_amazon_api_secret_key" id="_asa_amazon_api_secret_key" autocomplete="off" value="<?php echo (!empty($this->_amazon_api_secret_key)) ? $this->_amazon_api_secret_key : ''; ?>" />
-                        <a href="http://docs.amazonwebservices.com/AWSECommerceService/latest/DG/ViewingCredentials.html" target="_blank"><?php _e('What is this?', 'asa1'); ?></a>
+                        <a href="http://www.wp-amazon-plugin.com/register-amazon-affiliate-product-advertising-api/?#13" target="_blank"><?php _e('What is this?', 'asa1'); ?></a>
                     </td>
                 </tr>
 
@@ -1378,7 +1379,7 @@ class AmazonSimpleAdmin {
                     </th>
                     <td>
                         <input type="text" name="_asa_amazon_tracking_id" id="_asa_amazon_tracking_id" autocomplete="off" value="<?php echo (!empty($this->amazon_tracking_id)) ? $this->amazon_tracking_id : ''; ?>" />
-                        <a href="http://amazon.com/associates" target="_blank"><?php _e('Where do I get one?', 'asa1'); ?></a>
+                        <a href="http://www.wp-amazon-plugin.com/finding-amazon-tracking-id/" target="_blank"><?php _e('Where do I get one?', 'asa1'); ?></a>
                     </td>
                 </tr>
 
@@ -1535,6 +1536,10 @@ class AmazonSimpleAdmin {
                                 // the comment feature
                                 preg_match('/comment="([^"\r\n]*)"/', $param, $comment_match);
                                 $parse_params['comment'] = html_entity_decode($comment_match[1]);
+                            } elseif (strstr($param, 'class=')) {
+                                // the comment feature
+                                preg_match('/class="([^"\r\n]*)"/', $param, $comment_match);
+                                $parse_params['class'] = html_entity_decode($comment_match[1]);
                             } else {
                                 $tp = explode('=', $param);
                                 $parse_params[$tp[0]] = $tp[1];
@@ -1936,6 +1941,7 @@ class AmazonSimpleAdmin {
                 $this->_formatPrice($item->Offers->SalePriceAmount),
                 $item->Offers->SalePriceCurrencyCode,
                 $item->Offers->SalePriceFormatted,
+                !empty($parse_params['class']) ? $parse_params['class'] : '',
             );
 
             $result = preg_replace($search, $replace, $tpl);
