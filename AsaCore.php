@@ -2317,7 +2317,7 @@ class AmazonSimpleAdmin {
     protected function _getAsyncContent($asin, $tpl, $parse_params)
     {
         $containerID = 'asa-' . md5(uniqid(mt_rand()));
-        $params = json_encode($parse_params);
+        $params = str_replace("'", "\'", json_encode($parse_params));
         $nonce = wp_create_nonce('amazonsimpleadmin');
         $site_url = site_url();
         if (defined('WP_ALLOW_MULTISITE') && WP_ALLOW_MULTISITE == true) {
