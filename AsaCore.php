@@ -1169,7 +1169,7 @@ class AmazonSimpleAdmin {
         $templates = $this->getAllTemplates();
         $mode = 'tpl';
 
-        if (count($_POST) > 0 && isset($_POST['asin'])) {
+        if (count($_POST) > 0 && isset($_POST['asin']) && !empty($_POST['asin'])) {
             $asin = esc_attr($_POST['asin']);
             if (isset($_POST['tpl'])) {
                 $tpl = esc_attr($_POST['tpl']);
@@ -1189,36 +1189,51 @@ class AmazonSimpleAdmin {
 
 
         ?>
-        <form method="post">
-            <label for="asin">ASIN:</label>
-            <input type="text" name="asin" id="asin" placeholder="ASIN" value="<?php echo $asin; ?>">
-            <br>
-            <label for="tpl">Template:</label>
-            <select name="tpl" id="tpl">
-                <?php
-                foreach ($templates as $template) {
-                    $selected = ($template == $tpl) ? 'selected' : '';
-                    echo '<option value="'. $template .'" '. $selected .'>'. $template .'</li>';
-                }
-                ?>
-            </select>
-            <br>
-            Mode:
-            <input type="radio" name="mode" value="tpl" <?php echo ($mode == 'tpl') ? 'checked' : ''; ?>><?php _e('Template', 'asa1'); ?>
-            <input type="radio" name="mode" value="ratings" <?php echo ($mode == 'ratings') ? 'checked' : ''; ?>><?php _e('Ratings', 'asa1'); ?>
-            <br>
-            <input type="submit" name="submit" class="button-primary" value="<?php _e('Submit', 'asa1'); ?>">
+        <form method="post" id="asa_test_form">
+            <div class="form-group">
+                <label for="asin">ASIN:</label>
+                <input type="text" name="asin" id="asin" placeholder="ASIN" value="<?php echo $asin; ?>">
+            </div>
+            <div class="form-group">
+                <label for="tpl"><?php _e('Template', 'asa1'); ?>:</label>
+                <select name="tpl" id="tpl">
+                    <?php
+                    foreach ($templates as $template) {
+                        $selected = ($template == $tpl) ? 'selected' : '';
+                        echo '<option value="'. $template .'" '. $selected .'>'. $template .'</li>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <div class="form-group">
+                <?php _e('Mode', 'asa1'); ?>:
+                <label>
+                    <input type="radio" name="mode" id="mode_tpl" value="tpl" <?php echo ($mode == 'tpl') ? 'checked' : ''; ?>>
+                    <?php _e('Template', 'asa1'); ?>
+                </label>
+                &nbsp;&nbsp;&nbsp;
+                <label>
+                    <input type="radio" name="mode" id="mode_ratings" value="ratings" <?php echo ($mode == 'ratings') ? 'checked' : ''; ?>>
+                    <?php _e('Ratings', 'asa1'); ?>
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" name="submit" class="button-primary" value="<?php _e('Submit', 'asa1'); ?>">
+            </div>
         </form>
 
         <?php
 
         if (isset($asin)) {
+
+            echo '<h3>' . __('Result', 'asa1') . ':</h3>';
+
             if ($mode == 'tpl') {
                 echo $this->getItem($asin, $tpl);
             } elseif ($mode == 'ratings') {
                 $item = $this->_getItem($asin);
                 // get the customer rating object
-                $customerReviews = $this->getCustomerReviews($item);
+                $customerReviews = $this->getCustomerReviews($item, true);
 
                 if ($customerReviews->isSuccess()) {
 
@@ -1540,9 +1555,9 @@ class AmazonSimpleAdmin {
                        
         <?php
         if (isset($this->error['submit_cache'])) {
-            $this->_displayError($this->error['submit_cache']);    
+            $this->_displayError($this->error['submit_cache']);
         } else if (isset($this->success['submit_cache'])) {
-            $this->_displaySuccess($this->success['submit_cache']);    
+            $this->_displaySuccess($this->success['submit_cache']);
         }
         ?>
         
@@ -2476,15 +2491,22 @@ class AmazonSimpleAdmin {
      * Retrieve the customer reviews object
      *
      * @param $item
+     * @param bool $uncached
      * @return AsaCustomerReviews|null
      */
-    public function getCustomerReviews($item)
+    public function getCustomerReviews($item, $uncached = false)
     {
         require_once(dirname(__FILE__) . '/AsaCustomerReviews.php');
 
         $iframeUrl = ($item->CustomerReviewsIFrameURL != null) ? $item->CustomerReviewsIFrameURL : '';
 
-        $reviews = new AsaCustomerReviews($item->ASIN, $iframeUrl, $this->cache);
+        if ($uncached) {
+            $cache = null;
+        } else {
+            $cache = $this->cache;
+        }
+
+        $reviews = new AsaCustomerReviews($item->ASIN, $iframeUrl, $cache);
         if (get_option('_asa_review_load_fallback')) {
             $reviews->setFindMethod(AsaCustomerReviews::FIND_METHOD_FALLBACK);
         }
