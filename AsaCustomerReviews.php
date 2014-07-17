@@ -1,6 +1,9 @@
 <?php
-class AsaCustomerReviews {
-    
+class AsaCustomerReviews
+{
+    const FIND_METHOD_DOM = 1;
+    const FIND_METHOD_FALLBACK = 2;
+
     /**
      * the rating stars as complete html img tag
      * @var string
@@ -30,27 +33,65 @@ class AsaCustomerReviews {
      * @var string
      */
     public $iframeUrl;
-    
-    
-    
+
+    /**
+     * @var
+     */
+    protected $_asin;
+
+    /**
+     * @var
+     */
+    protected $_cache;
+
+    /**
+     * @var
+     */
+    protected $_response;
+
+    /**
+     * @var int
+     */
+    protected $_statusCode;
+
+    /**
+     * @var string
+     */
+    protected $_errorMessage;
+
+    /**
+     * @var int
+     */
+    protected $_findMethod = self::FIND_METHOD_DOM;
+
+
+
     /**
      * constructor
+     * @param $asin
      * @param string $iframeUrl
+     * @param $cache
      */
-    public function __construct ($asin, $iframeUrl, $cache)    
+    public function __construct ($asin, $iframeUrl, $cache)
     {
+        $this->_asin = $asin;
         $this->iframeUrl = $iframeUrl;
+        $this->_cache = $cache;
+    }
 
-        if ($cache == null) {
+    public function load()
+    {
+        if ($this->_cache == null) {
             // if cache could not be initialized
-            $this->_grabReview();                
+            $this->_grabReview();
+
         } else {
 
-            $reviewCacheId = 'CustomerReviews_'. $asin;            
-            $reviewData    = $cache->load($reviewCacheId);
-        
+            $reviewCacheId = 'CustomerReviews_'. $this->_asin;
+            $reviewData    = $this->_cache->load($reviewCacheId);
+
             if (empty($reviewData)) {
-                
+
                 // data is not cached yet
                 $this->_grabReview();
                 $reviewData = array(
@@ -59,12 +100,12 @@ class AsaCustomerReviews {
                     'totalReviews'  => $this->totalReviews,
                     'averageRating' => $this->averageRating
                 );
-                    
+
                 // put data in cache
-                $cache->save($reviewData, $reviewCacheId);
-            
+                $this->_cache->save($reviewData, $reviewCacheId);
+
             } else {
-                
+
                 // load data from cache
                 $this->imgTag        = $reviewData['imgTag'];
                 $this->imgSrc        = $reviewData['imgSrc'];
@@ -135,33 +176,123 @@ class AsaCustomerReviews {
 
         if (!empty($this->iframeUrl)) {
 
-            $client = new AsaZend_Http_Client($this->iframeUrl);
+            $this->_response = wp_remote_get($this->iframeUrl);
 
-            $result = $client->request('GET');
-            global $asa;
-            if ($asa->isDebug()) {
-                $asa->getDebugger()->write($result->getBody());
-            }
+            if (!is_wp_error($this->_response)) {
 
-            $saveBuffer = false;
+                // success
 
-            foreach(preg_split("/$\R?^/m", $result->getBody()) as $line){
-
-                if (trim($line) == '<div class="crIFrameNumCustReviews">') {
-                    $saveBuffer = true;
+                if (isset($this->_response['response']['code'])) {
+                    $this->_statusCode = $this->_response['response']['code'];
                 }
-                if ($saveBuffer === true && trim($line) == '</div>') {
+
+                $body = $this->_response['body'];
+
+
+                global $asa;
+                if ($asa->isDebug()) {
+                    $asa->getDebugger()->write($body);
+                }
+
+                if ($this->getFindMethod() == self::FIND_METHOD_DOM) {
+
+                    $body = preg_replace("/\r|\n/", "", $body);
+
+                    $charset = get_bloginfo('charset');
+                    if ($charset == 'UTF-8') {
+                        $body = str_replace("\xC2\xA0", ' ', html_entity_decode($body, ENT_COMPAT, $charset));
+                    } else {
+                        $body = str_replace("\xA0", ' ', html_entity_decode($body, ENT_COMPAT, $charset));
+                    }
+
+                    $dom = new DomDocument();
+                    $dom->loadHTML($body);
+
+                    $finder = new DomXPath($dom);
+                    $classname = 'crIFrameNumCustReviews';
+                    $nodes = $finder->query("//*[contains(@class, '$classname')]");
+
+                    foreach ($nodes as $node) {
+                        $contents .= $dom->saveXML($node);
+                    }
+
+                } elseif ($this->getFindMethod() == self::FIND_METHOD_FALLBACK) {
+
                     $saveBuffer = false;
+
+                    foreach(preg_split("/$\R?^/m", $body) as $line){
+
+                        if (trim($line) == '<div class="crIFrameNumCustReviews">') {
+                            $saveBuffer = true;
+                        }
+                        if ($saveBuffer === true && trim($line) == '</div>') {
+                            $saveBuffer = false;
+                        }
+
+                        if ($saveBuffer === true) {
+                            $contents .= $line;
+                        }
+                    }
                 }
 
-                if ($saveBuffer === true) {
-                    $contents .= $line;
-                }
+            } else {
+                $this->_errorMessage = $this->_response->get_error_message();
             }
         }
         
         return $contents;
     }
 
+
+    /**
+     * @return bool
+     */
+    public function isSuccess()
+    {
+        return $this->_statusCode == 200;
+    }
+
+    /**
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->_errorMessage;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBody()
+    {
+        return $this->_response['body'];
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getResponse()
+    {
+        return $this->_response;
+    }
+
+    /**
+     * @param int $findMethod
+     */
+    public function setFindMethod($findMethod)
+    {
+        if ($findMethod == self::FIND_METHOD_DOM || $findMethod == self::FIND_METHOD_FALLBACK) {
+            $this->_findMethod = $findMethod;
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getFindMethod()
+    {
+        return $this->_findMethod;
+    }
+
+
 }
-?>

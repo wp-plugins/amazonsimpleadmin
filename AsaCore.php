@@ -575,6 +575,7 @@ class AmazonSimpleAdmin {
         $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=cache', (($task == 'cache') ? 'nav-tab-active' : ''), __('Cache', 'asa1'));
         $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=usage', (($task == 'usage') ? 'nav-tab-active' : ''), __('Usage', 'asa1'));
         $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=faq', (($task == 'faq') ? 'nav-tab-active' : ''), __('FAQ', 'asa1'));
+        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=test', (($task == 'test') ? 'nav-tab-active' : ''), __('Test', 'asa1'));
 
         $nav .= '</h2><br />';
         return $nav;
@@ -780,6 +781,13 @@ class AmazonSimpleAdmin {
 
                 $this->_displayFaqPage();
                 break;
+
+            case 'test':
+
+                echo $this->_getSubMenu($task);
+
+                $this->_displayTestPage();
+                break;
                 
             case 'cache':
                 
@@ -822,6 +830,7 @@ class AmazonSimpleAdmin {
                     $_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
                     $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
                     $_asa_debug                  = strip_tags($_POST['_asa_debug']);
+                    $_asa_review_load_fallback   = strip_tags($_POST['_asa_review_load_fallback']);
 
                     update_option('_asa_product_preview', $_asa_product_preview);
                     update_option('_asa_parse_comments', $_asa_parse_comments);
@@ -830,6 +839,7 @@ class AmazonSimpleAdmin {
                     update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
                     update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
                     update_option('_asa_debug', $_asa_debug);
+                    update_option('_asa_review_load_fallback', $_asa_review_load_fallback);
 
                     $this->_displaySuccess(__('Settings saved.', 'asa1'));
                 }
@@ -1148,6 +1158,88 @@ class AmazonSimpleAdmin {
             echo '<p>Could not load FAQ from '. $faqUrl . '</p>';
         }
     }
+
+
+    /**
+     * the actual options page content
+     *
+     */
+    protected function _displayTestPage ()
+    {
+        $templates = $this->getAllTemplates();
+        $mode = 'tpl';
+
+        if (count($_POST) > 0 && isset($_POST['asin'])) {
+            $asin = esc_attr($_POST['asin']);
+            if (isset($_POST['tpl'])) {
+                $tpl = esc_attr($_POST['tpl']);
+            } else {
+                $tpl = 'demo';
+            }
+            if (isset($_POST['mode'])) {
+                switch ($_POST['mode']) {
+                    case 'ratings':
+                        $mode = 'ratings';
+                        break;
+                    default:
+                        $mode = 'tpl';
+                }
+            }
+        }
+
+
+        ?>
+        <form method="post">
+            <label for="asin">ASIN:</label>
+            <input type="text" name="asin" id="asin" placeholder="ASIN" value="<?php echo $asin; ?>">
+            <br>
+            <label for="tpl">Template:</label>
+            <select name="tpl" id="tpl">
+                <?php
+                foreach ($templates as $template) {
+                    $selected = ($template == $tpl) ? 'selected' : '';
+                    echo '<option value="'. $template .'" '. $selected .'>'. $template .'</li>';
+                }
+                ?>
+            </select>
+            <br>
+            Mode:
+            <input type="radio" name="mode" value="tpl" <?php echo ($mode == 'tpl') ? 'checked' : ''; ?>><?php _e('Template', 'asa1'); ?>
+            <input type="radio" name="mode" value="ratings" <?php echo ($mode == 'ratings') ? 'checked' : ''; ?>><?php _e('Ratings', 'asa1'); ?>
+            <br>
+            <input type="submit" name="submit" class="button-primary" value="<?php _e('Submit', 'asa1'); ?>">
+        </form>
+
+        <?php
+
+        if (isset($asin)) {
+            if ($mode == 'tpl') {
+                echo $this->getItem($asin, $tpl);
+            } elseif ($mode == 'ratings') {
+                $item = $this->_getItem($asin);
+                // get the customer rating object
+                $customerReviews = $this->getCustomerReviews($item);
+
+                if ($customerReviews->isSuccess()) {
+
+                    echo '<p>' . __('Successfully retrieved customer ratings.', 'asa1') . '</p>';
+                    echo '<p>' . __('Total reviews:', 'asa1') . ' ' . $customerReviews->totalReviews . '</p>';
+                    echo '<p>' . __('Average rating:', 'asa1') . ' ' . $customerReviews->averageRating . '</p>';
+                    echo '<p>' . __('Image source:', 'asa1') . ' ' . $customerReviews->imgSrc . '</p>';
+                    echo $customerReviews->imgTag;
+
+
+                } else {
+
+                    echo '<p>' . __('Customer ratings could not be retrieved.', 'asa1') . '</p>';
+                    echo '<p>Error message: ' . $customerReviews->getErrorMessage() . '</p>';
+                    echo '<pre>';
+                    var_dump($customerReviews->getResponse());
+                }
+            }
+
+        }
+    }
     
     /**
      * Load options panel
@@ -1234,6 +1326,16 @@ class AmazonSimpleAdmin {
                     <?php endif; ?>
                 </td>
             </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_review_load_fallback"><?php _e('Review load fallback:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="checkbox" name="_asa_review_load_fallback" id="_asa_review_load_fallback" value="1"<?php echo ((get_option('_asa_review_load_fallback') == true) ? 'checked="checked"' : '') ?> />
+                    <p class="description"><?php _e('Try this option if you have problems with loading the product reviews', 'asa1'); ?></p>
+                </td>
+            </tr>
+
         </tbody>
     </table>
 
@@ -1760,7 +1862,7 @@ class AmazonSimpleAdmin {
 
 
     /**
-     * parses the choosen template
+     * parses the chosen template
      *
      * @param $asin
      * @param $tpl
@@ -1781,19 +1883,19 @@ class AmazonSimpleAdmin {
 
         // get the item data
         $item = $this->_getItem($asin);
-        
+
         if ($item === null) {
-            
+
             return '';
-        
+
         } else {
-                        
+
             $search = $this->_getTplPlaceholders(true);
-            
+
             $lowestOfferPrice = null;
-            
+
             $tracking_id = '';
-            
+
             if (!empty($this->amazon_tracking_id)) {
                 // set the user's tracking id
                 $tracking_id = $this->amazon_tracking_id;
@@ -1817,33 +1919,33 @@ class AmazonSimpleAdmin {
 
 
             if ($item->Offers->LowestUsedPrice && $item->Offers->LowestNewPrice) {
-                
+
                 $lowestOfferPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
                     $item->Offers->LowestUsedPrice : $item->Offers->LowestNewPrice;
                 $lowestOfferCurrency = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
                     $item->Offers->LowestUsedPriceCurrency : $item->Offers->LowestNewPriceCurrency;
                 $lowestOfferFormattedPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
                     $item->Offers->LowestUsedPriceFormattedPrice : $item->Offers->LowestNewPriceFormattedPrice;
-                    
+
             } else if ($item->Offers->LowestNewPrice) {
-                
+
                 $lowestOfferPrice          = $item->Offers->LowestNewPrice;
                 $lowestOfferCurrency       = $item->Offers->LowestNewPriceCurrency;
                 $lowestOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
-                
+
             } else if ($item->Offers->LowestUsedPrice) {
-                
+
                 $lowestOfferPrice          = $item->Offers->LowestUsedPrice;
                 $lowestOfferCurrency       = $item->Offers->LowestUsedPriceCurrency;
                 $lowestOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
             }
-            
+
             $lowestOfferPrice = $this->_formatPrice($lowestOfferPrice);
             $lowestNewPrice = $this->_formatPrice($item->Offers->LowestNewPrice);
             $lowestNewOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
             $lowestUsedPrice = $this->_formatPrice($item->Offers->LowestUsedPrice);
             $lowestUsedOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
-            
+
 //            if ($item->Offers->Offers[0]->Price != null) {
 //                $amazonPrice = $item->Offers->Offers[0]->Price;
 //                $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
@@ -1862,12 +1964,12 @@ class AmazonSimpleAdmin {
             $amazonPrice = $this->getAmazonPrice($item);
             $amazonPriceFormatted = $this->getAmazonPrice($item, true);
 
-            
+
             $listPriceFormatted = $item->ListPriceFormatted;
-            
-            $totalOffers = $item->Offers->TotalNew + $item->Offers->TotalUsed + 
+
+            $totalOffers = $item->Offers->TotalNew + $item->Offers->TotalUsed +
                 $item->Offers->TotalCollectible + $item->Offers->TotalRefurbished;
-            
+
             $platform = $item->Platform;
             if (is_array($platform)) {
                 $platform = implode(', ', $platform);
@@ -2382,7 +2484,12 @@ class AmazonSimpleAdmin {
 
         $iframeUrl = ($item->CustomerReviewsIFrameURL != null) ? $item->CustomerReviewsIFrameURL : '';
 
-        return new AsaCustomerReviews($item->ASIN, $iframeUrl, $this->cache);
+        $reviews = new AsaCustomerReviews($item->ASIN, $iframeUrl, $this->cache);
+        if (get_option('_asa_review_load_fallback')) {
+            $reviews->setFindMethod(AsaCustomerReviews::FIND_METHOD_FALLBACK);
+        }
+        $reviews->load();
+        return $reviews;
     }
 
     /**

@@ -55,6 +55,11 @@ http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
 
+= 0.9.14 =
+* New feature: Test section. Test a ASIN with your template or check if the ratings can be retrieved.
+* New placeholder: {$Class}. You can use it like {$Comment} e.g. to put a custom CSS class in it. [asa demo, class="my_css_class"]B00AKHKTVI[/asa]
+* Improvement: On some servers the rating images could not be loaded. This has been improved.
+
 = 0.9.13 =
 * New feature: Added support for indian country store. You can now advertise with Amazon India.
 * New feature: ASA is ready for translation. It supports english and german so far.
