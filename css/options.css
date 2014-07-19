@@ -120,27 +120,23 @@
 #asa_navigation li a:hover {
     background-color: #fff;
 }
-/*
-#asa_navigation li {
-    float:                left;
-    margin:             0 7px 0 5px;
-    text-align:            center;
+#asa_test_form .form-group {
+    padding: 5px 0;
 }
-
-#asa_navigation li a {
-    display:            block;
-    height:                20px;
-    padding:            0px 6px 0 6px;
-    width:                80px;
-    text-decoration:     none;
+#asa_test_form {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 20px;
 }
-*/
-/*
-#asa_navigation li a.active, #asa_navigation li a.active:hover {
-    background-color:     #ddd;
+#asa_logs table th#id {
+    width: 50px;
 }
-
-#asa_navigation li a:hover {
-    background-color:     #efefef;
+#asa_logs table th#type {
+    width: 80px;
 }
-*/
+#asa_logs table th#message {
+    width: 180px;
+}
+#asa_logs table th#timestamp {
+    width: 180px;
+}
