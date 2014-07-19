@@ -64,7 +64,7 @@ class AsaLogger
             $errors = $error->getErrors();
 
             foreach ($errors as $k => $error) {
-                $errors[$k]['Location'] = $location;
+                $error['Location'] = $location;
 
                 $extra = sprintf("%s\n\nASIN: %s\n\nLocation: %s",
                     $error['Message'],
@@ -72,7 +72,17 @@ class AsaLogger
                     $location);
 
                 $this->log($error['Code'], self::LOG_TYPE_ERROR, $extra);
+
+
+                if (get_option('_asa_error_email_notification')) {
+
+                    require_once 'AsaEmail.php';
+                    $email = AsaEmail::getInstance();
+                    $email->updatePsnBridgePost($error, $extra);
+                }
             }
+
+
         }
     }
 

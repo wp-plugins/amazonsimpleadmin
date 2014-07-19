@@ -235,8 +235,14 @@ class AmazonSimpleAdmin {
      * @var debugger error message
      */
     protected $_debugger_error;
-        
-    
+
+    /**
+     * @var AsaEmail
+     */
+    protected $_email;
+
+
+
     /**
      * constructor
      */
@@ -308,9 +314,16 @@ class AmazonSimpleAdmin {
         add_filter('upgrader_pre_install', array($this, 'onPreInstall'), 10, 2);
         add_filter('upgrader_post_install', array($this, 'onPostInstall'), 10, 2);
 
-        $this->amazon = $this->connect();        
+        $this->amazon = $this->connect();
+
+        if (get_option('_asa_error_email_notification')) {
+            require_once 'AsaEmail.php';
+            $this->_email = AsaEmail::getInstance();
+        }
     }
-        
+
+
+
     /**
      * Called before installation / upgrade
      * 
@@ -668,7 +681,9 @@ class AmazonSimpleAdmin {
                     $_asa_review_load_fallback   = strip_tags($_POST['_asa_review_load_fallback']);
                     $_asa_error_handling         = strip_tags($_POST['_asa_error_handling']);
                     $_asa_admin_error_frontend   = strip_tags($_POST['_asa_admin_error_frontend']);
-                    $_asa_use_error_tpl   = strip_tags($_POST['_asa_use_error_tpl']);
+                    $_asa_use_error_tpl          = strip_tags($_POST['_asa_use_error_tpl']);
+                    $_asa_error_email_notification = strip_tags($_POST['_asa_error_email_notification']);
+                    $_asa_error_email_notification_bridge_page_id = (int)strip_tags($_POST['_asa_error_email_notification_bridge_page_id']);
 
                     update_option('_asa_product_preview', $_asa_product_preview);
                     update_option('_asa_parse_comments', $_asa_parse_comments);
@@ -681,6 +696,8 @@ class AmazonSimpleAdmin {
                     update_option('_asa_error_handling', $_asa_error_handling);
                     update_option('_asa_admin_error_frontend', $_asa_admin_error_frontend);
                     update_option('_asa_use_error_tpl', $_asa_use_error_tpl);
+                    update_option('_asa_error_email_notification', $_asa_error_email_notification);
+                    update_option('_asa_error_email_notification_bridge_page_id', $_asa_error_email_notification_bridge_page_id);
 
                     if ($this->isErrorHandling()) {
                         $this->getLogger()->initTable();
@@ -1418,6 +1435,9 @@ class AmazonSimpleAdmin {
                     <p class="description"><?php _e('Try this option if you have problems with loading the product reviews', 'asa1'); ?></p>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2"><h3><?php _e('Error handling', 'asa1'); ?></h3></td>
+            </tr>
             <tr valign="top">
                 <th scope="row">
                     <label for="_asa_error_handling"><?php _e('Error handling:', 'asa1') ?></label>
@@ -1443,6 +1463,15 @@ class AmazonSimpleAdmin {
                 <td>
                     <input type="checkbox" name="_asa_use_error_tpl" id="_asa_use_error_tpl" value="1"<?php echo ((get_option('_asa_use_error_tpl') == true) ? 'checked="checked"' : '') ?> />
                     <p class="description"><?php _e('If an error occures while loading a product, display the error template instead of an empty product box. Template file <b>error.htm</b> will be used. ', 'asa1'); ?></p>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_error_email_notification"><?php _e('Email notification:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="checkbox" name="_asa_error_email_notification" id="_asa_error_email_notification" value="1"<?php echo ((get_option('_asa_error_email_notification') == true) ? 'checked="checked"' : '') ?> />
+                    <p class="description"><?php _e('Enables the email notification feature. This enables to receive notifications about product parsing errors, e.g. invalid ASINs.', 'asa1'); ?></p>
                 </td>
             </tr>
 
