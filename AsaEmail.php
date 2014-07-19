@@ -151,10 +151,10 @@ class AsaEmail
 
         $args = array(
             'labels'             => $labels,
-            'public'             => true,
+            'public'             => false,
             'publicly_queryable' => false,
-            'show_ui'            => true,
-            'show_in_menu'       => true,
+            'show_ui'            => false,
+            'show_in_menu'       => false,
             'query_var'          => false,
             //'rewrite'            => array( 'slug' => 'asa-error' ),
             'capability_type'    => 'post',
