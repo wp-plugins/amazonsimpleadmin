@@ -514,6 +514,14 @@ class AmazonSimpleAdmin {
         return get_option('_asa_debug');
     }
 
+    /**
+     * @return bool
+     */
+    public function isErrorHandling()
+    {
+        return get_option('_asa_error_handling');
+    }
+
     public function getDebugger()
     {
         return $this->_debugger;
@@ -551,9 +559,9 @@ class AmazonSimpleAdmin {
     public function createOptionsPage () 
     {
         echo '<div id="amazonsimpleadmin-general" class="wrap">';
-        screen_icon('asa');
         echo '<h2>AmazonSimpleAdmin</h2>';
-                
+
+        $this->_displayPreDispatcher($this->task);
         echo $this->getTabMenu($this->task);
         #echo '<div style="clear: both"></div>';
         echo '<div id="asa_content">';
@@ -576,6 +584,9 @@ class AmazonSimpleAdmin {
         $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=usage', (($task == 'usage') ? 'nav-tab-active' : ''), __('Usage', 'asa1'));
         $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=faq', (($task == 'faq') ? 'nav-tab-active' : ''), __('FAQ', 'asa1'));
         $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=test', (($task == 'test') ? 'nav-tab-active' : ''), __('Test', 'asa1'));
+        if ($this->isErrorHandling()) {
+            $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=log', (($task == 'log') ? 'nav-tab-active' : ''), __('Log', 'asa1'));
+        }
 
         $nav .= '</h2><br />';
         return $nav;
@@ -638,6 +649,55 @@ class AmazonSimpleAdmin {
             $nav .= '<div class="asa_box_warning"><p>'. __('Debugging mode is active. Be sure to deactivate it when you do not need it anymore.', 'asa1') .'</p></div>';
         }
         return $nav;
+    }
+
+    protected function _displayPreDispatcher ($task)
+    {
+        switch ($task) {
+            case 'options':
+
+                if (count($_POST) > 0 && isset($_POST['info_update'])) {
+
+                    $_asa_product_preview        = strip_tags($_POST['_asa_product_preview']);
+                    $_asa_parse_comments         = strip_tags($_POST['_asa_parse_comments']);
+                    $_asa_async_load             = strip_tags($_POST['_asa_async_load']);
+                    $_asa_hide_meta_link         = strip_tags($_POST['_asa_hide_meta_link']);
+                    $_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
+                    $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
+                    $_asa_debug                  = strip_tags($_POST['_asa_debug']);
+                    $_asa_review_load_fallback   = strip_tags($_POST['_asa_review_load_fallback']);
+                    $_asa_error_handling         = strip_tags($_POST['_asa_error_handling']);
+                    $_asa_admin_error_frontend   = strip_tags($_POST['_asa_admin_error_frontend']);
+                    $_asa_use_error_tpl   = strip_tags($_POST['_asa_use_error_tpl']);
+
+                    update_option('_asa_product_preview', $_asa_product_preview);
+                    update_option('_asa_parse_comments', $_asa_parse_comments);
+                    update_option('_asa_async_load', $_asa_async_load);
+                    update_option('_asa_hide_meta_link', $_asa_hide_meta_link);
+                    update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
+                    update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
+                    update_option('_asa_debug', $_asa_debug);
+                    update_option('_asa_review_load_fallback', $_asa_review_load_fallback);
+                    update_option('_asa_error_handling', $_asa_error_handling);
+                    update_option('_asa_admin_error_frontend', $_asa_admin_error_frontend);
+                    update_option('_asa_use_error_tpl', $_asa_use_error_tpl);
+
+                    if ($this->isErrorHandling()) {
+                        $this->getLogger()->initTable();
+                    }
+
+                    $this->_displaySuccess(__('Settings saved.', 'asa1'));
+                }
+
+                if ($this->isDebug()) {
+                    $this->_initDebugger();
+                    if (!empty($_POST['_asa_debug_clear'])) {
+                        $this->_debugger->clear();
+                    }
+                }
+
+                break;
+        }
     }
     
     /**
@@ -788,6 +848,13 @@ class AmazonSimpleAdmin {
 
                 $this->_displayTestPage();
                 break;
+
+            case 'log':
+
+                echo $this->_getSubMenu($task);
+
+                $this->_displayLogPage();
+                break;
                 
             case 'cache':
                 
@@ -820,36 +887,6 @@ class AmazonSimpleAdmin {
                 break;
 
             case 'options':
-
-                if (count($_POST) > 0 && isset($_POST['info_update'])) {
-
-                    $_asa_product_preview        = strip_tags($_POST['_asa_product_preview']);
-                    $_asa_parse_comments         = strip_tags($_POST['_asa_parse_comments']);
-                    $_asa_async_load             = strip_tags($_POST['_asa_async_load']);
-                    $_asa_hide_meta_link         = strip_tags($_POST['_asa_hide_meta_link']);
-                    $_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
-                    $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
-                    $_asa_debug                  = strip_tags($_POST['_asa_debug']);
-                    $_asa_review_load_fallback   = strip_tags($_POST['_asa_review_load_fallback']);
-
-                    update_option('_asa_product_preview', $_asa_product_preview);
-                    update_option('_asa_parse_comments', $_asa_parse_comments);
-                    update_option('_asa_async_load', $_asa_async_load);
-                    update_option('_asa_hide_meta_link', $_asa_hide_meta_link);
-                    update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
-                    update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
-                    update_option('_asa_debug', $_asa_debug);
-                    update_option('_asa_review_load_fallback', $_asa_review_load_fallback);
-
-                    $this->_displaySuccess(__('Settings saved.', 'asa1'));
-                }
-
-                if ($this->isDebug()) {
-                    $this->_initDebugger();
-                    if (!empty($_POST['_asa_debug_clear'])) {
-                        $this->_debugger->clear();
-                    }
-                }
 
                 echo $this->_getSubMenu($task);
 
@@ -1185,6 +1222,9 @@ class AmazonSimpleAdmin {
                         $mode = 'tpl';
                 }
             }
+            if (isset($_POST['block-log'])) {
+                $blockLog = true;
+            }
         }
 
 
@@ -1217,6 +1257,14 @@ class AmazonSimpleAdmin {
                     <?php _e('Ratings', 'asa1'); ?>
                 </label>
             </div>
+            <?php if ($this->isErrorHandling()): ?>
+            <div class="form-group">
+                <label>
+                <input type="checkbox" name="block-log" value="1" <?php echo (isset($blockLog)) ? 'checked' : ''; ?>>
+                    <?php _e('Disable error log', 'asa1'); ?>
+                </label>
+            </div>
+            <?php endif; ?>
             <div class="form-group">
                 <input type="submit" name="submit" class="button-primary" value="<?php _e('Submit', 'asa1'); ?>">
             </div>
@@ -1225,6 +1273,10 @@ class AmazonSimpleAdmin {
         <?php
 
         if (isset($asin)) {
+
+            if (isset($blockLog)) {
+                $this->getLogger()->setBlock(true);
+            }
 
             echo '<h3>' . __('Result', 'asa1') . ':</h3>';
 
@@ -1249,12 +1301,28 @@ class AmazonSimpleAdmin {
                     echo '<p>' . __('Customer ratings could not be retrieved.', 'asa1') . '</p>';
                     echo '<p>Error message: ' . $customerReviews->getErrorMessage() . '</p>';
                     echo '<pre>';
-                    var_dump($customerReviews->getResponse());
                 }
             }
 
         }
     }
+
+    protected function _displayLogPage()
+    {
+        require_once 'AsaLogListTable.php';
+
+        $listTable = new AsaLogListTable();
+        $listTable->setLogger($this->getLogger());
+        $listTable->prepare_items();
+
+        ?>
+        <div id="asa_logs" class="wrap">
+            <h2><?php _e('Log', 'asa1'); ?></h2>
+            <?php $listTable->display(); ?>
+        </div>
+        <?php
+    }
+
     
     /**
      * Load options panel
@@ -1348,6 +1416,33 @@ class AmazonSimpleAdmin {
                 <td>
                     <input type="checkbox" name="_asa_review_load_fallback" id="_asa_review_load_fallback" value="1"<?php echo ((get_option('_asa_review_load_fallback') == true) ? 'checked="checked"' : '') ?> />
                     <p class="description"><?php _e('Try this option if you have problems with loading the product reviews', 'asa1'); ?></p>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_error_handling"><?php _e('Error handling:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="checkbox" name="_asa_error_handling" id="_asa_error_handling" value="1"<?php echo ((get_option('_asa_error_handling') == true) ? 'checked="checked"' : '') ?> />
+                    <p class="description"><?php _e('Activates the error handling. Generates log entries e.g. when using invalid ASINs (see tab "Log"). Precondition for admin front-end errors.', 'asa1'); ?></p>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_admin_error_frontend"><?php _e('Admin front-end errors:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="checkbox" name="_asa_admin_error_frontend" id="_asa_admin_error_frontend" value="1"<?php echo ((get_option('_asa_admin_error_frontend') == true) ? 'checked="checked"' : '') ?> />
+                    <p class="description"><?php _e('If an error occures while loading the products, display the error messages instead of an empty product box in the front-end for logged in admins only. Template file <b>error_admin.htm</b> will be used', 'asa1'); ?></p>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_use_error_tpl"><?php _e('Error template:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="checkbox" name="_asa_use_error_tpl" id="_asa_use_error_tpl" value="1"<?php echo ((get_option('_asa_use_error_tpl') == true) ? 'checked="checked"' : '') ?> />
+                    <p class="description"><?php _e('If an error occures while loading a product, display the error template instead of an empty product box. Template file <b>error.htm</b> will be used. ', 'asa1'); ?></p>
                 </td>
             </tr>
 
@@ -1822,14 +1917,6 @@ class AmazonSimpleAdmin {
     {
         if (!empty($tpl_file)) {
 
-            $tplLocations = array(
-                get_stylesheet_directory() . DIRECTORY_SEPARATOR . 'asa' . DIRECTORY_SEPARATOR,
-                get_template_directory() . DIRECTORY_SEPARATOR . 'asa' . DIRECTORY_SEPARATOR,
-                dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR,
-                dirname(__FILE__) . DIRECTORY_SEPARATOR . 'tpl' . DIRECTORY_SEPARATOR . 'built-in' . DIRECTORY_SEPARATOR
-            );
-            $tplExtensions = array('htm', 'html');
-
             foreach ($this->getTplLocations() as $loc) {
                 if (!is_dir($loc)) {
                     continue;
@@ -1903,9 +1990,35 @@ class AmazonSimpleAdmin {
 
             return '';
 
+        } elseif ($this->isErrorHandling() && $item instanceof Asa_Service_Amazon_Error &&
+            get_option('_asa_admin_error_frontend') && is_super_admin()) {
+
+            // show admin error
+            $errors = $item->getErrors();
+            $error = array_shift($errors);
+
+            // load error_admin.htm
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
+            $output = preg_replace($search, $replace, $this->getTpl('error_admin'));
+
+            echo $output;
+
+        } elseif ($item instanceof Asa_Service_Amazon_Error && get_option('_asa_use_error_tpl')) {
+
+            $errors = $item->getErrors();
+            $error = array_shift($errors);
+
+            // load error.htm
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
+            $output = preg_replace($search, $replace, $this->getTpl('error'));
+
+            echo $output;
+
         } else {
 
-            $search = $this->_getTplPlaceholders(true);
+            $search = $this->_getTplPlaceholders($this->tpl_placeholder, true);
 
             $lowestOfferPrice = null;
 
@@ -2099,8 +2212,8 @@ class AmazonSimpleAdmin {
     /**
      * get item information from amazon webservice or cache
      * 
-     * @param        string        ASIN
-     * @return         object        AsaZend_Service_Amazon_Item object
+     * @param string ASIN
+     * @return object AsaZend_Service_Amazon_Item object
      */    
     protected function _getItem ($asin)
     {
@@ -2112,9 +2225,11 @@ class AmazonSimpleAdmin {
             } else if (!$item = $this->cache->load($asin)) {
                 // if asin is not cached yet
                 $item = $this->_getItemLookup($asin);
-                
-                // put asin in cache now
-                $this->cache->save($item, $asin);
+
+                if (!($item instanceof Asa_Service_Amazon_Error)) {
+                    // put asin in cache if it is not an error response
+                    $this->cache->save($item, $asin);
+                }
             }
             return $item;
             
@@ -2144,6 +2259,14 @@ class AmazonSimpleAdmin {
     {
         $result = $this->amazon->itemLookup($asin, array(
                     'ResponseGroup' => 'ItemAttributes,Images,Offers,OfferListings,Reviews,EditorialReview,Tracks'));
+
+        if ($result instanceof Asa_Service_Amazon_Error) {
+            // handle errors
+            if ($this->isErrorHandling()) {
+                $this->getLogger()->logError($result);
+            }
+        }
+
         return $result;
     }
             
@@ -2203,16 +2326,16 @@ class AmazonSimpleAdmin {
      * 
      * @param         bool        true for regex prepared
      */
-    protected function _getTplPlaceholders ($regex=false)
+    protected function _getTplPlaceholders ($placeholders, $regex=false)
     {
-        $placeholders = array();
-        foreach ($this->tpl_placeholder as $ph) {
-            $placeholders[] = $this->tpl_prefix . $ph . $this->tpl_postfix;
+        $result = array();
+        foreach ($placeholders as $ph) {
+            $result[] = $this->tpl_prefix . $ph . $this->tpl_postfix;
         }
         if ($regex == true) {
-            return array_map(array($this, 'TplPlaceholderToRegex'), $placeholders);
+            return array_map(array($this, 'TplPlaceholderToRegex'), $result);
         }
-        return $placeholders;
+        return $result;
     }
     
     /**
@@ -2434,6 +2557,10 @@ class AmazonSimpleAdmin {
     protected function _getAsyncContent($asin, $tpl, $parse_params)
     {
         $containerID = 'asa-' . md5(uniqid(mt_rand()));
+
+        if ($this->getLogger()->isBlock()) {
+            $parse_params['asa-block-errorlog'] = true;
+        }
         $params = str_replace("'", "\'", json_encode($parse_params));
         $nonce = wp_create_nonce('amazonsimpleadmin');
         $site_url = site_url();
@@ -2585,6 +2712,15 @@ class AmazonSimpleAdmin {
         return true;
     }
 
+    /**
+     * @return AsaLogger
+     */
+    public function getLogger()
+    {
+        require_once 'AsaLogger.php';
+        return AsaLogger::getInstance($this->db);
+    }
+
 }
 
 
@@ -2659,10 +2795,17 @@ function asa_async_load_callback() {
 
     $asin = esc_attr($_POST['asin']);
     $tpl = $asa->getTpl(esc_attr($_POST['tpl']), $asa->getDefaultTpl());
-    $params = json_decode(stripcslashes($_POST['params']), true);
+
+    $params = $_POST['params'];
+
+    $params = json_decode(stripcslashes($params), true);
     $params = array_map('strip_tags', $params);
     // debug
     //echo '<pre>' . print_r($_POST) . '</pre>';
+
+    if (isset($params['asa-block-errorlog'])) {
+        $asa->getLogger()->setBlock(true);
+    }
 
     echo $asa->parseTpl($asin, $tpl, $params);
     exit;

@@ -152,7 +152,7 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
 
         if (!$response) {
             return false;
-        }   
+        }
 
         // init and return the ZF object
         $dom = new DOMDocument();
@@ -160,22 +160,34 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
         $dom->loadXML($xml_response);
         $xpath = new DOMXPath($dom);
         $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. self::$api_version);
-        $items = $xpath->query('//az:Items/az:Item');
 
-        if ($items->length == 1) {
+        // check for errors
+        $errors = $xpath->query('//az:Items/az:Request/az:Errors/az:Error');
+
+        if ($errors->length > 0) {
+
+            // errors found in response
+            require_once 'Asa/Service/Amazon/Error.php';
+            return new Asa_Service_Amazon_Error($errors, $asin);
+
+        } else {
+
+            $items = $xpath->query('//az:Items/az:Item');
+
+            if ($items->length == 1) {
+                /**
+                 * @see AsaZend_Service_Amazon_Item
+                 */
+                require_once 'AsaZend/Service/Amazon/Item.php';
+                return new AsaZend_Service_Amazon_Item($items->item(0), $xml_response);
+            }
+
             /**
-             * @see AsaZend_Service_Amazon_Item
+             * @see AsaZend_Service_Amazon_ResultSet
              */
-            require_once 'AsaZend/Service/Amazon/Item.php';
-            return new AsaZend_Service_Amazon_Item($items->item(0), $xml_response);
+            require_once 'AsaZend/Service/Amazon/ResultSet.php';
+            return new AsaZend_Service_Amazon_ResultSet($dom);
         }
-
-        /**
-         * @see AsaZend_Service_Amazon_ResultSet
-         */
-        require_once 'AsaZend/Service/Amazon/ResultSet.php';
-        return new AsaZend_Service_Amazon_ResultSet($dom);
-        
     }
     
     /**
