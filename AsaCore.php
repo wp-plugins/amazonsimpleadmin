@@ -1471,7 +1471,9 @@ class AmazonSimpleAdmin {
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_error_email_notification" id="_asa_error_email_notification" value="1"<?php echo ((get_option('_asa_error_email_notification') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description"><?php _e('Enables the email notification feature. This enables to receive notifications about product parsing errors, e.g. invalid ASINs.', 'asa1'); ?></p>
+                    <p class="description"><?php _e('Enables the email notification feature. Enables you to receive notifications about product parsing errors with the same information like in the log entries (invalid ASINs and location where it is used).', 'asa1'); ?><br>
+                    <?php printf(__('Read the <a href="%s" target="_blank">documentation</a> about how to setup this feature. <b>Error handling must be activated.</b>', 'asa1'), 'http://www.wp-amazon-plugin.com/email-notification-feature/'); ?>
+                    </p>
                 </td>
             </tr>
 
