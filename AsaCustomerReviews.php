@@ -62,7 +62,7 @@ class AsaCustomerReviews
     /**
      * @var int
      */
-    protected $_findMethod = self::FIND_METHOD_DOM;
+    protected $_findMethod = self::FIND_METHOD_FALLBACK;
 
 
 
@@ -206,7 +206,7 @@ class AsaCustomerReviews
                     }
 
                     $dom = new DomDocument();
-                    $dom->loadHTML($body);
+                    @$dom->loadHTML($body);
 
                     $finder = new DomXPath($dom);
                     $classname = 'crIFrameNumCustReviews';

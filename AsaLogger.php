@@ -137,6 +137,17 @@ class AsaLogger
     }
 
     /**
+     * Clear all log entries
+     *
+     * @return false|int
+     */
+    public function clear()
+    {
+        $sql = 'TRUNCATE TABLE `'. $this->_getTableName() .'`';
+        return $this->_db->query($sql);
+    }
+
+    /**
      * @param boolean $block
      */
     public function setBlock($block)

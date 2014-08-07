@@ -320,9 +320,22 @@ class AmazonSimpleAdmin {
             require_once 'AsaEmail.php';
             $this->_email = AsaEmail::getInstance();
         }
+
+        $this->_initCallback();
     }
 
+    protected function _initCallback()
+    {
+        add_action('init', array($this, 'onWpInit'));
+    }
 
+    public function onWpInit()
+    {
+        if (!is_admin() && $this->_isAsync()) {
+            // be sure to have jQuery if AJAX mode is active
+            wp_enqueue_script('jquery');
+        }
+    }
 
     /**
      * Called before installation / upgrade
@@ -678,7 +691,7 @@ class AmazonSimpleAdmin {
                     $_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
                     $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
                     $_asa_debug                  = strip_tags($_POST['_asa_debug']);
-                    $_asa_review_load_fallback   = strip_tags($_POST['_asa_review_load_fallback']);
+                    $_asa_get_rating_alternative = strip_tags($_POST['_asa_get_rating_alternative']);
                     $_asa_error_handling         = strip_tags($_POST['_asa_error_handling']);
                     $_asa_admin_error_frontend   = strip_tags($_POST['_asa_admin_error_frontend']);
                     $_asa_use_error_tpl          = strip_tags($_POST['_asa_use_error_tpl']);
@@ -692,7 +705,7 @@ class AmazonSimpleAdmin {
                     update_option('_asa_use_short_amazon_links', $_asa_use_short_amazon_links);
                     update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
                     update_option('_asa_debug', $_asa_debug);
-                    update_option('_asa_review_load_fallback', $_asa_review_load_fallback);
+                    update_option('_asa_get_rating_alternative', $_asa_get_rating_alternative);
                     update_option('_asa_error_handling', $_asa_error_handling);
                     update_option('_asa_admin_error_frontend', $_asa_admin_error_frontend);
                     update_option('_asa_use_error_tpl', $_asa_use_error_tpl);
@@ -1328,6 +1341,11 @@ class AmazonSimpleAdmin {
     {
         require_once 'AsaLogListTable.php';
 
+        if (isset($_POST['action']) && $_POST['action'] == 'clear') {
+            $this->getLogger()->clear();
+            echo '<div class="updated"><p>'. __('All log entries have been deleted.') .'</p></div>';
+        }
+
         $listTable = new AsaLogListTable();
         $listTable->setLogger($this->getLogger());
         $listTable->prepare_items();
@@ -1335,7 +1353,9 @@ class AmazonSimpleAdmin {
         ?>
         <div id="asa_logs" class="wrap">
             <h2><?php _e('Log', 'asa1'); ?></h2>
+            <form method="post">
             <?php $listTable->display(); ?>
+            </form>
         </div>
         <?php
     }
@@ -1428,11 +1448,11 @@ class AmazonSimpleAdmin {
             </tr>
             <tr valign="top">
                 <th scope="row">
-                    <label for="_asa_review_load_fallback"><?php _e('Review load fallback:', 'asa1') ?></label>
+                    <label for="_asa_get_rating_alternative"><?php _e('Ratings parser alternative:', 'asa1') ?></label>
                 </th>
                 <td>
-                    <input type="checkbox" name="_asa_review_load_fallback" id="_asa_review_load_fallback" value="1"<?php echo ((get_option('_asa_review_load_fallback') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description"><?php _e('Try this option if you have problems with loading the product reviews', 'asa1'); ?></p>
+                    <input type="checkbox" name="_asa_get_rating_alternative" id="_asa_get_rating_alternative" value="1"<?php echo ((get_option('_asa_get_rating_alternative') == true) ? 'checked="checked"' : '') ?> />
+                    <p class="description"><?php _e('Try this option if you have problems with loading the product ratings', 'asa1'); ?></p>
                 </td>
             </tr>
             <tr>
@@ -1444,7 +1464,7 @@ class AmazonSimpleAdmin {
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_error_handling" id="_asa_error_handling" value="1"<?php echo ((get_option('_asa_error_handling') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description"><?php _e('Activates the error handling. Generates log entries e.g. when using invalid ASINs (see tab "Log"). Precondition for admin front-end errors.', 'asa1'); ?></p>
+                    <p class="description"><?php _e('Activates the error handling. Generates log entries e.g. when using invalid ASINs (see tab "Log"). Precondition for all following options.', 'asa1'); ?></p>
                 </td>
             </tr>
             <tr valign="top">
@@ -1453,7 +1473,7 @@ class AmazonSimpleAdmin {
                 </th>
                 <td>
                     <input type="checkbox" name="_asa_admin_error_frontend" id="_asa_admin_error_frontend" value="1"<?php echo ((get_option('_asa_admin_error_frontend') == true) ? 'checked="checked"' : '') ?> />
-                    <p class="description"><?php _e('If an error occures while loading the products, display the error messages instead of an empty product box in the front-end for logged in admins only. Template file <b>error_admin.htm</b> will be used', 'asa1'); ?></p>
+                    <p class="description"><?php _e('If an error occures while loading the products, display the error messages instead of an empty product box in the front-end for logged in admins only. Template file <b>error_admin.htm</b> will be used.', 'asa1'); ?></p>
                 </td>
             </tr>
             <tr valign="top">
@@ -2665,8 +2685,8 @@ class AmazonSimpleAdmin {
         }
 
         $reviews = new AsaCustomerReviews($item->ASIN, $iframeUrl, $cache);
-        if (get_option('_asa_review_load_fallback')) {
-            $reviews->setFindMethod(AsaCustomerReviews::FIND_METHOD_FALLBACK);
+        if (get_option('_asa_get_rating_alternative')) {
+            $reviews->setFindMethod(AsaCustomerReviews::FIND_METHOD_DOM);
         }
         $reviews->load();
         return $reviews;

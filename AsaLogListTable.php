@@ -156,6 +156,15 @@ class AsaLogListTable extends WP_List_Table
         return -$result;
     }
 
+    public function get_bulk_actions()
+    {
+        $actions = array(
+            'clear' => __('Clear log'),
+        );
+
+        return $actions;
+    }
+
     /**
      * @param AsaLogger $logger
      */
