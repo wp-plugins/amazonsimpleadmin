@@ -100,7 +100,8 @@ class AsaEmail
     public function getPsnBridgePostId()
     {
         if ($this->hasPsnBridgePost()) {
-            $post = array_shift($this->getPsnBridgePost());
+            $psnBridgePost = $this->getPsnBridgePost();
+            $post = array_shift($psnBridgePost);
             $id = $post->ID;
         } else {
             $id = $this->_createPsnBridgePost();
