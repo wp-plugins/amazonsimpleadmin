@@ -2850,7 +2850,9 @@ function asa_async_load_callback() {
     $params = $_POST['params'];
 
     $params = json_decode(stripcslashes($params), true);
-    $params = array_map('strip_tags', $params);
+    if (is_array($params)) {
+        $params = array_map('strip_tags', $params);
+    }
     // debug
     //echo '<pre>' . print_r($_POST) . '</pre>';
 
