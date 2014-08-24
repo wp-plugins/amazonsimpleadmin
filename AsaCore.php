@@ -483,8 +483,7 @@ class AmazonSimpleAdmin {
      */
     protected function _initCache ()
     {
-        $_asa_cache_active    = get_option('_asa_cache_active');
-        if (empty($_asa_cache_active)) {
+        if (!$this->_isCache()) {
             return null;
         }
         
@@ -516,7 +515,7 @@ class AmazonSimpleAdmin {
     }
     
     /**
-     * Determines if cache is working fine
+     * Determines if cache is activated and cache dir is writable
      * @return bool
      */
     protected function _isCache()
@@ -692,6 +691,7 @@ class AmazonSimpleAdmin {
                     $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
                     $_asa_debug                  = strip_tags($_POST['_asa_debug']);
                     $_asa_get_rating_alternative = strip_tags($_POST['_asa_get_rating_alternative']);
+                    $_asa_custom_widget_class    = strip_tags($_POST['_asa_custom_widget_class']);
                     $_asa_error_handling         = strip_tags($_POST['_asa_error_handling']);
                     $_asa_admin_error_frontend   = strip_tags($_POST['_asa_admin_error_frontend']);
                     $_asa_use_error_tpl          = strip_tags($_POST['_asa_use_error_tpl']);
@@ -706,6 +706,7 @@ class AmazonSimpleAdmin {
                     update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
                     update_option('_asa_debug', $_asa_debug);
                     update_option('_asa_get_rating_alternative', $_asa_get_rating_alternative);
+                    update_option('_asa_custom_widget_class', $_asa_custom_widget_class);
                     update_option('_asa_error_handling', $_asa_error_handling);
                     update_option('_asa_admin_error_frontend', $_asa_admin_error_frontend);
                     update_option('_asa_use_error_tpl', $_asa_use_error_tpl);
@@ -1455,6 +1456,15 @@ class AmazonSimpleAdmin {
                     <p class="description"><?php _e('Try this option if you have problems with loading the product ratings', 'asa1'); ?></p>
                 </td>
             </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_custom_widget_class"><?php _e('Custom widget class:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="text" name="_asa_custom_widget_class" id="_asa_custom_widget_class" value="<?php echo (get_option('_asa_custom_widget_class')) != '' ? get_option('_asa_custom_widget_class') : ''; ?>" />
+                    <p class="description"><?php _e('Set a custom CSS class for the outer widget container. Default is "AmazonSimpleAdmin_widget" which may get blocked by AdBlockers.', 'asa1'); ?></p>
+                </td>
+            </tr>
             <tr>
                 <td colspan="2"><h3><?php _e('Error handling', 'asa1'); ?></h3></td>
             </tr>
@@ -2037,37 +2047,7 @@ class AmazonSimpleAdmin {
         // get the item data
         $item = $this->_getItem($asin);
 
-        if ($item === null) {
-
-            return '';
-
-        } elseif ($this->isErrorHandling() && $item instanceof Asa_Service_Amazon_Error &&
-            get_option('_asa_admin_error_frontend') && is_super_admin()) {
-
-            // show admin error
-            $errors = $item->getErrors();
-            $error = array_shift($errors);
-
-            // load error_admin.htm
-            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
-            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
-            $output = preg_replace($search, $replace, $this->getTpl('error_admin'));
-
-            echo $output;
-
-        } elseif ($item instanceof Asa_Service_Amazon_Error && get_option('_asa_use_error_tpl')) {
-
-            $errors = $item->getErrors();
-            $error = array_shift($errors);
-
-            // load error.htm
-            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
-            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
-            $output = preg_replace($search, $replace, $this->getTpl('error'));
-
-            echo $output;
-
-        } else {
+        if ($item instanceof AsaZend_Service_Amazon_Item) {
 
             $search = $this->_getTplPlaceholders($this->tpl_placeholder, true);
 
@@ -2097,7 +2077,7 @@ class AmazonSimpleAdmin {
 
 
 
-            if ($item->Offers->LowestUsedPrice && $item->Offers->LowestNewPrice) {
+            if (isset($item->Offers->LowestUsedPrice) && isset($item->Offers->LowestNewPrice)) {
 
                 $lowestOfferPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
                     $item->Offers->LowestUsedPrice : $item->Offers->LowestNewPrice;
@@ -2106,13 +2086,13 @@ class AmazonSimpleAdmin {
                 $lowestOfferFormattedPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
                     $item->Offers->LowestUsedPriceFormattedPrice : $item->Offers->LowestNewPriceFormattedPrice;
 
-            } else if ($item->Offers->LowestNewPrice) {
+            } else if (isset($item->Offers->LowestNewPrice)) {
 
                 $lowestOfferPrice          = $item->Offers->LowestNewPrice;
                 $lowestOfferCurrency       = $item->Offers->LowestNewPriceCurrency;
                 $lowestOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
 
-            } else if ($item->Offers->LowestUsedPrice) {
+            } else if (isset($item->Offers->LowestUsedPrice)) {
 
                 $lowestOfferPrice          = $item->Offers->LowestUsedPrice;
                 $lowestOfferCurrency       = $item->Offers->LowestUsedPriceCurrency;
@@ -2120,10 +2100,10 @@ class AmazonSimpleAdmin {
             }
 
             $lowestOfferPrice = $this->_formatPrice($lowestOfferPrice);
-            $lowestNewPrice = $this->_formatPrice($item->Offers->LowestNewPrice);
-            $lowestNewOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
-            $lowestUsedPrice = $this->_formatPrice($item->Offers->LowestUsedPrice);
-            $lowestUsedOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
+            $lowestNewPrice = isset($item->Offers->LowestNewPrice) ? $this->_formatPrice($item->Offers->LowestNewPrice) : '';
+            $lowestNewOfferFormattedPrice = isset($item->Offers->LowestNewPriceFormattedPrice) ? $item->Offers->LowestNewPriceFormattedPrice : '';
+            $lowestUsedPrice = isset($item->Offers->LowestUsedPrice) ? $this->_formatPrice($item->Offers->LowestUsedPrice) : '';
+            $lowestUsedOfferFormattedPrice = isset($item->Offers->LowestUsedPriceFormattedPrice) ? $item->Offers->LowestUsedPriceFormattedPrice : '';
 
 //            if ($item->Offers->Offers[0]->Price != null) {
 //                $amazonPrice = $item->Offers->Offers[0]->Price;
@@ -2177,8 +2157,8 @@ class AmazonSimpleAdmin {
                 $this->getItemUrl($item),
                 empty($totalOffers) ? '0' : $totalOffers,
                 empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
-                $lowestOfferCurrency,
-                str_replace('$', '\$', $lowestOfferFormattedPrice),
+                isset($lowestOfferCurrency) ? $lowestOfferCurrency : '',
+                isset($lowestOfferFormattedPrice) ? str_replace('$', '\$', $lowestOfferFormattedPrice) : '',
                 empty($lowestNewPrice) ? '---' : $lowestNewPrice,
                 str_replace('$', '\$', $lowestNewOfferFormattedPrice),
                 empty($lowestUsedPrice) ? '---' : $lowestUsedPrice,
@@ -2186,8 +2166,8 @@ class AmazonSimpleAdmin {
                 empty($amazonPrice) ? '---' : str_replace('$', '\$', $amazonPrice),
                 empty($amazonPriceFormatted) ? '---' : str_replace('$', '\$', $amazonPriceFormatted),
                 empty($listPriceFormatted) ? '---' : str_replace('$', '\$', $listPriceFormatted),
-                $item->Offers->Offers[0]->CurrencyCode,
-                $item->Offers->Offers[0]->Availability,
+                isset($item->Offers->Offers[0]->CurrencyCode) ? $item->Offers->Offers[0]->CurrencyCode : '',
+                isset($item->Offers->Offers[0]->Availability) ? $item->Offers->Offers[0]->Availability : '',
                 asa_plugins_url( 'img/amazon_' . (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'_small.gif', __FILE__ ),
                 asa_plugins_url( 'img/amazon_' . (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'.gif', __FILE__ ),
                 $item->DetailPageURL,
@@ -2219,9 +2199,9 @@ class AmazonSimpleAdmin {
                 $this->getAmazonShopUrl() . 'product-reviews/' . $item->ASIN . '/&tag=' . $this->getTrackingId(),
                 $this->getTrackingId(),
                 $this->getAmazonShopUrl(),
-                $this->_formatPrice($item->Offers->SalePriceAmount),
-                $item->Offers->SalePriceCurrencyCode,
-                $item->Offers->SalePriceFormatted,
+                isset($item->Offers->SalePriceAmount) ? $this->_formatPrice($item->Offers->SalePriceAmount) : '',
+                isset($item->Offers->SalePriceCurrencyCode) ? $item->Offers->SalePriceCurrencyCode : '',
+                isset($item->Offers->SalePriceFormatted) ? $item->Offers->SalePriceFormatted : '',
                 !empty($parse_params['class']) ? $parse_params['class'] : '',
             );
 
@@ -2257,6 +2237,51 @@ class AmazonSimpleAdmin {
                 }
             }
             return $result;
+
+        } elseif ($this->isErrorHandling() && $item instanceof Asa_Service_Amazon_Error &&
+            get_option('_asa_admin_error_frontend') && is_super_admin()) {
+
+            // show admin error
+            $errors = $item->getErrors();
+            $error = array_shift($errors);
+
+            // load error_admin.htm
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
+            $output = preg_replace($search, $replace, $this->getTpl('error_admin'));
+
+            echo $output;
+
+        } elseif ($item instanceof Asa_Service_Amazon_Error && get_option('_asa_use_error_tpl')) {
+
+            $errors = $item->getErrors();
+            $error = array_shift($errors);
+
+            // load error.htm
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
+            $output = preg_replace($search, $replace, $this->getTpl('error'));
+
+            echo $output;
+
+        } elseif ($item === null && $this->isErrorHandling()) {
+
+            // general error
+            $message = __('Error while loading product data.', 'asa1');
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array('General error', $message, $asin);
+
+            if (get_option('_asa_admin_error_frontend') && is_super_admin()) {
+                $output = preg_replace($search, $replace, $this->getTpl('error_admin'));
+            } else {
+                $output = preg_replace($search, $replace, $this->getTpl('error'));
+            }
+
+            echo $output;
+
+        } else {
+
+            return '';
         }
     }
     
@@ -2269,22 +2294,51 @@ class AmazonSimpleAdmin {
     protected function _getItem ($asin)
     {
         try {
-                        
             if ($this->cache == null || $this->_useCache() === false) {
                 // if cache could not be initialized
                 $item = $this->_getItemLookup($asin);
-            } else if (!$item = $this->cache->load($asin)) {
-                // if asin is not cached yet
-                $item = $this->_getItemLookup($asin);
 
-                if (!($item instanceof Asa_Service_Amazon_Error)) {
-                    // put asin in cache if it is not an error response
-                    $this->cache->save($item, $asin);
+            } else {
+
+                // try to load item from cache
+                $item = $this->cache->load($asin);
+
+                if ($item === false || !($item instanceof AsaZend_Service_Amazon_Item)) {
+                    // item could not be loaded from cache or is not an item object
+                    //asa_debug('could not load from cache: ' . $asin);
+
+                    $item = $this->_getItemLookup($asin);
+
+                    if (!($item instanceof Asa_Service_Amazon_Error)) {
+                        // put asin in cache if it is not an error response
+                        $this->cache->save($item, $asin);
+                    }
+
+                } else {
+                    // asin could be loaded from cache
+
+                    // debug
+                    //asa_debug('loaded from cache: ' . $asin);
+                    //asa_debug($item);
                 }
+
             }
+
             return $item;
             
         } catch (Exception $e) {
+
+            if ($this->isErrorHandling()) {
+
+                $message = "Error while trying to load item data: %s\n\nASIN: %s";
+                $error = array();
+                $error['Message'] = sprintf($message, $e->getMessage(), $asin);
+                $error['ASIN'] = $asin;
+                $error['Code'] = 'General error';
+
+                $this->getLogger()->logError($error);
+            }
+
             return null;
         }
     }
@@ -2636,25 +2690,25 @@ class AmazonSimpleAdmin {
     {
         $result = null;
 
-        if (!empty($item->Offers->LowestNewPrice)) {
+        if (isset($item->Offers->LowestNewPrice) && !empty($item->Offers->LowestNewPrice)) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->LowestNewPrice);
             } else {
                 $result = $item->Offers->LowestNewPriceFormattedPrice;
             }
-        } elseif ($item->Offers->SalePriceAmount != null) {
+        } elseif (isset($item->Offers->SalePriceAmount) && $item->Offers->SalePriceAmount != null) {
                 if ($formatted === false) {
                     $result = $this->_formatPrice($item->Offers->SalePriceAmount);
                 } else {
                     $result = $item->Offers->SalePriceFormatted;
                 }
-        } elseif ($item->Offers->Offers[0]->Price != null) {
+        } elseif (isset($item->Offers->Offers[0]->Price) && $item->Offers->Offers[0]->Price != null) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
             } else {
                 $result = $item->Offers->Offers[0]->FormattedPrice;
             }
-        } elseif (!empty($item->Offers->LowestUsedPrice)) {
+        } elseif (isset($item->Offers->LowestUsedPrice) && !empty($item->Offers->LowestUsedPrice)) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->LowestUsedPrice);
             } else {
@@ -2850,7 +2904,9 @@ function asa_async_load_callback() {
     $params = $_POST['params'];
 
     $params = json_decode(stripcslashes($params), true);
-    $params = array_map('strip_tags', $params);
+    if (is_array($params)) {
+        $params = array_map('strip_tags', $params);
+    }
     // debug
     //echo '<pre>' . print_r($_POST) . '</pre>';
 
