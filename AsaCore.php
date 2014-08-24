@@ -691,6 +691,7 @@ class AmazonSimpleAdmin {
                     $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
                     $_asa_debug                  = strip_tags($_POST['_asa_debug']);
                     $_asa_get_rating_alternative = strip_tags($_POST['_asa_get_rating_alternative']);
+                    $_asa_custom_widget_class    = strip_tags($_POST['_asa_custom_widget_class']);
                     $_asa_error_handling         = strip_tags($_POST['_asa_error_handling']);
                     $_asa_admin_error_frontend   = strip_tags($_POST['_asa_admin_error_frontend']);
                     $_asa_use_error_tpl          = strip_tags($_POST['_asa_use_error_tpl']);
@@ -705,6 +706,7 @@ class AmazonSimpleAdmin {
                     update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
                     update_option('_asa_debug', $_asa_debug);
                     update_option('_asa_get_rating_alternative', $_asa_get_rating_alternative);
+                    update_option('_asa_custom_widget_class', $_asa_custom_widget_class);
                     update_option('_asa_error_handling', $_asa_error_handling);
                     update_option('_asa_admin_error_frontend', $_asa_admin_error_frontend);
                     update_option('_asa_use_error_tpl', $_asa_use_error_tpl);
@@ -1452,6 +1454,15 @@ class AmazonSimpleAdmin {
                 <td>
                     <input type="checkbox" name="_asa_get_rating_alternative" id="_asa_get_rating_alternative" value="1"<?php echo ((get_option('_asa_get_rating_alternative') == true) ? 'checked="checked"' : '') ?> />
                     <p class="description"><?php _e('Try this option if you have problems with loading the product ratings', 'asa1'); ?></p>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_custom_widget_class"><?php _e('Custom widget class:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="text" name="_asa_custom_widget_class" id="_asa_custom_widget_class" value="<?php echo (get_option('_asa_custom_widget_class')) != '' ? get_option('_asa_custom_widget_class') : ''; ?>" />
+                    <p class="description"><?php _e('Set a custom CSS class for the outer widget container. Default is "AmazonSimpleAdmin_widget" which may get blocked by AdBlockers.', 'asa1'); ?></p>
                 </td>
             </tr>
             <tr>
