@@ -2,9 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.9
+Tested up to: 4.0
 Stable tag: 0.9.14
-
 
 Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
 
@@ -29,7 +28,7 @@ Features:
 * Supports all Amazon webservice **country codes**: CA, CN, DE, ES, FR, IN, IT, JP, UK, US
 * Use your Amazon **tracking ID** for making money
 * Features **collections**. You can define and mangage sets of products as a collection an show them on a page with only one BBCode tag or just the latest added product in your sidebar
-* Backend translation: supported so far are english and german. Contact me to help translate.
+* Backend translation: supported so far are english, german and spanish. Contact me to help translate.
 * Supports product **preview layers** (for US, UK and DE so far)
 * New with version 0.9.5: **Caching** Speeds up your blog when adding many products to your posts!
 * New with version 0.9.6: Parsing [asa] tags in user comments 
@@ -38,7 +37,6 @@ Features:
 * Version 0.9.11 brings AJAX mode (optional) for faster page load
 * Error handling options
 * Test section
-
 
 == Installation ==
 

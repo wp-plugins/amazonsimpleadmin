@@ -24,7 +24,6 @@ Author URI: http://www.ifeelweb.de/
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-
 if (version_compare(phpversion(), '5.0') === -1) {
 
     $active_plugins = get_option('active_plugins');
@@ -46,5 +45,4 @@ if (version_compare(phpversion(), '5.0') === -1) {
 
     die('Your PHP Version is not compatible with this Plugin. <a href="plugins.php">back</a>');
 }
-
 include_once(dirname(__FILE__) . '/AsaCore.php');
