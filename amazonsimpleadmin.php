@@ -45,5 +45,4 @@ if (version_compare(phpversion(), '5.0') === -1) {
 
     die('Your PHP Version is not compatible with this Plugin. <a href="plugins.php">back</a>');
 }
-
 include_once(dirname(__FILE__) . '/AsaCore.php');

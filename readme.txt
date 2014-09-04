@@ -38,7 +38,6 @@ Features:
 * Error handling options
 * Test section
 
-
 == Installation ==
 
 Just unpack the `amazonsimpleadmin` folder into your plugins directory and activate it on your wordpress plugins page.
