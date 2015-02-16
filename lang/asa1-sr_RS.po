@@ -1,0 +1,771 @@
+# Copyright (C) 2014 AmazonSimpleAdmin
+# This file is distributed under the same license as the AmazonSimpleAdmin package.
+msgid ""
+msgstr ""
+"Project-Id-Version: AmazonSimpleAdmin 0.9.14\n"
+"Report-Msgid-Bugs-To: http://wordpress.org/tag/amazonsimpleadmin\n"
+"POT-Creation-Date: 2014-08-24 16:07:56+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2014-09-09 09:40+0100\n"
+"Last-Translator: Borisa Djuraskovic <borisad@webhostinghub.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"X-Generator: Poedit 1.5.7\n"
+
+#: AsaCore.php:605 AsaCore.php:1589
+msgid "Setup"
+msgstr "Postavka"
+
+#: AsaCore.php:606 AsaCore.php:1373
+msgid "Options"
+msgstr "Opcije"
+
+#: AsaCore.php:607 AsaCore.php:985 AsaCore.php:1014
+msgid "Collections"
+msgstr "Kolekcije"
+
+#: AsaCore.php:608 AsaCore.php:1710
+msgid "Cache"
+msgstr "Keš memorija"
+
+#: AsaCore.php:609 AsaCore.php:1188
+msgid "Usage"
+msgstr "Upotreba"
+
+#: AsaCore.php:610 AsaCore.php:1595
+msgid "FAQ"
+msgstr "FAQ"
+
+#: AsaCore.php:611
+msgid "Test"
+msgstr "Test"
+
+#: AsaCore.php:613 AsaCore.php:1356
+msgid "Log"
+msgstr "Dnevnik"
+
+#: AsaCore.php:632
+msgid "Donation"
+msgstr "Donacija"
+
+#: AsaCore.php:635
+msgid ""
+"If you like this plugin and make some money with it, feel free to <a href="
+"\"javascript:void(0)\" onclick=\"%s\">support me</a> so that I can keep up "
+"the updates!"
+msgstr ""
+"Ako vam se dopada ovaj plugin i ako vam omogućava da zaradite, slobodno <a "
+"href=\"javascript:void(0)\" onclick=\"%s\">me podržite</a> da bih mogao da "
+"ga ažuriram! "
+
+#: AsaCore.php:637
+msgid "Thank you"
+msgstr "Hvala"
+
+#: AsaCore.php:641
+msgid "I donated already. Please hide this box."
+msgstr "Već sam donirao. Sakrij ovo polje."
+
+#: AsaCore.php:641 AsaCore.php:665
+msgid "Send"
+msgstr "Pošalji"
+
+#: AsaCore.php:649
+msgid "Newsletter"
+msgstr "Obaveštenja"
+
+#: AsaCore.php:654
+msgid ""
+"Curious about the <b>new features</b> of the upcoming <b>ASA Pro</b> version?"
+"<br>Then you should subscribe to the ASA newsletter!"
+msgstr ""
+"Zanimaju vas <b>nove funkcije</b>buduće <b>ASA Pro</b> verzije? "
+"<br>Pretplatite se na ASA obaveštenja!"
+
+#: AsaCore.php:658
+msgid "Email Address (required)"
+msgstr "Email adresa (obavezna)"
+
+#: AsaCore.php:661
+msgid "Subscribe"
+msgstr "Pretplati se"
+
+#: AsaCore.php:665
+msgid "I subscribed to the ASA newsletter already. Please hide this box."
+msgstr "Već sam se pretplatio na ASA obaveštenja. Sakrij ovo polje."
+
+#: AsaCore.php:671
+msgid "It is highly recommended to activate the <a href=\"%s\">cache</a>!"
+msgstr "Preporučujemo vam da aktivirate  <a href=\"%s\">cache</a>!"
+
+#: AsaCore.php:674
+msgid ""
+"Debugging mode is active. Be sure to deactivate it when you do not need it "
+"anymore."
+msgstr ""
+"Režim za otklanjanje grešaka aktiviran! Ne zaboravite da ga deaktivirate kad "
+"vam više ne bude potreban."
+
+#: AsaCore.php:720 AsaCore.php:947
+msgid "Settings saved."
+msgstr "Podešavanja sačuvana"
+
+#: AsaCore.php:779
+msgid "invalid ASIN"
+msgstr "Nevažeći ASIN."
+
+#: AsaCore.php:784
+msgid "ASIN already added to collection <strong>%s</strong>"
+msgstr "ASIN je već dodat zbirci <strong>%s</strong>"
+
+#: AsaCore.php:792
+msgid "<strong>%s</strong> added to collection <strong>%s</strong>"
+msgstr "<strong>%s</strong>dodat zbirci<strong>%s</strong>"
+
+#: AsaCore.php:825
+msgid "collection deleted: <strong>%s</strong>"
+msgstr "kolekcija obrisana: <strong>%s</strong>"
+
+#: AsaCore.php:835
+msgid "Invalid collection label"
+msgstr "Nevažeća oznaka kolekcije"
+
+#: AsaCore.php:839
+msgid "New collection <strong>%s</strong> created"
+msgstr "Nova kolekcija <strong>%s</strong> kreirana"
+
+#: AsaCore.php:843
+msgid "This collection already exists"
+msgstr "Ova kolekcija već postoji"
+
+#: AsaCore.php:895
+msgid "Cache not activated!"
+msgstr "Keš memorija nije aktivirana!"
+
+#: AsaCore.php:898
+msgid "Cache cleaned up!"
+msgstr "Keš memorija očišćena!"
+
+#: AsaCore.php:912
+msgid "Cache options updated!"
+msgstr "Opcije keš memorije ažurirane!"
+
+#: AsaCore.php:987
+msgid "Do you want to activate the AmazonSimpleAdmin collections feature?"
+msgstr "Želite li da aktivirate funkcije AmazonSimpleAdmin kolekcije?"
+
+#: AsaCore.php:992
+msgid "Activate"
+msgstr "Aktiviraj"
+
+#: AsaCore.php:1016
+msgid ""
+"Check out the <a href=\"%s\" target=\"_blank\">guide</a> if you do not know "
+"how to use collections."
+msgstr ""
+"Idite na <a href=\"%s\" target=\"_blank\">guide</a> ako ne znate kako se "
+"koriste kolekcije."
+
+#: AsaCore.php:1018
+msgid "Create new collection"
+msgstr "Kreiraj novu kolekciju"
+
+#: AsaCore.php:1028
+msgid "New collection"
+msgstr "Nova kolekcija"
+
+#: AsaCore.php:1032 AsaCore.php:1059
+msgid "Save"
+msgstr "Sačuvaj"
+
+#: AsaCore.php:1034
+msgid "Only alpha-numeric characters and underscore allowed"
+msgstr "Dozvoljeni su samo alfa-numerički karakteri i podvlačenje"
+
+#: AsaCore.php:1037
+msgid "Add to collection"
+msgstr "Dodaj kolekciji"
+
+#: AsaCore.php:1046
+msgid "Add Amazon item (ASIN)"
+msgstr "Dodaj artikal sa Amazona (ASIN)"
+
+#: AsaCore.php:1048
+msgid "to collection"
+msgstr "kolekciji"
+
+#: AsaCore.php:1064
+msgid "Manage collections"
+msgstr "Upravljaj kolekcijama"
+
+#: AsaCore.php:1073 AsaWidget.php:142
+msgid "Collection"
+msgstr "Kolekcija"
+
+#: AsaCore.php:1084
+msgid "Browse"
+msgstr "Pretraži"
+
+#: AsaCore.php:1087
+msgid "Delete collection"
+msgstr "Izbriši kolekciju"
+
+#: AsaCore.php:1099
+msgid "Delete selected"
+msgstr "Izbriši odabrano"
+
+#: AsaCore.php:1099
+msgid "Delete selected collection items from collection?"
+msgstr "Izbriši odabrane artikle kolekcije "
+
+#: AsaCore.php:1110
+msgid "Price"
+msgstr "Cena"
+
+#: AsaCore.php:1111
+msgid "Title"
+msgstr "Naslov"
+
+#: AsaCore.php:1112
+msgid "Timestamp"
+msgstr "Vremenska oznaka"
+
+#: AsaCore.php:1147
+msgid "Y-m-d \\<\\b\\r \\/\\> g:i:s a"
+msgstr "Y-m-d \\<\\b\\r \\/\\> g:i:s a"
+
+#: AsaCore.php:1148
+msgid "Set timestamp of &quot;%s&quot; to actual time?"
+msgstr "Podesi vremensku oznaku &quot;%&quot; na tekuće vreme?"
+
+#: AsaCore.php:1148
+msgid "latest"
+msgstr "najnovije"
+
+#: AsaCore.php:1170
+msgid "Nothing found. Add some products."
+msgstr "Ništa nije pronađeno. Dodajte neke artikle."
+
+#: AsaCore.php:1190
+msgid ""
+"Please visit the <a href=\"%s\" target=\"_blank\">Usage Guide</a> on the "
+"plugin's homepage to learn how to use it."
+msgstr ""
+"Posetite <a href=\"%s\" target=\"_blank\">Usage Guide</a>na početnoj "
+"stranici plugin-a da biste naučili da ga koristite."
+
+#: AsaCore.php:1192
+msgid "Step by Step Guide"
+msgstr "Uputstvo za upotrebu - korak po korak"
+
+#: AsaCore.php:1193
+msgid ""
+"Please read the <a href=\"%s\" target=\"_blank\">Step by Step Guide</a> if "
+"you are new to this plugin."
+msgstr ""
+"Pročitajte <a href=\"%s\" target=\"_blank\">Step by Step Guide</a> ako ste "
+"tek počeli da koristite ovaj plugin."
+
+#: AsaCore.php:1195
+msgid "Available templates"
+msgstr "Raspoloživi uzorci"
+
+#: AsaCore.php:1197
+msgid "This is a list of template files, ASA found on your server:"
+msgstr "Ovo je spisak uzoraka datoteka koje je ASA našao na vašem serveru:  "
+
+#: AsaCore.php:1269 AsaCore.php:1283 AsaWidget.php:172
+msgid "Template"
+msgstr "Uzorak"
+
+#: AsaCore.php:1280
+msgid "Mode"
+msgstr "Režim"
+
+#: AsaCore.php:1288
+msgid "Ratings"
+msgstr "Ocene"
+
+#: AsaCore.php:1295
+msgid "Disable error log"
+msgstr "Deaktiviraj dnevnik grešaka"
+
+#: AsaCore.php:1300
+msgid "Submit"
+msgstr "Podnesi"
+
+#: AsaCore.php:1312
+msgid "Result"
+msgstr "Rezultat"
+
+#: AsaCore.php:1323
+msgid "Successfully retrieved customer ratings."
+msgstr "Ocene korisnika uspešno su vraćene."
+
+#: AsaCore.php:1324
+msgid "Total reviews:"
+msgstr "Ukupno pregleda:"
+
+#: AsaCore.php:1325
+msgid "Average rating:"
+msgstr "Prosečna ocena:"
+
+#: AsaCore.php:1326
+msgid "Image source:"
+msgstr "Izvor slika"
+
+#: AsaCore.php:1332
+msgid "Customer ratings could not be retrieved."
+msgstr "Ocene korisnika ne mogu se vratiti."
+
+#: AsaCore.php:1347
+msgid "All log entries have been deleted."
+msgstr "Svi unosi dnevnika su obrisani."
+
+#: AsaCore.php:1381
+msgid "Use asynchronous mode (AJAX):"
+msgstr "Koristi vremenski neusklađen režim (AJAX):"
+
+#: AsaCore.php:1386
+msgid ""
+"Requests to the Amazon webservice will be executed asynchronously. This will "
+"improve page load speed."
+msgstr ""
+"Zahtevi Amazon web servisu biće obrađeni vremenski neusklađeno. Na ovaj "
+"način ubrzaće se učitavanje stranice."
+
+#: AsaCore.php:1392
+msgid "Parse comments:"
+msgstr "Analiza komentara:"
+
+#: AsaCore.php:1396
+msgid "[asa] tags in comments will be parsed."
+msgstr "[asa] oznake u komentarima biće analizirane."
+
+#: AsaCore.php:1402
+msgid "Enable product preview links:"
+msgstr "Aktiviraj linkove za pregled proizvoda:"
+
+#: AsaCore.php:1406
+msgid ""
+"Product preview layers are only supported by US, UK and DE so far. This can "
+"effect the site to be loaded a bit slower due to link parsing."
+msgstr ""
+"Slojeve pregleda proizvoda, za sada, podržavaju samo US, UK i DE. To može "
+"prouzrokovati sporije učitavanje sajta zbog parsiranja linka. "
+
+#: AsaCore.php:1412
+msgid "Hide ASA link:"
+msgstr "Sakrij ASA link"
+
+#: AsaCore.php:1416
+msgid ""
+"Hides link to ASA homepage from Meta widget. Do not hide it to support this "
+"plugin."
+msgstr ""
+"Sakriva link za ASA početnu stranicu sa meta widget-a. Nemojte je sakrivati "
+"da biste podržali ovaj plugin. "
+
+#: AsaCore.php:1422
+msgid "Use short Amazon links:"
+msgstr "Koristi kratke Amazon linkove:"
+
+#: AsaCore.php:1426
+msgid "Activates the short version of affiliate links like %s"
+msgstr "Aktivira kratku verziju pridruženih linkova, kao što su %s"
+
+#: AsaCore.php:1432
+msgid "Activate debugging:"
+msgstr "Aktiviraj otklanjanje grešaka:"
+
+#: AsaCore.php:1436
+msgid ""
+"Important: Use debugging only temporarily if you are facing problems with "
+"ASA. Ask the <a href=\"%s\" target=\"_blank\">support</a> how to interpret "
+"the debugging information."
+msgstr ""
+"Važna napomena: Koristite otklanjanje grešaka samo privremeno i to ako vam "
+"ASA zadaje probleme. Pitajte podršku na  <a href=\"%s\" target=\"_blank"
+"\">support</a> kako da protumačite informacije o otklanjanju grešaka."
+
+#: AsaCore.php:1439
+msgid "Debugger error"
+msgstr "Greška u otklanjanju grešaka"
+
+#: AsaCore.php:1441
+msgid "Refresh"
+msgstr "Osveži"
+
+#: AsaCore.php:1445
+msgid "Clear debugging data"
+msgstr "Obriši podatke o otklanjanju grešaka"
+
+#: AsaCore.php:1452
+msgid "Ratings parser alternative:"
+msgstr "Ocene alternative parsera:"
+
+#: AsaCore.php:1456
+msgid "Try this option if you have problems with loading the product ratings"
+msgstr ""
+"Isprobajte ovu opciju ako imate problema sa učitavanjem ocena proizvoda."
+
+#: AsaCore.php:1461
+msgid "Custom widget class:"
+msgstr "Prilagođena klasa widget-a."
+
+#: AsaCore.php:1465
+msgid ""
+"Set a custom CSS class for the outer widget container. Default is "
+"\"AmazonSimpleAdmin_widget\" which may get blocked by AdBlockers."
+msgstr ""
+"Podesite prilagođenu CSS klasu za spoljni kontejner widget-a. Podrazumevani "
+"je \"AmazonSimpleAdmin_widget\" kojeg AdBlockers mogu blokirati.  "
+
+#: AsaCore.php:1469
+msgid "Error handling"
+msgstr "Obrada grešaka:"
+
+#: AsaCore.php:1473
+msgid "Error handling:"
+msgstr "Obrada grešaka:"
+
+#: AsaCore.php:1477
+msgid ""
+"Activates the error handling. Generates log entries e.g. when using invalid "
+"ASINs (see tab \"Log\"). Precondition for all following options."
+msgstr ""
+"Aktivira obradu grešaka. Generiše unose dnevnika, npr. kad se koriste "
+"nevažeći ASIN-i (pogledajte tabulator \"Log\"). Preduslov za sve naredne "
+"opcije. "
+
+#: AsaCore.php:1482
+msgid "Admin front-end errors:"
+msgstr "Greške administratora na front end-u"
+
+#: AsaCore.php:1486
+msgid ""
+"If an error occures while loading the products, display the error messages "
+"instead of an empty product box in the front-end for logged in admins only. "
+"Template file <b>error_admin.htm</b> will be used."
+msgstr ""
+"Ako se greška pojavi prilikom učitavanja proizvoda, prikaži poruku o grešci "
+"umesto praznog okvira za proizvod na front end-u, samo za prijavljene "
+"administratore. Koristiće se obrazac datoteke <b>error_admin.htm</b>. "
+
+#: AsaCore.php:1491
+msgid "Error template:"
+msgstr "Obrazac greške:"
+
+#: AsaCore.php:1495
+msgid ""
+"If an error occures while loading a product, display the error template "
+"instead of an empty product box. Template file <b>error.htm</b> will be "
+"used. "
+msgstr ""
+"Ako se greška pojavi prilikom učitavanja proizvoda, prikaži obrazac greške "
+"umesto praznog okvira proizvoda. Koristiće se obrazac datoteke <b>error.htm</"
+"b>."
+
+#: AsaCore.php:1500
+msgid "Email notification:"
+msgstr "Email obaveštenje:"
+
+#: AsaCore.php:1504
+msgid ""
+"Enables the email notification feature. Enables you to receive notifications "
+"about product parsing errors with the same information like in the log "
+"entries (invalid ASINs and location where it is used)."
+msgstr ""
+"Aktivira slanje obaveštenja putem email-a. Omogućava vam da dobijate "
+"obaveštenja o greškama analize proizvoda zajedno sa informacijama o unosima "
+"dnevnika (nevažeći ASIN i lokacije na kojima se koristi)."
+
+#: AsaCore.php:1505
+msgid ""
+"Read the <a href=\"%s\" target=\"_blank\">documentation</a> about how to "
+"setup this feature. <b>Error handling must be activated.</b>"
+msgstr ""
+"Pročitajte dokumentaciju na <a href=\"%s\" target=\"_blank\">documentation</"
+"a> da biste videli podešavanja ove funkcionalnosti. <b>Obrada grešaka mora "
+"biti aktivirana.</b>"
+
+#: AsaCore.php:1514 AsaCore.php:1682 AsaCore.php:1745
+msgid "Update Options"
+msgstr "Opcije ažuriranja"
+
+#: AsaCore.php:1537
+msgid ""
+"Connection to Amazon Webservice failed. Please check the mandatory data."
+msgstr ""
+"Povezivanje sa Amazon Web servisom neuspešno. Proverite obavezne podatke."
+
+#: AsaCore.php:1591
+msgid "Need help?"
+msgstr "Da li vam je potrebna pomoć?"
+
+#: AsaCore.php:1599
+msgid "Online documentation"
+msgstr "Online dokumentacija"
+
+#: AsaCore.php:1603
+msgid "Forums"
+msgstr "Forumi"
+
+#: AsaCore.php:1607
+msgid "Contact"
+msgstr "Kontakt"
+
+#: AsaCore.php:1612
+msgid "Credentials"
+msgstr "Akreditivi"
+
+#: AsaCore.php:1614
+msgid "Status"
+msgstr "Status"
+
+#: AsaCore.php:1614
+msgid "Ready"
+msgstr "Spreman"
+
+#: AsaCore.php:1614
+msgid "Not Ready"
+msgstr "Nije spreman"
+
+#: AsaCore.php:1619
+msgid "Get help at"
+msgstr "Nađite pomoć"
+
+#: AsaCore.php:1623
+msgid "Please fill in your Amazon Product Advertising API credentials."
+msgstr ""
+"Molimo vas da unesete svoje akreditive u Amazon Product Advertising API. "
+
+#: AsaCore.php:1624
+msgid "Fields marked with * are mandatory:"
+msgstr "Polja označena zvezdicom * su obavezna:"
+
+#: AsaCore.php:1631
+msgid "Your Amazon Access Key ID*:"
+msgstr "ID vašeg ključa za pristup Amazonu:"
+
+#: AsaCore.php:1635
+msgid "How do I get one?"
+msgstr "Kako da ga dobijem?"
+
+#: AsaCore.php:1641
+msgid "Your Secret Access Key*:"
+msgstr "Vaš tajni ključ za pristup*"
+
+#: AsaCore.php:1645
+msgid "What is this?"
+msgstr "Šta je to?"
+
+#: AsaCore.php:1651
+msgid "Your Amazon Tracking ID*:"
+msgstr "Vaš ID za praćenje Amazona*"
+
+#: AsaCore.php:1655
+msgid "Where do I get one?"
+msgstr "Gde da ga nađem?"
+
+#: AsaCore.php:1661
+msgid "Your Amazon Country Code*:"
+msgstr "Kod vaše države na Amazonu*"
+
+#: AsaCore.php:1675
+msgid "Default"
+msgstr "Podrazumevani"
+
+#: AsaCore.php:1683
+msgid "Clear Settings"
+msgstr "Obriši podešavanja"
+
+#: AsaCore.php:1685
+msgid "Notice"
+msgstr "Obratite pažnju"
+
+#: AsaCore.php:1686
+msgid ""
+"If your status is ready but your implemented Amazon product boxes do not "
+"show any data, check the FAQ panel for more information (first entry)."
+msgstr ""
+"Ako vam je status “spreman”, ali vaši implementirani Amazon okviri za "
+"proizvode ne prikazuju nikakve podatke, za više informacija pogledajte panel "
+"sa često postavljenim pitanjima (prvi unos). "
+
+#: AsaCore.php:1720
+msgid "Activate cache:"
+msgstr "Aktiviraj keš:"
+
+#: AsaCore.php:1723
+msgid "Do not use cache when logged in as admin:"
+msgstr "Nemojte koristiti keš dok ste prijavljeni kao administrator:"
+
+#: AsaCore.php:1726
+msgid "Cache Lifetime (in seconds):"
+msgstr "Životni vek keša (u sekundama):"
+
+#: AsaCore.php:1729
+msgid "Cache directory:"
+msgstr "Direktorijum keša:"
+
+#: AsaCore.php:1730
+msgid ""
+"within asa plugin directory / default = \"cache\" / must be "
+"<strong>writable</strong>!"
+msgstr ""
+"U asa plugin direktorijumu default = \"cache\" / mora biti <strong>writable</"
+"strong>!"
+
+#: AsaCore.php:1734
+msgid "is"
+msgstr "je "
+
+#: AsaCore.php:1736
+msgid "writable"
+msgstr "writable"
+
+#: AsaCore.php:1738
+msgid "not writable"
+msgstr "not writable"
+
+#: AsaCore.php:1746
+msgid "Clear Cache"
+msgstr "Obriši keš"
+
+#: AsaCore.php:1760 AsaLogListTable.php:113
+msgid "Error"
+msgstr "Greška"
+
+#: AsaCore.php:1768
+msgid "Success"
+msgstr "Uspeh"
+
+#: AsaCore.php:2270
+msgid "Error while loading product data."
+msgstr "Greška prilikom učitavanja podataka o proizvodu."
+
+#: AsaEmail.php:137
+msgctxt "post type general name"
+msgid "ASA Errors"
+msgstr "ASA Greške"
+
+#: AsaEmail.php:138
+msgctxt "post type singular name"
+msgid "ASA Error"
+msgstr "ASA Greška"
+
+#: AsaEmail.php:139
+msgctxt "admin menu"
+msgid "ASA Errors"
+msgstr "ASA Greške"
+
+#: AsaEmail.php:140
+msgctxt "add new on admin bar"
+msgid "ASA Error"
+msgstr "ASA Greška"
+
+#: AsaEmail.php:141
+msgctxt "asa-error"
+msgid "Add New"
+msgstr "Dodaj novi"
+
+#: AsaEmail.php:142
+msgid "Add New"
+msgstr "Dodaj novi"
+
+#: AsaEmail.php:143
+msgid "New"
+msgstr "Novi"
+
+#: AsaEmail.php:144
+msgid "Edit"
+msgstr "Uredi"
+
+#: AsaEmail.php:145
+msgid "View"
+msgstr "Vidi"
+
+#: AsaEmail.php:146
+msgid "All"
+msgstr "Sve"
+
+#: AsaEmail.php:147
+msgid "Search"
+msgstr "Traži"
+
+#: AsaEmail.php:148
+msgid "Parent:"
+msgstr "Nadređeni"
+
+#: AsaEmail.php:149
+msgid "Noting found."
+msgstr "Ništa nije nađeno"
+
+#: AsaEmail.php:150
+msgid "Nothing found in Trash."
+msgstr "Ništa nije nađeno u korpi za otpatke."
+
+#: AsaLogListTable.php:164
+msgid "Clear log"
+msgstr "Obriši dnevnik"
+
+#: AsaWidget.php:129
+msgid "Latest added on top"
+msgstr "Najnovije se dodaje na vrh"
+
+#: AsaWidget.php:130
+msgid "Random"
+msgstr "Nasumično"
+
+#: AsaWidget.php:138
+msgid "Title:"
+msgstr "Naslov:"
+
+#: AsaWidget.php:144
+msgid "Choose collection"
+msgstr "Izaberi zbirku"
+
+#: AsaWidget.php:156
+msgid "Number of items (0 = all)"
+msgstr "Broj artikala (0 = svi)"
+
+#: AsaWidget.php:160
+msgid "Sort type"
+msgstr "Razvrstaj"
+
+#: AsaWidget.php:184
+msgid "Custom CSS class for the inner container"
+msgstr "Prilagođena CSS klasa za unutrašnji kontejner"
+
+#. Plugin Name of the plugin/theme
+msgid "AmazonSimpleAdmin"
+msgstr "AmazonSimpleAdmin"
+
+#. Plugin URI of the plugin/theme
+msgid "http://www.wp-amazon-plugin.com/"
+msgstr "http://www.wp-amazon-plugin.com/"
+
+#. Description of the plugin/theme
+msgid ""
+"Lets you easily <strong>embed Amazon products</strong> into your posts by "
+"use of [asa]ASIN[/asa] tags. Supports the use of templates. So you can "
+"choose from various presentation styles and of course create your own "
+"template in a few seconds. Needs PHP 5! <a href=\"options-general.php?"
+"page=amazonsimpleadmin/amazonsimpleadmin.php\">Options panel</a>"
+msgstr ""
+"Omogućava vam da lako <strong>ugradite Amazon proizvode</strong> u svoje "
+"postove tako što ćete koristiti [asa]ASIN[/asa] oznake. Podržava upotrebu "
+"šablona. Možete da birate između različitih stilova prezentacije i, naravno, "
+"da kreirate svoj šablon za samo nekoliko sekundi! Zahteva PHP 5! <a href="
+"\"options-general.php?page=amazonsimpleadmin/amazonsimpleadmin.php\">Options "
+"panel</a>"
+
+#. Author of the plugin/theme
+msgid "Timo Reith"
+msgstr "Timo Reith"
+
+#. Author URI of the plugin/theme
+msgid "http://www.ifeelweb.de/"
+msgstr "http://www.ifeelweb.de/"

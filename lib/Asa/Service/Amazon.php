@@ -145,7 +145,7 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
             'ItemId'        => $asin,
             'ResponseGroup' => $response_group
         );
-           
+
         
         // get the response
         $response = $this->_request->send($url_params);

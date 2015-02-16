@@ -89,7 +89,43 @@ class AsaCollection {
         ';
         
         $this->db->query($sql);
-    }        
+    }
+
+    public function export($collection_id, $country_code)
+    {
+        $collectionName = $this->getLabel($collection_id);
+        $filename = 'ASA1_collection_export_'. date('Y-m-d_H_i_s');
+        $items = $this->getItems($collection_id);
+
+        $result = "<asa2_collections>\n";
+        $result .= "<asa2_collection>\n";
+
+        $result .= "\t" . '<column name="name">'. $collectionName .'</column>' . "\n";
+        $result .= "\t<items>\n";
+
+        foreach ($items as $item) {
+            $result .= "\t\t<item>\n";
+            $result .= "\t\t\t<asin>" . $item->collection_item_asin . "</asin>\n";
+            $result .= "\t\t\t<country_code>" . $country_code . "</country_code>\n";
+
+            $result .= "\t\t</item>\n";
+        }
+
+        $result .= "\t</items>\n";
+
+
+        $result .= "</asa2_collection>\n";
+        $result .= "</asa2_collections>\n";
+
+        $xml = new SimpleXMLElement($result);
+
+        $filename .= '.xml';
+
+        header('Content-disposition: attachment; filename="'. $filename .'"');
+        header('Content-type: "text/xml"; charset="utf8"');
+        echo $xml->asXML();
+        exit;
+    }
     
     /**
      * 
@@ -104,7 +140,7 @@ class AsaCollection {
             ORDER by collection_label
         ';
         
-        $result = $this->db->get_results($sql);    
+        $result = $this->db->get_results($sql);
         
         foreach ($result as $row) {
             $collections[$row->collection_id] = $row->collection_label;            
