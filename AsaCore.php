@@ -669,6 +669,7 @@ class AmazonSimpleAdmin {
             <div class="asa_info_box asa_info_box_outer">
                 <div id="asa_newsletter_teaser"><img src="<?php echo asa_plugins_url( 'img/newsletter.png', __FILE__); ?>" /></div>
                 <div id="asa_newsletter_form">
+                    <h3>ASA 2</h3>
                     <p><?php _e('Curious about the <b>new features</b> of the upcoming <b>ASA 2</b> version?<br>Then you should subscribe to the ASA newsletter!', 'asa1'); ?></p>
 
                     <form action="http://wp-amazon-plugin.us7.list-manage.com/subscribe/post?u=a11948220f94721bb8bcddc8b&amp;id=69a6051b59" method="post" target="_blank" novalidate>
@@ -771,9 +772,16 @@ class AmazonSimpleAdmin {
                     $collection_label = $this->collection->getLabel($collection_id);
 
                     if ($collection_label !== null) {
-                        $this->collection->export($collection_id, $this->_amazon_country_code);
+                        $this->collection->export((int)$collection_id, $this->_amazon_country_code);
                     }
 
+                } elseif (isset($_POST['submit_export_all_collections'])) {
+
+                    $collections = $this->collection->getAll();
+
+                    if (!empty($collections)) {
+                        $this->collection->export(array_keys($collections), $this->_amazon_country_code);
+                    }
                 }
 
                 break;
@@ -829,7 +837,7 @@ class AmazonSimpleAdmin {
                         $this->error['submit_import'] = $import->getError();
                     } else {
                         $importedCollections = $import->getImportedCollections();
-                        $this->success['submit_import'] = sprintf(__('Collections imported: %s'), implode(',', $importedCollections));
+                        $this->success['submit_import'] = sprintf(__('Collections imported: %s'), implode(', ', $importedCollections));
                     }
                 }
 
@@ -1175,6 +1183,9 @@ class AmazonSimpleAdmin {
             <input type="submit" name="submit_export_collection" value="<?php _e('Export', 'asa1'); ?>" class="button" />
         </p>
         <p style="margin:0; display: inline;">
+            <input type="submit" name="submit_export_all_collections" value="<?php _e('Export all', 'asa1'); ?>" class="button" />
+        </p>
+        <p style="margin:0; display: inline;">
             <input type="submit" name="submit_delete_collection" value="<?php _e('Delete collection', 'asa1'); ?>" onclick="return asa_deleteCollection();" class="button" />
         </p>
         </form>
@@ -1286,6 +1297,7 @@ class AmazonSimpleAdmin {
         <h3><?php _e('Available templates', 'asa1'); ?></h3>
                 
         <p><?php _e('This is a list of template files, ASA found on your server:', 'asa1') ?></p>
+        <p><?php _e('Please read', 'asa1') ?>: <a href="http://www.wp-amazon-plugin.com/2015/13280/keeping-your-custom-templates-update-safe/" target="_blank">Keeping your custom templates update safe</a></p>
         <ul>
         <?php
         $templates = $this->getAllTemplates();

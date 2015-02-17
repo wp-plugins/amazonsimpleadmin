@@ -91,30 +91,49 @@ class AsaCollection {
         $this->db->query($sql);
     }
 
+    /**
+     * @param $collection_id
+     * @param $country_code
+     */
     public function export($collection_id, $country_code)
     {
-        $collectionName = $this->getLabel($collection_id);
-        $filename = 'ASA1_collection_export_'. date('Y-m-d_H_i_s');
-        $items = $this->getItems($collection_id);
+        $collections = array();
 
-        $result = "<asa2_collections>\n";
-        $result .= "<asa2_collection>\n";
-
-        $result .= "\t" . '<column name="name">'. $collectionName .'</column>' . "\n";
-        $result .= "\t<items>\n";
-
-        foreach ($items as $item) {
-            $result .= "\t\t<item>\n";
-            $result .= "\t\t\t<asin>" . $item->collection_item_asin . "</asin>\n";
-            $result .= "\t\t\t<country_code>" . $country_code . "</country_code>\n";
-
-            $result .= "\t\t</item>\n";
+        if (is_numeric($collection_id)) {
+            // single collection
+            $collections = array($collection_id);
+        } elseif (is_array($collection_id)) {
+            // multiple collections
+            $collections = $collection_id;
         }
 
-        $result .= "\t</items>\n";
+        $result = "<asa2_collections>\n";
+
+        foreach ($collections as $collId) {
+
+            $collectionName = $this->getLabel($collId);
+            $filename = 'ASA1_collection_export_'. date('Y-m-d_H_i_s');
+            $items = $this->getItems($collId);
+
+            $result .= "\t<asa2_collection>\n";
+
+            $result .= "\t\t" . '<column name="name">'. $collectionName .'</column>' . "\n";
+            $result .= "\t\t<items>\n";
+
+            foreach ($items as $item) {
+                $result .= "\t\t\t<item>\n";
+                $result .= "\t\t\t\t<asin>" . $item->collection_item_asin . "</asin>\n";
+                $result .= "\t\t\t\t<country_code>" . $country_code . "</country_code>\n";
+
+                $result .= "\t\t\t</item>\n";
+            }
+
+            $result .= "\t\t</items>\n";
+
+            $result .= "\t</asa2_collection>\n";
+        }
 
 
-        $result .= "</asa2_collection>\n";
         $result .= "</asa2_collections>\n";
 
         $xml = new SimpleXMLElement($result);
