@@ -2,17 +2,15 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 3.9
-Stable tag: 0.9.13
+Tested up to: 4.2
+Stable tag: 0.9.15
 
-
-Lets you easily embed Amazon products into your posts by use of [asa]ASIN[/asa] tags. Supports the use of templates.
+Lets you easily embed Amazon products into your WordPress posts by use of [asa]ASIN[/asa] shortcodes. Supports the use of templates. You can choose from various presentation styles and of course create your own template in a few seconds.
 
 == Description ==
 
-AmazonSimpleAdmin lets you easily integrate Amazon products into your wordpress pages.
+AmazonSimpleAdmin lets you easily integrate Amazon products into your WordPress pages.
 By using the template feature, you can present the products in different styles on different pages. All by typing simple BBCode tags.
-AmazonSimpleAdmin requires `PHP5`.
 
 For the latest information visit the plugin homepage:
 
@@ -24,26 +22,34 @@ http://www.wp-amazon-plugin.com/guide/
 
 Features:
 
-* Ease of use with **BBCode** tags
+* Ease of use with asa-**Shortcode** tags
 * Lets you design your own product **templates**
 * Supports all Amazon webservice **country codes**: CA, CN, DE, ES, FR, IN, IT, JP, UK, US
 * Use your Amazon **tracking ID** for making money
 * Features **collections**. You can define and mangage sets of products as a collection an show them on a page with only one BBCode tag or just the latest added product in your sidebar
-* Backend translation: supported so far are english and german. Contact me to help translate.
+* Backend translation: supported so far are English, German, Spanish and Serbian. Contact me to help translate.
 * Supports product **preview layers** (for US, UK and DE so far)
 * New with version 0.9.5: **Caching** Speeds up your blog when adding many products to your posts!
 * New with version 0.9.6: Parsing [asa] tags in user comments 
 * Since version 0.9.6 compatible with Amazons Product Advertising API changes by August 15, 2009 which require all requests to be authenticated using request signatures
 * Version 0.9.7 supports customer reviews again!
 * Version 0.9.11 brings AJAX mode (optional) for faster page load
+* Error handling options
+* Test section
 
+Credits:
+
+Thanks for translations
+
+Serbian: Ogi Djuraskovic (http://firstsiteguide.com/)
+Spanish: Andrew Kurtis (http://www.webhostinghub.com/)
+
+Help me translate ASA in your language: http://www.wp-amazon-plugin.com/contact/
 
 == Installation ==
 
 Just unpack the `amazonsimpleadmin` folder into your plugins directory and activate it on your wordpress plugins page.
 Then you will have the option `AmazonSimpleAdmin` on your wordpress options page.
-
-AmazonSimpleAdmin requires `PHP 5.1.4` at least!
 
 == Configuration ==
 
@@ -55,8 +61,17 @@ http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
 
+= 0.9.15 =
+* New feature: Export / import collections
+* Added language file: Serbian. Thanks to Ogi Djuraskovic (http://firstsiteguide.com/)
+* Added update notice for template backup (Please also read: http://www.wp-amazon-plugin.com/2015/13280/keeping-your-custom-templates-update-safe/)
+* New placeholder: {$OffersMainPriceAmount} Always keeps the main Amazon price. You can set the text it should show if the price is empty.
+* New placeholder: {$OffersMainPriceCurrencyCode} The main price currency code.
+* New placeholder: {$OffersMainPriceFormattedPrice} Always keeps the main Amazon formatted price (with currency code). You can set the text it should show if the price is empty.
+
 = 0.9.14 =
 * New feature: Test section. Test a ASIN with your template or check if the ratings can be retrieved.
+* Improved error handling options
 * New placeholder: {$Class}. You can use it like {$Comment} e.g. to put a custom CSS class in it. [asa demo, class="my_css_class"]B00AKHKTVI[/asa]
 * Improvement: On some servers the rating images could not be loaded. This has been improved.
 
@@ -223,4 +238,6 @@ I suspect that loading php_domxml.dll (on Windows) in your php.ini is the cause 
 6. Widget rendered on page
 7. Integrated help
 8. For more information visit http://www.wp-amazon-plugin.com/
+9. Error log
+10. Error reporting notification email
 

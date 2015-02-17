@@ -89,7 +89,62 @@ class AsaCollection {
         ';
         
         $this->db->query($sql);
-    }        
+    }
+
+    /**
+     * @param $collection_id
+     * @param $country_code
+     */
+    public function export($collection_id, $country_code)
+    {
+        $collections = array();
+
+        if (is_numeric($collection_id)) {
+            // single collection
+            $collections = array($collection_id);
+        } elseif (is_array($collection_id)) {
+            // multiple collections
+            $collections = $collection_id;
+        }
+
+        $result = "<asa2_collections>\n";
+
+        foreach ($collections as $collId) {
+
+            $collectionName = $this->getLabel($collId);
+            $filename = 'ASA1_collection_export_'. date('Y-m-d_H_i_s');
+            $items = $this->getItems($collId);
+
+            $result .= "\t<asa2_collection>\n";
+
+            $result .= "\t\t" . '<column name="name">'. $collectionName .'</column>' . "\n";
+            $result .= "\t\t<items>\n";
+
+            foreach ($items as $item) {
+                $result .= "\t\t\t<item>\n";
+                $result .= "\t\t\t\t<asin>" . $item->collection_item_asin . "</asin>\n";
+                $result .= "\t\t\t\t<country_code>" . $country_code . "</country_code>\n";
+
+                $result .= "\t\t\t</item>\n";
+            }
+
+            $result .= "\t\t</items>\n";
+
+            $result .= "\t</asa2_collection>\n";
+        }
+
+
+        $result .= "</asa2_collections>\n";
+
+        $xml = new SimpleXMLElement($result);
+
+        $filename .= '.xml';
+
+        header('Content-disposition: attachment; filename="'. $filename .'"');
+        header('Content-type: "text/xml"; charset="utf8"');
+        echo $xml->asXML();
+        exit;
+    }
     
     /**
      * 
@@ -104,7 +159,7 @@ class AsaCollection {
             ORDER by collection_label
         ';
         
-        $result = $this->db->get_results($sql);    
+        $result = $this->db->get_results($sql);
         
         foreach ($result as $row) {
             $collections[$row->collection_id] = $row->collection_label;            
