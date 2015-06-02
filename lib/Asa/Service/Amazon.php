@@ -60,7 +60,7 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
 	 * The api version to use
 	 * @var string
 	 */
-	public static $api_version = '2011-08-01';	
+	public static $api_version = '2013-08-01';
 	
 	/**
 	 * The Asa request object
@@ -157,6 +157,7 @@ class Asa_Service_Amazon implements Asa_Service_Amazon_Interface
         // init and return the ZF object
         $dom = new DOMDocument();
         $xml_response = $response;
+
         $dom->loadXML($xml_response);
         $xpath = new DOMXPath($dom);
         $xpath->registerNamespace('az', 'http://webservices.amazon.com/AWSECommerceService/'. self::$api_version);

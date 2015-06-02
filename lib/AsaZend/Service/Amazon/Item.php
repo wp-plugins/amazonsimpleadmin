@@ -175,7 +175,25 @@ class AsaZend_Service_Amazon_Item
             }
         }
 
+        $smallImage = $xpath->query('./az:SmallImage', $dom);
+        if ($smallImage->length >= 1) {
+            $this->SmallImage = new AsaZend_Service_Amazon_Image($smallImage->item(0));
+        }
+
+        $mediumImage = $xpath->query('./az:MediumImage', $dom);
+        if ($mediumImage->length >= 1) {
+            $this->MediumImage = new AsaZend_Service_Amazon_Image($mediumImage->item(0));
+        }
+
+        $largeImage = $xpath->query('./az:LargeImage', $dom);
+        if ($largeImage->length >= 1) {
+            $this->LargeImage = new AsaZend_Service_Amazon_Image($largeImage->item(0));
+        }
+
         foreach (array('SmallImage', 'MediumImage', 'LargeImage') as $im) {
+            if ($this->$im !== null) {
+                continue;
+            }
             $result = $xpath->query("./az:ImageSets/az:ImageSet[position() = 1]/az:$im", $dom);
 
             if ($result->length == 1) {

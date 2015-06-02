@@ -2255,6 +2255,7 @@ class AmazonSimpleAdmin {
                 $offerMainPriceFormatted = (string)$item->Offers->Offers[0]->FormattedPrice;
             } else {
                 $emptyMainPriceText = get_option('_asa_replace_empty_main_price');
+                $offerMainPriceCurrencyCode = '';
                 if (!empty($emptyMainPriceText)) {
                     $offerMainPriceFormatted = $emptyMainPriceText;
                     $offerMainPriceAmount = $emptyMainPriceText;
