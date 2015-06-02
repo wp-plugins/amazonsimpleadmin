@@ -109,6 +109,9 @@ class AmazonSimpleAdmin {
         'SalePriceCurrencyCode',
         'SalePriceFormatted',
         'Class',
+        'OffersMainPriceAmount',
+        'OffersMainPriceCurrencyCode',
+        'OffersMainPriceFormattedPrice'
     );
 
     /**
@@ -313,6 +316,8 @@ class AmazonSimpleAdmin {
         
         add_filter('upgrader_pre_install', array($this, 'onPreInstall'), 10, 2);
         add_filter('upgrader_post_install', array($this, 'onPostInstall'), 10, 2);
+        add_action('in_plugin_update_message-amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'handleUpdateMessage'));
+        add_filter('plugin_action_links_amazonsimpleadmin/amazonsimpleadmin.php', array($this, 'addPluginActionLinks'));
 
         $this->amazon = $this->connect();
 
@@ -321,7 +326,18 @@ class AmazonSimpleAdmin {
             $this->_email = AsaEmail::getInstance();
         }
 
+        $this->_beforeOutput($this->task);
+
         $this->_initCallback();
+    }
+
+    /**
+     *
+     */
+    public function addPluginActionLinks($links)
+    {
+        $links[] = '<a href="' . get_admin_url(null, 'options-general.php?page=amazonsimpleadmin/amazonsimpleadmin.php') . '">' . __('Settings', 'asa1') . '</a>';
+        return $links;
     }
 
     protected function _initCallback()
@@ -483,8 +499,7 @@ class AmazonSimpleAdmin {
      */
     protected function _initCache ()
     {
-        $_asa_cache_active    = get_option('_asa_cache_active');
-        if (empty($_asa_cache_active)) {
+        if (!$this->_isCache()) {
             return null;
         }
         
@@ -516,7 +531,7 @@ class AmazonSimpleAdmin {
     }
     
     /**
-     * Determines if cache is working fine
+     * Determines if cache is activated and cache dir is writable
      * @return bool
      */
     protected function _isCache()
@@ -613,6 +628,8 @@ class AmazonSimpleAdmin {
         if ($this->isErrorHandling()) {
             $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=log', (($task == 'log') ? 'nav-tab-active' : ''), __('Log', 'asa1'));
         }
+        $nav .= sprintf($navItemFormat, $this->plugin_url.'&task=credits', (($task == 'credits') ? 'nav-tab-active' : ''), __('Credits', 'asa1'));
+
 
         $nav .= '</h2><br />';
         return $nav;
@@ -652,7 +669,8 @@ class AmazonSimpleAdmin {
             <div class="asa_info_box asa_info_box_outer">
                 <div id="asa_newsletter_teaser"><img src="<?php echo asa_plugins_url( 'img/newsletter.png', __FILE__); ?>" /></div>
                 <div id="asa_newsletter_form">
-                    <p><?php _e('Curious about the <b>new features</b> of the upcoming <b>ASA Pro</b> version?<br>Then you should subscribe to the ASA newsletter!', 'asa1'); ?></p>
+                    <h3>ASA 2</h3>
+                    <p><?php _e('Curious about the <b>new features</b> of the upcoming <b>ASA 2</b> version?<br>Then you should subscribe to the ASA newsletter!', 'asa1'); ?></p>
 
                     <form action="http://wp-amazon-plugin.us7.list-manage.com/subscribe/post?u=a11948220f94721bb8bcddc8b&amp;id=69a6051b59" method="post" target="_blank" novalidate>
                         <div class="mc-field-group">
@@ -662,8 +680,10 @@ class AmazonSimpleAdmin {
                         <input type="submit" value="<?php _e('Subscribe', 'asa1') ?>" name="subscribe" id="mc-embedded-subscribe" class="button">
                     </form>
 
+                    <p><?php _e('ASA 2 will be <b>available soon</b> with amazing new features!', 'asa1'); ?></p>
+
                 </div>
-                <p style="float: right; padding: 5px 10px;"><form action="<?php echo $this->plugin_url; ?>&task=checkNewsletter" method="post" style="display: inline; float: right;"><input type="checkbox" name="asa_check_newsletter" id="asa_check_newsletter" value="1" />&nbsp;<label for="asa_check_newsletter"><?php _e('I subscribed to the ASA newsletter already. Please hide this box.', 'asa1'); ?></label><br /><input type="submit" value="<?php _e('Send', 'asa1'); ?>" /></form></p>
+                <p style="float: right; padding: 5px 10px;"><form action="<?php echo $this->plugin_url; ?>&task=checkNewsletter" method="post" style="display: inline; float: right;"><input type="checkbox" name="asa_check_newsletter" id="asa_check_newsletter" value="1" />&nbsp;<label for="asa_check_newsletter"><?php _e('I subscribed to the ASA newsletter already. Please hide this box.', 'asa1'); ?></label><br /><input type="submit" value="<?php _e('Send', 'asa1'); ?>" class="button" /></form></p>
             </div>
         <?php
         endif;
@@ -692,6 +712,8 @@ class AmazonSimpleAdmin {
                     $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
                     $_asa_debug                  = strip_tags($_POST['_asa_debug']);
                     $_asa_get_rating_alternative = strip_tags($_POST['_asa_get_rating_alternative']);
+                    $_asa_custom_widget_class    = strip_tags($_POST['_asa_custom_widget_class']);
+                    $_asa_replace_empty_main_price = strip_tags($_POST['_asa_replace_empty_main_price']);
                     $_asa_error_handling         = strip_tags($_POST['_asa_error_handling']);
                     $_asa_admin_error_frontend   = strip_tags($_POST['_asa_admin_error_frontend']);
                     $_asa_use_error_tpl          = strip_tags($_POST['_asa_use_error_tpl']);
@@ -706,6 +728,8 @@ class AmazonSimpleAdmin {
                     update_option('_asa_use_amazon_price_only', $_asa_use_amazon_price_only);
                     update_option('_asa_debug', $_asa_debug);
                     update_option('_asa_get_rating_alternative', $_asa_get_rating_alternative);
+                    update_option('_asa_custom_widget_class', $_asa_custom_widget_class);
+                    update_option('_asa_replace_empty_main_price', $_asa_replace_empty_main_price);
                     update_option('_asa_error_handling', $_asa_error_handling);
                     update_option('_asa_admin_error_frontend', $_asa_admin_error_frontend);
                     update_option('_asa_use_error_tpl', $_asa_use_error_tpl);
@@ -723,6 +747,40 @@ class AmazonSimpleAdmin {
                     $this->_initDebugger();
                     if (!empty($_POST['_asa_debug_clear'])) {
                         $this->_debugger->clear();
+                    }
+                }
+
+                break;
+        }
+    }
+
+    /**
+     * @param $task
+     */
+    protected function _beforeOutput($task)
+    {
+        switch ($task) {
+
+            case 'collections':
+
+                require_once(dirname(__FILE__) . '/AsaCollection.php');
+                $this->collection = new AsaCollection($this->db);
+
+                if (isset($_POST['submit_export_collection'])) {
+
+                    $collection_id = strip_tags($_POST['select_manage_collection']);
+                    $collection_label = $this->collection->getLabel($collection_id);
+
+                    if ($collection_label !== null) {
+                        $this->collection->export((int)$collection_id, $this->_amazon_country_code);
+                    }
+
+                } elseif (isset($_POST['submit_export_all_collections'])) {
+
+                    $collections = $this->collection->getAll();
+
+                    if (!empty($collections)) {
+                        $this->collection->export(array_keys($collections), $this->_amazon_country_code);
                     }
                 }
 
@@ -767,8 +825,24 @@ class AmazonSimpleAdmin {
                     }
                 }
                 
+                if (isset($_POST['submit_import'])) {
+
+                    require_once(dirname(__FILE__) . '/AsaCollectionImport.php');
+
+                    $file = $_FILES['importfile']['tmp_name'];
+                    $import = new AsaCollectionImport($file, $this->collection);
+                    $import->import();
+
+                    if ($import->getError() != null) {
+                        $this->error['submit_import'] = $import->getError();
+                    } else {
+                        $importedCollections = $import->getImportedCollections();
+                        $this->success['submit_import'] = sprintf(__('Collections imported: %s'), implode(', ', $importedCollections));
+                    }
+                }
+
                 if (isset($_POST['submit_new_asin'])) {
-                    
+
                     $asin             = strip_tags($_POST['new_asin']);
                     $collection_id     = strip_tags($_POST['collection']);
                     $item            = $this->_getItem($asin); 
@@ -812,19 +886,19 @@ class AmazonSimpleAdmin {
                     $params['collection_id']     = $collection_id;
                     
                 } else if (isset($_POST['submit_delete_collection'])) {
-                    
+
                     $collection_id = strip_tags($_POST['select_manage_collection']);
                     $collection_label = $this->collection->getLabel($collection_id);
-                    
+
                     if ($collection_label !== null) {
                         $this->collection->delete($collection_id);
                     }
-                    
+
                     $this->success['manage_collection'] = sprintf(
                         __('collection deleted: <strong>%s</strong>', 'asa1'),
                         $collection_label
                     );
-                    
+
                 } else if (isset($_POST['submit_new_collection'])) {
                     
                     $collection_label = str_replace(' ', '_', trim($_POST['new_collection']));
@@ -884,6 +958,13 @@ class AmazonSimpleAdmin {
                 echo $this->_getSubMenu($task);
 
                 $this->_displayLogPage();
+                break;
+
+            case 'credits':
+
+                echo $this->_getSubMenu($task);
+
+                $this->_displayCreditsPage();
                 break;
                 
             case 'cache':
@@ -1032,6 +1113,22 @@ class AmazonSimpleAdmin {
         </p><br>
             (<?php _e('Only alpha-numeric characters and underscore allowed', 'asa1'); ?>)
         </form>
+
+        <h3><?php _e('Import collection', 'asa1'); ?></h3>
+        <?php
+        if (isset($this->error['submit_import'])) {
+            $this->_displayError($this->error['submit_import']);
+        } else if (isset($this->success['submit_import'])) {
+            $this->_displaySuccess($this->success['submit_import']);
+        }
+        ?>
+        <form action="<?php echo $this->plugin_url .'&task=collections'; ?>" name="form_import_collection" id="form_import_collection" method="post" enctype="multipart/form-data">
+            <label for="importfile"><?php _e('Import file', 'asa1'); ?>:</label>
+            <input type="file" name="importfile" id="importfile" accept="text/xml" /> <input type="submit" name="submit_import" value="<?php _e('Import', 'asa1'); ?>" class="button">
+            <p class="description"><?php _e('Please select a valid .xml file created by the export function.', 'asa1'); ?></p>
+            <br>
+
+        </form>
         
         <h3><?php _e('Add to collection', 'asa1'); ?></h3>
         <?php
@@ -1081,6 +1178,12 @@ class AmazonSimpleAdmin {
 
         <p style="margin:0; display: inline;">
             <input type="submit" name="submit_manage_collection" value="<?php _e('Browse', 'asa1'); ?>" class="button" />
+        </p>
+        <p style="margin:0; display: inline;">
+            <input type="submit" name="submit_export_collection" value="<?php _e('Export', 'asa1'); ?>" class="button" />
+        </p>
+        <p style="margin:0; display: inline;">
+            <input type="submit" name="submit_export_all_collections" value="<?php _e('Export all', 'asa1'); ?>" class="button" />
         </p>
         <p style="margin:0; display: inline;">
             <input type="submit" name="submit_delete_collection" value="<?php _e('Delete collection', 'asa1'); ?>" onclick="return asa_deleteCollection();" class="button" />
@@ -1194,6 +1297,7 @@ class AmazonSimpleAdmin {
         <h3><?php _e('Available templates', 'asa1'); ?></h3>
                 
         <p><?php _e('This is a list of template files, ASA found on your server:', 'asa1') ?></p>
+        <p><?php _e('Please read', 'asa1') ?>: <a href="http://www.wp-amazon-plugin.com/2015/13280/keeping-your-custom-templates-update-safe/" target="_blank">Keeping your custom templates update safe</a></p>
         <ul>
         <?php
         $templates = $this->getAllTemplates();
@@ -1360,6 +1464,20 @@ class AmazonSimpleAdmin {
         <?php
     }
 
+    protected function _displayCreditsPage()
+    {
+        ?>
+        <div id="asa_logs" class="wrap">
+            <h2><?php _e('Credits', 'asa1'); ?></h2>
+            <h3><?php _e('Thanks for translations', 'asa1'); ?></h3>
+            <ul>
+                <li><b>Serbian:</b> Ogi Djuraskovic (<a href="http://firstsiteguide.com/" target="_blank">http://firstsiteguide.com/</a>)</li>
+                <li><b>Spanish:</b> Andrew Kurtis (<a href="http://www.webhostinghub.com/" target="_blank">http://www.webhostinghub.com/</a>)</li>
+            </ul>
+        </div>
+        <?php
+    }
+
     
     /**
      * Load options panel
@@ -1453,6 +1571,24 @@ class AmazonSimpleAdmin {
                 <td>
                     <input type="checkbox" name="_asa_get_rating_alternative" id="_asa_get_rating_alternative" value="1"<?php echo ((get_option('_asa_get_rating_alternative') == true) ? 'checked="checked"' : '') ?> />
                     <p class="description"><?php _e('Try this option if you have problems with loading the product ratings', 'asa1'); ?></p>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_custom_widget_class"><?php _e('Custom widget class:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="text" name="_asa_custom_widget_class" id="_asa_custom_widget_class" value="<?php echo (get_option('_asa_custom_widget_class')) != '' ? get_option('_asa_custom_widget_class') : ''; ?>" />
+                    <p class="description"><?php _e('Set a custom CSS class for the outer widget container. Default is "AmazonSimpleAdmin_widget" which may get blocked by AdBlockers.', 'asa1'); ?></p>
+                </td>
+            </tr>
+            <tr valign="top">
+                <th scope="row">
+                    <label for="_asa_replace_empty_main_price"><?php _e('Empty main price text:', 'asa1') ?></label>
+                </th>
+                <td>
+                    <input type="text" name="_asa_replace_empty_main_price" id="_asa_replace_empty_main_price" value="<?php echo (get_option('_asa_replace_empty_main_price')) != '' ? get_option('_asa_replace_empty_main_price') : ''; ?>" />
+                    <p class="description"><?php _e('Enter a text which should be displayed for placeholder {$OffersMainPriceFormattedPrice} if the main price is empty. Default is "--".', 'asa1'); ?></p>
                 </td>
             </tr>
             <tr>
@@ -2037,37 +2173,7 @@ class AmazonSimpleAdmin {
         // get the item data
         $item = $this->_getItem($asin);
 
-        if ($item === null) {
-
-            return '';
-
-        } elseif ($this->isErrorHandling() && $item instanceof Asa_Service_Amazon_Error &&
-            get_option('_asa_admin_error_frontend') && is_super_admin()) {
-
-            // show admin error
-            $errors = $item->getErrors();
-            $error = array_shift($errors);
-
-            // load error_admin.htm
-            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
-            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
-            $output = preg_replace($search, $replace, $this->getTpl('error_admin'));
-
-            echo $output;
-
-        } elseif ($item instanceof Asa_Service_Amazon_Error && get_option('_asa_use_error_tpl')) {
-
-            $errors = $item->getErrors();
-            $error = array_shift($errors);
-
-            // load error.htm
-            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
-            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
-            $output = preg_replace($search, $replace, $this->getTpl('error'));
-
-            echo $output;
-
-        } else {
+        if ($item instanceof AsaZend_Service_Amazon_Item) {
 
             $search = $this->_getTplPlaceholders($this->tpl_placeholder, true);
 
@@ -2097,7 +2203,7 @@ class AmazonSimpleAdmin {
 
 
 
-            if ($item->Offers->LowestUsedPrice && $item->Offers->LowestNewPrice) {
+            if (isset($item->Offers->LowestUsedPrice) && isset($item->Offers->LowestNewPrice)) {
 
                 $lowestOfferPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
                     $item->Offers->LowestUsedPrice : $item->Offers->LowestNewPrice;
@@ -2106,13 +2212,13 @@ class AmazonSimpleAdmin {
                 $lowestOfferFormattedPrice = ($item->Offers->LowestUsedPrice < $item->Offers->LowestNewPrice) ?
                     $item->Offers->LowestUsedPriceFormattedPrice : $item->Offers->LowestNewPriceFormattedPrice;
 
-            } else if ($item->Offers->LowestNewPrice) {
+            } else if (isset($item->Offers->LowestNewPrice)) {
 
                 $lowestOfferPrice          = $item->Offers->LowestNewPrice;
                 $lowestOfferCurrency       = $item->Offers->LowestNewPriceCurrency;
                 $lowestOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
 
-            } else if ($item->Offers->LowestUsedPrice) {
+            } else if (isset($item->Offers->LowestUsedPrice)) {
 
                 $lowestOfferPrice          = $item->Offers->LowestUsedPrice;
                 $lowestOfferCurrency       = $item->Offers->LowestUsedPriceCurrency;
@@ -2120,10 +2226,10 @@ class AmazonSimpleAdmin {
             }
 
             $lowestOfferPrice = $this->_formatPrice($lowestOfferPrice);
-            $lowestNewPrice = $this->_formatPrice($item->Offers->LowestNewPrice);
-            $lowestNewOfferFormattedPrice = $item->Offers->LowestNewPriceFormattedPrice;
-            $lowestUsedPrice = $this->_formatPrice($item->Offers->LowestUsedPrice);
-            $lowestUsedOfferFormattedPrice = $item->Offers->LowestUsedPriceFormattedPrice;
+            $lowestNewPrice = isset($item->Offers->LowestNewPrice) ? $this->_formatPrice($item->Offers->LowestNewPrice) : '';
+            $lowestNewOfferFormattedPrice = isset($item->Offers->LowestNewPriceFormattedPrice) ? $item->Offers->LowestNewPriceFormattedPrice : '';
+            $lowestUsedPrice = isset($item->Offers->LowestUsedPrice) ? $this->_formatPrice($item->Offers->LowestUsedPrice) : '';
+            $lowestUsedOfferFormattedPrice = isset($item->Offers->LowestUsedPriceFormattedPrice) ? $item->Offers->LowestUsedPriceFormattedPrice : '';
 
 //            if ($item->Offers->Offers[0]->Price != null) {
 //                $amazonPrice = $item->Offers->Offers[0]->Price;
@@ -2143,6 +2249,21 @@ class AmazonSimpleAdmin {
             $amazonPrice = $this->getAmazonPrice($item);
             $amazonPriceFormatted = $this->getAmazonPrice($item, true);
 
+            if (isset($item->Offers->Offers[0]->Price) && !empty($item->Offers->Offers[0]->Price)) {
+                $offerMainPriceAmount = $this->_formatPrice((string)$item->Offers->Offers[0]->Price);
+                $offerMainPriceCurrencyCode = (string)$item->Offers->Offers[0]->CurrencyCode;
+                $offerMainPriceFormatted = (string)$item->Offers->Offers[0]->FormattedPrice;
+            } else {
+                $emptyMainPriceText = get_option('_asa_replace_empty_main_price');
+                $offerMainPriceCurrencyCode = '';
+                if (!empty($emptyMainPriceText)) {
+                    $offerMainPriceFormatted = $emptyMainPriceText;
+                    $offerMainPriceAmount = $emptyMainPriceText;
+                } else {
+                    $offerMainPriceFormatted = '--';
+                    $offerMainPriceAmount = '--';
+                }
+            }
 
             $listPriceFormatted = $item->ListPriceFormatted;
 
@@ -2177,8 +2298,8 @@ class AmazonSimpleAdmin {
                 $this->getItemUrl($item),
                 empty($totalOffers) ? '0' : $totalOffers,
                 empty($lowestOfferPrice) ? '---' : $lowestOfferPrice,
-                $lowestOfferCurrency,
-                str_replace('$', '\$', $lowestOfferFormattedPrice),
+                isset($lowestOfferCurrency) ? $lowestOfferCurrency : '',
+                isset($lowestOfferFormattedPrice) ? str_replace('$', '\$', $lowestOfferFormattedPrice) : '',
                 empty($lowestNewPrice) ? '---' : $lowestNewPrice,
                 str_replace('$', '\$', $lowestNewOfferFormattedPrice),
                 empty($lowestUsedPrice) ? '---' : $lowestUsedPrice,
@@ -2186,8 +2307,8 @@ class AmazonSimpleAdmin {
                 empty($amazonPrice) ? '---' : str_replace('$', '\$', $amazonPrice),
                 empty($amazonPriceFormatted) ? '---' : str_replace('$', '\$', $amazonPriceFormatted),
                 empty($listPriceFormatted) ? '---' : str_replace('$', '\$', $listPriceFormatted),
-                $item->Offers->Offers[0]->CurrencyCode,
-                $item->Offers->Offers[0]->Availability,
+                isset($item->Offers->Offers[0]->CurrencyCode) ? $item->Offers->Offers[0]->CurrencyCode : '',
+                isset($item->Offers->Offers[0]->Availability) ? $item->Offers->Offers[0]->Availability : '',
                 asa_plugins_url( 'img/amazon_' . (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'_small.gif', __FILE__ ),
                 asa_plugins_url( 'img/amazon_' . (empty($this->_amazon_country_code) ? 'US' : $this->_amazon_country_code) .'.gif', __FILE__ ),
                 $item->DetailPageURL,
@@ -2219,10 +2340,13 @@ class AmazonSimpleAdmin {
                 $this->getAmazonShopUrl() . 'product-reviews/' . $item->ASIN . '/&tag=' . $this->getTrackingId(),
                 $this->getTrackingId(),
                 $this->getAmazonShopUrl(),
-                $this->_formatPrice($item->Offers->SalePriceAmount),
-                $item->Offers->SalePriceCurrencyCode,
-                $item->Offers->SalePriceFormatted,
+                isset($item->Offers->SalePriceAmount) ? $this->_formatPrice($item->Offers->SalePriceAmount) : '',
+                isset($item->Offers->SalePriceCurrencyCode) ? $item->Offers->SalePriceCurrencyCode : '',
+                isset($item->Offers->SalePriceFormatted) ? $item->Offers->SalePriceFormatted : '',
                 !empty($parse_params['class']) ? $parse_params['class'] : '',
+                $offerMainPriceAmount,
+                $offerMainPriceCurrencyCode,
+                $offerMainPriceFormatted,
             );
 
             $result = preg_replace($search, $replace, $tpl);
@@ -2257,6 +2381,51 @@ class AmazonSimpleAdmin {
                 }
             }
             return $result;
+
+        } elseif ($this->isErrorHandling() && $item instanceof Asa_Service_Amazon_Error &&
+            get_option('_asa_admin_error_frontend') && is_super_admin()) {
+
+            // show admin error
+            $errors = $item->getErrors();
+            $error = array_shift($errors);
+
+            // load error_admin.htm
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
+            $output = preg_replace($search, $replace, $this->getTpl('error_admin'));
+
+            echo $output;
+
+        } elseif ($item instanceof Asa_Service_Amazon_Error && get_option('_asa_use_error_tpl')) {
+
+            $errors = $item->getErrors();
+            $error = array_shift($errors);
+
+            // load error.htm
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array($error['Code'], $error['Message'], $error['ASIN']);
+            $output = preg_replace($search, $replace, $this->getTpl('error'));
+
+            echo $output;
+
+        } elseif ($item === null && $this->isErrorHandling()) {
+
+            // general error
+            $message = __('Error while loading product data.', 'asa1');
+            $search = $this->_getTplPlaceholders(array('Error', 'Message', 'ASIN'), true);
+            $replace = array('General error', $message, $asin);
+
+            if (get_option('_asa_admin_error_frontend') && is_super_admin()) {
+                $output = preg_replace($search, $replace, $this->getTpl('error_admin'));
+            } else {
+                $output = preg_replace($search, $replace, $this->getTpl('error'));
+            }
+
+            echo $output;
+
+        } else {
+
+            return '';
         }
     }
     
@@ -2269,22 +2438,51 @@ class AmazonSimpleAdmin {
     protected function _getItem ($asin)
     {
         try {
-                        
             if ($this->cache == null || $this->_useCache() === false) {
                 // if cache could not be initialized
                 $item = $this->_getItemLookup($asin);
-            } else if (!$item = $this->cache->load($asin)) {
-                // if asin is not cached yet
-                $item = $this->_getItemLookup($asin);
 
-                if (!($item instanceof Asa_Service_Amazon_Error)) {
-                    // put asin in cache if it is not an error response
-                    $this->cache->save($item, $asin);
+            } else {
+
+                // try to load item from cache
+                $item = $this->cache->load($asin);
+
+                if ($item === false || !($item instanceof AsaZend_Service_Amazon_Item)) {
+                    // item could not be loaded from cache or is not an item object
+                    //asa_debug('could not load from cache: ' . $asin);
+
+                    $item = $this->_getItemLookup($asin);
+
+                    if (!($item instanceof Asa_Service_Amazon_Error)) {
+                        // put asin in cache if it is not an error response
+                        $this->cache->save($item, $asin);
+                    }
+
+                } else {
+                    // asin could be loaded from cache
+
+                    // debug
+                    //asa_debug('loaded from cache: ' . $asin);
+                    //asa_debug($item);
                 }
+
             }
+
             return $item;
             
         } catch (Exception $e) {
+
+            if ($this->isErrorHandling()) {
+
+                $message = "Error while trying to load item data: %s\n\nASIN: %s";
+                $error = array();
+                $error['Message'] = sprintf($message, $e->getMessage(), $asin);
+                $error['ASIN'] = $asin;
+                $error['Code'] = 'General error';
+
+                $this->getLogger()->logError($error);
+            }
+
             return null;
         }
     }
@@ -2636,25 +2834,25 @@ class AmazonSimpleAdmin {
     {
         $result = null;
 
-        if (!empty($item->Offers->LowestNewPrice)) {
+        if (isset($item->Offers->LowestNewPrice) && !empty($item->Offers->LowestNewPrice)) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->LowestNewPrice);
             } else {
                 $result = $item->Offers->LowestNewPriceFormattedPrice;
             }
-        } elseif ($item->Offers->SalePriceAmount != null) {
+        } elseif (isset($item->Offers->SalePriceAmount) && $item->Offers->SalePriceAmount != null) {
                 if ($formatted === false) {
                     $result = $this->_formatPrice($item->Offers->SalePriceAmount);
                 } else {
                     $result = $item->Offers->SalePriceFormatted;
                 }
-        } elseif ($item->Offers->Offers[0]->Price != null) {
+        } elseif (isset($item->Offers->Offers[0]->Price) && $item->Offers->Offers[0]->Price != null) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
             } else {
                 $result = $item->Offers->Offers[0]->FormattedPrice;
             }
-        } elseif (!empty($item->Offers->LowestUsedPrice)) {
+        } elseif (isset($item->Offers->LowestUsedPrice) && !empty($item->Offers->LowestUsedPrice)) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->LowestUsedPrice);
             } else {
@@ -2772,6 +2970,18 @@ class AmazonSimpleAdmin {
         return AsaLogger::getInstance($this->db);
     }
 
+    /**
+     * @param $plugin_data
+     * @param $meta_data
+     */
+    public function handleUpdateMessage($plugin_data, $meta_data)
+    {
+        printf('<div style="border: 1px dashed #C9381A; padding: 4px; margin-top: 5px;"><span class="dashicons dashicons-info" style="color: #C9381A;"></span> %s <a href="http://www.wp-amazon-plugin.com/2015/13280/keeping-your-custom-templates-update-safe/" target="_blank">%s</a>.</div>',
+            __('Remember to <b>backup your custom template files</b> before updating!', 'asa1'),
+            __('Read more', 'asa1')
+        );
+    }
+
 }
 
 
@@ -2850,7 +3060,9 @@ function asa_async_load_callback() {
     $params = $_POST['params'];
 
     $params = json_decode(stripcslashes($params), true);
-    $params = array_map('strip_tags', $params);
+    if (is_array($params)) {
+        $params = array_map('strip_tags', $params);
+    }
     // debug
     //echo '<pre>' . print_r($_POST) . '</pre>';
 

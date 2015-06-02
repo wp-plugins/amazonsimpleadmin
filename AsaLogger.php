@@ -54,35 +54,49 @@ class AsaLogger
      */
     public function logError($error)
     {
-        if ($error instanceof Asa_Service_Amazon_Error) {
+        $location = site_url($_SERVER['REQUEST_URI']);
+        if (strstr($location, 'admin-ajax.php') !== false) {
+            $location = $_SERVER['HTTP_REFERER'];
+        }
 
-            $location = site_url($_SERVER['REQUEST_URI']);
-            if (strstr($location, 'admin-ajax.php') !== false) {
-                $location = $_SERVER['HTTP_REFERER'];
-            }
+
+
+        if ($error instanceof Asa_Service_Amazon_Error) {
 
             $errors = $error->getErrors();
 
             foreach ($errors as $k => $error) {
                 $error['Location'] = $location;
 
-                $extra = sprintf("%s\n\nASIN: %s\n\nLocation: %s",
+                $extra = sprintf("%s\n\nASIN: %s",
                     $error['Message'],
-                    $error['ASIN'],
-                    $location);
+                    $error['ASIN']
+                );
 
-                $this->log($error['Code'], self::LOG_TYPE_ERROR, $extra);
-
-
-                if (get_option('_asa_error_email_notification')) {
-
-                    require_once 'AsaEmail.php';
-                    $email = AsaEmail::getInstance();
-                    $email->updatePsnBridgePost($error, $extra);
-                }
+                $this->log($error['Code'], self::LOG_TYPE_ERROR, $extra, $location);
             }
 
+            $this->_triggerNotification($error, $extra);
 
+        } elseif (is_array($error)) {
+
+            $error['Location'] = $location;
+            $extra = $error['Message'];
+            $this->log($error['Code'], self::LOG_TYPE_ERROR, $extra, $location);
+
+            $this->_triggerNotification($error, $extra);
+        }
+
+    }
+
+    protected function _triggerNotification($error, $content)
+    {
+        // mail feature
+        if (get_option('_asa_error_email_notification')) {
+
+            require_once 'AsaEmail.php';
+            $email = AsaEmail::getInstance();
+            $email->updatePsnBridgePost($error, $content);
         }
     }
 
@@ -90,9 +104,10 @@ class AsaLogger
      * @param $msg
      * @param $type
      * @param string $extra
+     * @param string $location
      * @return bool
      */
-    public function log($msg, $type, $extra = '')
+    public function log($msg, $type, $extra = '', $location = '')
     {
         if ($this->isBlock()) {
             return null;
@@ -100,10 +115,19 @@ class AsaLogger
 
         $sql = '
             INSERT INTO `'. $this->_getTableName() .'`
-                (`message`, `type`, `timestamp`, `extra`)
+                (`message`, `location`, `type`, `timestamp`, `extra`)
             VALUES
-                ("'. esc_sql($msg) .'", '. esc_sql($type) .', CURRENT_TIMESTAMP(), "'. esc_sql($extra) .'")
+                ("'. esc_sql($msg) .'", "'. esc_sql($location) .'", '. esc_sql($type) .', CURRENT_TIMESTAMP(), "'. esc_sql($extra) .'")
         ';
+
+        $sql = '
+            INSERT INTO `'. $this->_getTableName() .'`
+                (`message`, `location`, `type`, `timestamp`, `extra`)
+            VALUES
+                ("%s", "%s", %d, CURRENT_TIMESTAMP(), "%s")
+        ';
+
+        $sql = $this->_db->prepare($sql, $msg, $location, $type, $extra);
 
         return ($this->_db->query($sql) === 1);
     }
@@ -116,6 +140,7 @@ class AsaLogger
             CREATE TABLE `'. $this->_getTableName() .'` (
               `id` int(11) NOT NULL auto_increment,
               `message` varchar(255) NOT NULL,
+              `location` varchar(255) NOT NULL,
               `type` smallint(4) NOT NULL,
               `timestamp` datetime NOT NULL,
               `extra` text NULL,
