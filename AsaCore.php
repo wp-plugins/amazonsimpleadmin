@@ -2834,23 +2834,23 @@ class AmazonSimpleAdmin {
     {
         $result = null;
 
-        if (isset($item->Offers->LowestNewPrice) && !empty($item->Offers->LowestNewPrice)) {
+        if (isset($item->Offers->Offers[0]->Price) && $item->Offers->Offers[0]->Price != null) {
+            if ($formatted === false) {
+                $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
+            } else {
+                $result = $item->Offers->Offers[0]->FormattedPrice;
+            }
+        } elseif (isset($item->Offers->LowestNewPrice) && !empty($item->Offers->LowestNewPrice)) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->LowestNewPrice);
             } else {
                 $result = $item->Offers->LowestNewPriceFormattedPrice;
             }
         } elseif (isset($item->Offers->SalePriceAmount) && $item->Offers->SalePriceAmount != null) {
-                if ($formatted === false) {
-                    $result = $this->_formatPrice($item->Offers->SalePriceAmount);
-                } else {
-                    $result = $item->Offers->SalePriceFormatted;
-                }
-        } elseif (isset($item->Offers->Offers[0]->Price) && $item->Offers->Offers[0]->Price != null) {
             if ($formatted === false) {
-                $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
+                $result = $this->_formatPrice($item->Offers->SalePriceAmount);
             } else {
-                $result = $item->Offers->Offers[0]->FormattedPrice;
+                $result = $item->Offers->SalePriceFormatted;
             }
         } elseif (isset($item->Offers->LowestUsedPrice) && !empty($item->Offers->LowestUsedPrice)) {
             if ($formatted === false) {
