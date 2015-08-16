@@ -704,21 +704,27 @@ class AmazonSimpleAdmin {
 
                 if (count($_POST) > 0 && isset($_POST['info_update'])) {
 
-                    $_asa_product_preview        = strip_tags($_POST['_asa_product_preview']);
-                    $_asa_parse_comments         = strip_tags($_POST['_asa_parse_comments']);
-                    $_asa_async_load             = strip_tags($_POST['_asa_async_load']);
-                    $_asa_hide_meta_link         = strip_tags($_POST['_asa_hide_meta_link']);
-                    $_asa_use_short_amazon_links = strip_tags($_POST['_asa_use_short_amazon_links']);
-                    $_asa_use_amazon_price_only  = strip_tags($_POST['_asa_use_amazon_price_only']);
-                    $_asa_debug                  = strip_tags($_POST['_asa_debug']);
-                    $_asa_get_rating_alternative = strip_tags($_POST['_asa_get_rating_alternative']);
-                    $_asa_custom_widget_class    = strip_tags($_POST['_asa_custom_widget_class']);
-                    $_asa_replace_empty_main_price = strip_tags($_POST['_asa_replace_empty_main_price']);
-                    $_asa_error_handling         = strip_tags($_POST['_asa_error_handling']);
-                    $_asa_admin_error_frontend   = strip_tags($_POST['_asa_admin_error_frontend']);
-                    $_asa_use_error_tpl          = strip_tags($_POST['_asa_use_error_tpl']);
-                    $_asa_error_email_notification = strip_tags($_POST['_asa_error_email_notification']);
-                    $_asa_error_email_notification_bridge_page_id = (int)strip_tags($_POST['_asa_error_email_notification_bridge_page_id']);
+                    $options = array(
+                        '_asa_product_preview',
+                        '_asa_parse_comments',
+                        '_asa_async_load',
+                        '_asa_hide_meta_link',
+                        '_asa_use_short_amazon_links',
+                        '_asa_use_amazon_price_only',
+                        '_asa_debug',
+                        '_asa_get_rating_alternative',
+                        '_asa_custom_widget_class',
+                        '_asa_replace_empty_main_price',
+                        '_asa_error_handling',
+                        '_asa_admin_error_frontend',
+                        '_asa_use_error_tpl',
+                        '_asa_error_email_notification',
+                        '_asa_error_email_notification_bridge_page_id',
+                    );
+
+                    foreach ($options as $opt) {
+                        $$opt = isset($_POST[$opt]) ? sanitize_text_field($_POST[$opt]) : null;
+                    }
 
                     update_option('_asa_product_preview', $_asa_product_preview);
                     update_option('_asa_parse_comments', $_asa_parse_comments);
@@ -817,55 +823,80 @@ class AmazonSimpleAdmin {
                 
                 
                 if (isset($_POST['deleteit_collection_item'])) {
-                    $delete_items = $_POST['delete_collection_item'];
-                    if (count($delete_items) > 0) {
-                        foreach ($delete_items as $item) {
-                           $this->collection->deleteAsin($item);
+
+                    /**
+                     * Delete collection item(s)
+                     */
+                    if (!wp_verify_nonce($_POST['nonce'], 'asa1_manage_collection')) {
+                        $this->error['manage_collection'] = __('Invalid access', 'asa1');
+                    } else {
+                        $delete_items = $_POST['delete_collection_item'];
+                        if (count($delete_items) > 0) {
+                            foreach ($delete_items as $item) {
+                                $this->collection->deleteAsin($item);
+                            }
                         }
                     }
                 }
                 
                 if (isset($_POST['submit_import'])) {
 
-                    require_once(dirname(__FILE__) . '/AsaCollectionImport.php');
-
-                    $file = $_FILES['importfile']['tmp_name'];
-                    $import = new AsaCollectionImport($file, $this->collection);
-                    $import->import();
-
-                    if ($import->getError() != null) {
-                        $this->error['submit_import'] = $import->getError();
+                    /**
+                     * Import collection
+                     */
+                    if (!wp_verify_nonce($_POST['nonce'], 'asa1_import_collection')) {
+                        $this->error['submit_new_asin'] = __('Invalid access', 'asa1');
                     } else {
-                        $importedCollections = $import->getImportedCollections();
-                        $this->success['submit_import'] = sprintf(__('Collections imported: %s'), implode(', ', $importedCollections));
+
+                        require_once(dirname(__FILE__) . '/AsaCollectionImport.php');
+
+                        $file = $_FILES['importfile']['tmp_name'];
+                        $import = new AsaCollectionImport($file, $this->collection);
+                        $import->import();
+
+                        if ($import->getError() != null) {
+                            $this->error['submit_import'] = $import->getError();
+                        } else {
+                            $importedCollections = $import->getImportedCollections();
+                            $this->success['submit_import'] = sprintf(__('Collections imported: %s'), implode(', ', $importedCollections));
+                        }
                     }
                 }
 
                 if (isset($_POST['submit_new_asin'])) {
 
-                    $asin             = strip_tags($_POST['new_asin']);
-                    $collection_id     = strip_tags($_POST['collection']);
-                    $item            = $this->_getItem($asin); 
-                    
-                    if ($item === null) {                        
-                        // invalid asin
-                        $this->error['submit_new_asin'] = __('invalid ASIN', 'asa1');
-                        
-                    } else if ($this->collection->checkAsin($asin, $collection_id) !== null) {
-                        // asin already added to this collection
-                        $this->error['submit_new_asin'] = sprintf(
-                            __('ASIN already added to collection <strong>%s</strong>', 'asa1'),
-                            $this->collection->getLabel($collection_id)
-                        );
-                        
+                    /**
+                     * Add item to collection
+                     */
+
+                    if (!wp_verify_nonce($_POST['nonce'], 'asa1_add_to_collection')) {
+                        $this->error['submit_new_asin'] = __('Invalid access', 'asa1');
                     } else {
-                        
-                        if ($this->collection->addAsin($asin, $collection_id) === true) {
-                            $this->success['submit_new_asin'] = sprintf(
-                                __('<strong>%s</strong> added to collection <strong>%s</strong>', 'asa1'),
-                                $item->Title,
+
+                        $asin = strip_tags($_POST['new_asin']);
+                        $collection_id = strip_tags($_POST['collection']);
+                        $item = $this->_getItem($asin);
+
+                        if ($item === null) {
+                            // invalid asin
+                            $this->error['submit_new_asin'] = __('invalid ASIN', 'asa1');
+
+                        } else if ($this->collection->checkAsin($asin, $collection_id) !== null) {
+                            // asin already added to this collection
+                            $this->error['submit_new_asin'] = sprintf(
+                                __('ASIN already added to collection <strong>%s</strong>', 'asa1'),
                                 $this->collection->getLabel($collection_id)
                             );
+
+                        } else {
+
+                            if ($this->collection->addAsin($asin, $collection_id) === true) {
+                                $this->success['submit_new_asin'] = sprintf(
+                                    __('<strong>%s</strong> added to collection <strong>%s</strong>', 'asa1'),
+                                    $item->Title,
+                                    $this->collection->getLabel($collection_id)
+                                );
+                            }
                         }
                     }
                     
@@ -887,33 +918,49 @@ class AmazonSimpleAdmin {
                     
                 } else if (isset($_POST['submit_delete_collection'])) {
 
-                    $collection_id = strip_tags($_POST['select_manage_collection']);
-                    $collection_label = $this->collection->getLabel($collection_id);
+                    /**
+                     * Delete collection
+                     */
+                    if (!wp_verify_nonce($_POST['nonce'], 'asa1_manage_collection')) {
+                        $this->error['manage_collection'] = __('Invalid access', 'asa1');
+                    } else {
 
-                    if ($collection_label !== null) {
-                        $this->collection->delete($collection_id);
+                        $collection_id = strip_tags($_POST['select_manage_collection']);
+                        $collection_label = $this->collection->getLabel($collection_id);
+
+                        if ($collection_label !== null) {
+                            $this->collection->delete($collection_id);
+                        }
+
+                        $this->success['manage_collection'] = sprintf(
+                            __('collection deleted: <strong>%s</strong>', 'asa1'),
+                            $collection_label
+                        );
                     }
 
-                    $this->success['manage_collection'] = sprintf(
-                        __('collection deleted: <strong>%s</strong>', 'asa1'),
-                        $collection_label
-                    );
-
                 } else if (isset($_POST['submit_new_collection'])) {
-                    
-                    $collection_label = str_replace(' ', '_', trim($_POST['new_collection']));
-                    $collection_label = preg_replace("/[^a-zA-Z0-9_]+/", "", $collection_label);
 
-                    if (empty($collection_label)) {
-                        $this->error['submit_new_collection'] = __('Invalid collection label', 'asa1');
+                    /**
+                     * Create new collection
+                     */
+
+                    if (!wp_verify_nonce($_POST['nonce'], 'asa1_create_collection')) {
+                        $this->error['submit_new_collection'] = __('Invalid access', 'asa1');
                     } else {
-                        if ($this->collection->create($collection_label) == true) {
-                            $this->success['submit_new_collection'] = sprintf(
-                                __('New collection <strong>%s</strong> created'),
-                                $collection_label
-                            );
+                        $collection_label = str_replace(' ', '_', trim($_POST['new_collection']));
+                        $collection_label = preg_replace("/[^a-zA-Z0-9_]+/", "", $collection_label);
+
+                        if (empty($collection_label)) {
+                            $this->error['submit_new_collection'] = __('Invalid collection label', 'asa1');
                         } else {
-                            $this->error['submit_new_collection'] = __('This collection already exists', 'asa1');
+                            if ($this->collection->create($collection_label) == true) {
+                                $this->success['submit_new_collection'] = sprintf(
+                                    __('New collection <strong>%s</strong> created'),
+                                    $collection_label
+                                );
+                            } else {
+                                $this->error['submit_new_collection'] = __('This collection already exists', 'asa1');
+                            }
                         }
                     }
                 
@@ -979,11 +1026,14 @@ class AmazonSimpleAdmin {
                     }
                     
                 } else if (count($_POST) > 0) {
-                    
-                    $_asa_cache_lifetime      = strip_tags($_POST['_asa_cache_lifetime']);
-                    $_asa_cache_dir           = strip_tags($_POST['_asa_cache_dir']);
-                    $_asa_cache_active        = strip_tags($_POST['_asa_cache_active']);
-                    $_asa_cache_skip_on_admin = strip_tags($_POST['_asa_cache_skip_on_admin']);
+
+                    foreach (array(
+                                 '_asa_cache_lifetime',
+                                 '_asa_cache_dir',
+                                 '_asa_cache_active',
+                                 '_asa_cache_skip_on_admin') as $opt) {
+                        $$opt = isset($_POST[$opt]) ? sanitize_text_field($_POST[$opt]) : null;
+                    }
                     update_option('_asa_cache_lifetime', intval($_asa_cache_lifetime));
                     update_option('_asa_cache_dir', $_asa_cache_dir);
                     update_option('_asa_cache_active', intval($_asa_cache_active));
@@ -1107,7 +1157,8 @@ class AmazonSimpleAdmin {
         <form name="form_new_collection" action="<?php echo $this->plugin_url .'&task=collections'; ?>" method="post">
         <label for="new_collection"><?php _e('New collection', 'asa1'); ?>:</label>
         <input type="text" name="new_collection" id="new_collection" />
-        
+        <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('asa1_create_collection'); ?>" />
+
         <p style="margin:0; display: inline;">
             <input type="submit" name="submit_new_collection" value="<?php _e('Save', 'asa1'); ?>" class="button" />
         </p><br>
@@ -1124,7 +1175,9 @@ class AmazonSimpleAdmin {
         ?>
         <form action="<?php echo $this->plugin_url .'&task=collections'; ?>" name="form_import_collection" id="form_import_collection" method="post" enctype="multipart/form-data">
             <label for="importfile"><?php _e('Import file', 'asa1'); ?>:</label>
-            <input type="file" name="importfile" id="importfile" accept="text/xml" /> <input type="submit" name="submit_import" value="<?php _e('Import', 'asa1'); ?>" class="button">
+            <input type="file" name="importfile" id="importfile" accept="text/xml" />
+            <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('asa1_import_collection'); ?>" />
+            <input type="submit" name="submit_import" value="<?php _e('Import', 'asa1'); ?>" class="button">
             <p class="description"><?php _e('Please select a valid .xml file created by the export function.', 'asa1'); ?></p>
             <br>
 
@@ -1150,6 +1203,8 @@ class AmazonSimpleAdmin {
         }
         echo $this->collection->getSelectField('collection', $collection_id);
         ?>
+
+        <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('asa1_add_to_collection'); ?>" />
         
         <p style="margin:0; display: inline;">
             <input type="submit" name="submit_new_asin" value="<?php _e('Save', 'asa1'); ?>" class="button" />
@@ -1188,6 +1243,7 @@ class AmazonSimpleAdmin {
         <p style="margin:0; display: inline;">
             <input type="submit" name="submit_delete_collection" value="<?php _e('Delete collection', 'asa1'); ?>" onclick="return asa_deleteCollection();" class="button" />
         </p>
+        <input type="hidden" name="nonce" value="<?php echo wp_create_nonce('asa1_manage_collection'); ?>" />
         </form>
         
         <?php
@@ -1195,6 +1251,7 @@ class AmazonSimpleAdmin {
 
             $table = '';
             $table .= '<form id="collection-filter" action="'.$this->plugin_url .'&task=collections" method="post">';
+            $table .= '<input type="hidden" name="nonce" value="' . wp_create_nonce('asa1_manage_collection') . '" />';
             
             $table .= '<div class="tablenav">
                 <div class="alignleft">
@@ -1242,9 +1299,16 @@ class AmazonSimpleAdmin {
                 } else {
                     $thumbnail = $item->SmallImage->Url->getUri();
                 }
+
+                if (isset($item->Offers->Offers)) {
+                    $price = $item->Offers->Offers[0]->FormattedPrice;
+                } else {
+                    $price = '---';
+                }
+
                 $table .= '<td width="[thumb_width]"><a href="'. $item->DetailPageURL .'" target="_blank"><img src="'. $thumbnail .'" /></a></td>';
                 $table .= '<td width="120">'. $row->collection_item_asin .'</td>';
-                $table .= '<td width="120">'. $item->Offers->Offers[0]->FormattedPrice .'</td>';
+                $table .= '<td width="120">'. $price .'</td>';
                 $table .= '<td><span id="">'. $item->Title .'</span></td>';
                 $table .= '<td width="160">'. date(str_replace(' \<\b\r \/\>', ',', __('Y-m-d \<\b\r \/\> g:i:s a')), $row->timestamp) .'</td>';                
                 $table .= '<td><a href="'. $this->plugin_url .'&task=collections&update_timestamp='. $row->collection_item_id .'&select_manage_collection='. $collection_id .'" class="edit" onclick="return asa_set_latest('. $row->collection_item_id .', \''. sprintf(__('Set timestamp of &quot;%s&quot; to actual time?', 'asa1'), $title) . '\');" title="update timestamp">'. __('latest', 'asa1') .'</a></td>';

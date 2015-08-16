@@ -67,8 +67,6 @@ class AsaCollectionImport
             return;
         }
 
-//        var_dump($items);
-
         $this->_import($items);
     }
 
@@ -94,11 +92,13 @@ class AsaCollectionImport
             $this->_collectionMapper->create($collectionName);
             $newId = $this->_collectionMapper->getId($collectionName);
 
-            foreach ($collection['item'] as $item) {
+            if (isset($collection['item'])) {
+                foreach ($collection['item'] as $item) {
 
-                $asin = (string)$item->asin;
-                if (!empty($asin)) {
-                    $this->_collectionMapper->addAsin((string)$item->asin, $newId);
+                    $asin = (string)$item->asin;
+                    if (!empty($asin)) {
+                        $this->_collectionMapper->addAsin((string)$item->asin, $newId);
+                    }
                 }
             }
 
@@ -135,8 +135,9 @@ class AsaCollectionImport
                 if (isset($attr[$itemNameCol])) {
                     $tmpItem[(string)$col[$itemNameCol]] = (string)$col;
                 } else {
+
                     foreach (get_object_vars($col) as $colVar => $colVal) {
-                        if (is_array($colVal) && !empty($colVal)) {
+                        if ( (is_array($colVal) || is_a($colVal, 'SimpleXMLElement')) && !empty($colVal)) {
                             $tmpItem[$colVar] = $colVal;
                         }
                     }

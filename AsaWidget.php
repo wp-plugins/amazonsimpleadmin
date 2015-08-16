@@ -45,7 +45,7 @@ class WP_Widget_AmazonSimpleAdmin extends WP_Widget {
             $css_class_outer = get_option('_asa_custom_widget_class');
         }
         $widget_ops = array('classname' => $css_class_outer, 'description' => 'Integrates Asa collections to your sidebar');
-        parent::WP_Widget(false, $name = 'AmazonSimpleAdmin', $widget_ops, $control_ops);
+        parent::__construct(false, $name = 'AmazonSimpleAdmin', $widget_ops, $control_ops);
     }
 
     /**

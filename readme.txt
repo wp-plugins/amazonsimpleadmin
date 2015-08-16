@@ -2,8 +2,8 @@
 Tags: amazon, admin, bbcode, collections, simple, product, preview, sidebar
 Contributors: worschtebrot
 Requires at least: 2.0
-Tested up to: 4.2
-Stable tag: 0.9.16
+Tested up to: 4.3
+Stable tag: 0.9.17
 
 Lets you easily embed Amazon products into your WordPress posts by use of [asa]ASIN[/asa] shortcodes. Supports the use of templates. You can choose from various presentation styles and of course create your own template in a few seconds.
 
@@ -43,6 +43,8 @@ Thanks for translations
 
 Serbian: Ogi Djuraskovic (http://firstsiteguide.com/)
 Spanish: Andrew Kurtis (http://www.webhostinghub.com/)
+Russian: Ivanka from Coupofy (http://www.coupofy.com/)
+French: Marie-Aude (http://www.lumieredelune.com/)
 
 Help me translate ASA in your language: http://www.wp-amazon-plugin.com/contact/
 
@@ -60,6 +62,11 @@ Here you can find a detailed documentation:
 http://www.wp-amazon-plugin.com/guide/
 
 == Change Log ==
+
+= 0.9.17 =
+* Tweak: Main price handling improved
+* Improvement: Security updates
+* Improvement: Prepared for WP 4.3
 
 = 0.9.16 =
 * Bugfix: Due to changes in the structure of the API's XML result, the second product image was used.
