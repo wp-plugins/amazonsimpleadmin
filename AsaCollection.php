@@ -61,7 +61,7 @@ class AsaCollection {
                 INSERT INTO `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL .'`
                     (collection_label)
                 VALUES
-                    ("'. $this->db->escape($label) .'")
+                    ("'. esc_sql($label) .'")
             ';
             
             return ($this->db->query($sql) === 1);
@@ -78,18 +78,73 @@ class AsaCollection {
     {
         $sql = '
             DELETE FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL_ITEM .'`
-            WHERE collection_id = '. $this->db->escape($collection_id) .'
+            WHERE collection_id = '. esc_sql($collection_id) .'
         ';
         
         $this->db->query($sql);
         
         $sql = '
             DELETE FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL .'`
-            WHERE collection_id = '. $this->db->escape($collection_id) .'
+            WHERE collection_id = '. esc_sql($collection_id) .'
         ';
         
         $this->db->query($sql);
-    }        
+    }
+
+    /**
+     * @param $collection_id
+     * @param $country_code
+     */
+    public function export($collection_id, $country_code)
+    {
+        $collections = array();
+
+        if (is_numeric($collection_id)) {
+            // single collection
+            $collections = array($collection_id);
+        } elseif (is_array($collection_id)) {
+            // multiple collections
+            $collections = $collection_id;
+        }
+
+        $result = "<asa2_collections>\n";
+
+        foreach ($collections as $collId) {
+
+            $collectionName = $this->getLabel($collId);
+            $filename = 'ASA1_collection_export_'. date('Y-m-d_H_i_s');
+            $items = $this->getItems($collId);
+
+            $result .= "\t<asa2_collection>\n";
+
+            $result .= "\t\t" . '<column name="name">'. $collectionName .'</column>' . "\n";
+            $result .= "\t\t<items>\n";
+
+            foreach ($items as $item) {
+                $result .= "\t\t\t<item>\n";
+                $result .= "\t\t\t\t<asin>" . $item->collection_item_asin . "</asin>\n";
+                $result .= "\t\t\t\t<country_code>" . $country_code . "</country_code>\n";
+
+                $result .= "\t\t\t</item>\n";
+            }
+
+            $result .= "\t\t</items>\n";
+
+            $result .= "\t</asa2_collection>\n";
+        }
+
+
+        $result .= "</asa2_collections>\n";
+
+        $xml = new SimpleXMLElement($result);
+
+        $filename .= '.xml';
+
+        header('Content-disposition: attachment; filename="'. $filename .'"');
+        header('Content-type: "text/xml"; charset="utf8"');
+        echo $xml->asXML();
+        exit;
+    }
     
     /**
      * 
@@ -104,7 +159,7 @@ class AsaCollection {
             ORDER by collection_label
         ';
         
-        $result = $this->db->get_results($sql);    
+        $result = $this->db->get_results($sql);
         
         foreach ($result as $row) {
             $collections[$row->collection_id] = $row->collection_label;            
@@ -121,8 +176,8 @@ class AsaCollection {
         $sql = '
             SELECT collection_item_id as id
             FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL_ITEM .'`
-            WHERE collection_id = "'. $this->db->escape($collection) .'"
-                AND collection_item_asin = "'. $this->db->escape($asin) .'"
+            WHERE collection_id = "'. esc_sql($collection) .'"
+                AND collection_item_asin = "'. esc_sql($asin) .'"
         ';
         
         return $this->db->get_var($sql);
@@ -140,7 +195,7 @@ class AsaCollection {
         $sql = '
             SELECT collection_id
             FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL .'`
-            WHERE collection_label = "'. $this->db->escape($label) .'"
+            WHERE collection_label = "'. esc_sql($label) .'"
         ';
         
         return $this->db->get_var($sql);
@@ -155,8 +210,8 @@ class AsaCollection {
             INSERT INTO `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL_ITEM .'`
                 (collection_id, collection_item_asin, collection_item_timestamp)
             VALUES
-                ('. $this->db->escape($collection_id) .',
-                 "'. $this->db->escape($asin) .'", NOW())
+                ('. esc_sql($collection_id) .',
+                 "'. esc_sql($asin) .'", NOW())
         ';
         
         return ($this->db->query($sql) === 1);
@@ -169,7 +224,7 @@ class AsaCollection {
     {
         $sql = '
             DELETE FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL_ITEM .'`
-            WHERE collection_item_id = '. $this->db->escape($item_id) .'
+            WHERE collection_item_id = '. esc_sql($item_id) .'
         ';
         
         return $this->db->query($sql);
@@ -183,7 +238,7 @@ class AsaCollection {
         $sql = '
             SELECT collection_label as label
             FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL .'`
-            WHERE collection_id = "'. $this->db->escape($collection_id) .'"
+            WHERE collection_id = "'. esc_sql($collection_id) .'"
         ';
         
         return $this->db->get_var($sql);
@@ -197,7 +252,7 @@ class AsaCollection {
         $sql = '
             SELECT collection_id
             FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL .'`
-            WHERE collection_label = "'. $this->db->escape($collection_label) .'"
+            WHERE collection_label = "'. esc_sql($collection_label) .'"
         ';
         
         return $this->db->get_var($sql);
@@ -238,7 +293,7 @@ class AsaCollection {
             SELECT collection_item_id, collection_item_asin, 
                 UNIX_TIMESTAMP(collection_item_timestamp) as timestamp
             FROM `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL_ITEM .'`
-            WHERE collection_id = "'. $this->db->escape($collection_id) .'"
+            WHERE collection_id = "'. esc_sql($collection_id) .'"
             ORDER by collection_item_timestamp DESC
         ';
         
@@ -253,7 +308,7 @@ class AsaCollection {
         $sql = '
             UPDATE `'. $this->db->prefix . AmazonSimpleAdmin::DB_COLL_ITEM .'`
             SET collection_item_timestamp = NOW()
-            WHERE collection_item_id = '. $this->db->escape($item_id) .'
+            WHERE collection_item_id = '. esc_sql($item_id) .'
         ';
         
         return $this->db->query($sql);
