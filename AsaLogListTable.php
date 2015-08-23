@@ -51,6 +51,7 @@ class AsaLogListTable extends WP_List_Table
             'type'        => 'Type',
             'message'     => 'Message',
             'extra'       => 'Text',
+            'location'    => 'Location',
             'timestamp'   => 'Timestamp',
         );
 
@@ -100,6 +101,7 @@ class AsaLogListTable extends WP_List_Table
         switch( $column_name ) {
             case 'id':
             case 'message':
+            case 'location':
             case 'timestamp':
                 return $item[ $column_name ];
                 break;
