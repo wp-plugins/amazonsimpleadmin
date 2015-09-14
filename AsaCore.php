@@ -2295,29 +2295,24 @@ class AmazonSimpleAdmin {
             $lowestUsedPrice = isset($item->Offers->LowestUsedPrice) ? $this->_formatPrice($item->Offers->LowestUsedPrice) : '';
             $lowestUsedOfferFormattedPrice = isset($item->Offers->LowestUsedPriceFormattedPrice) ? $item->Offers->LowestUsedPriceFormattedPrice : '';
 
-//            if ($item->Offers->Offers[0]->Price != null) {
-//                $amazonPrice = $item->Offers->Offers[0]->Price;
-//                $amazonPriceFormatted = $item->Offers->Offers[0]->FormattedPrice;
-//            } elseif (!empty($lowestNewPrice)) {
-//                $amazonPrice = $lowestNewPrice;
-//                $amazonPriceFormatted = $lowestNewOfferFormattedPrice;
-//            } elseif (!empty($lowestUsedPrice)) {
-//                $amazonPrice = $lowestUsedPrice;
-//                $amazonPriceFormatted = $lowestUsedOfferFormattedPrice;
-//            }
-//
-//            if (isset($amazonPrice)) {
-//                $amazonPrice = $this->_formatPrice($amazonPrice);
-//            }
-
             $amazonPrice = $this->getAmazonPrice($item);
             $amazonPriceFormatted = $this->getAmazonPrice($item, true);
 
             if (isset($item->Offers->Offers[0]->Price) && !empty($item->Offers->Offers[0]->Price)) {
-                $offerMainPriceAmount = $this->_formatPrice((string)$item->Offers->Offers[0]->Price);
-                $offerMainPriceCurrencyCode = (string)$item->Offers->Offers[0]->CurrencyCode;
-                $offerMainPriceFormatted = (string)$item->Offers->Offers[0]->FormattedPrice;
+
+                if (isset($item->Offers->SalePriceAmount)) {
+                    // set main price to sale price
+                    $offerMainPriceAmount = $this->_formatPrice((string)$item->Offers->SalePriceAmount);
+                    $offerMainPriceCurrencyCode = $item->Offers->SalePriceCurrencyCode;
+                    $offerMainPriceFormatted = $item->Offers->SalePriceFormatted;
+                } else {
+                    $offerMainPriceAmount = $this->_formatPrice((string)$item->Offers->Offers[0]->Price);
+                    $offerMainPriceCurrencyCode = (string)$item->Offers->Offers[0]->CurrencyCode;
+                    $offerMainPriceFormatted = (string)$item->Offers->Offers[0]->FormattedPrice;
+                }
+
             } else {
+                // empty main price
                 $emptyMainPriceText = get_option('_asa_replace_empty_main_price');
                 $offerMainPriceCurrencyCode = '';
                 if (!empty($emptyMainPriceText)) {
@@ -2898,7 +2893,13 @@ class AmazonSimpleAdmin {
     {
         $result = null;
 
-        if (isset($item->Offers->Offers[0]->Price) && $item->Offers->Offers[0]->Price != null) {
+        if (isset($item->Offers->SalePriceAmount) && $item->Offers->SalePriceAmount != null) {
+            if ($formatted === false) {
+                $result = $this->_formatPrice($item->Offers->SalePriceAmount);
+            } else {
+                $result = $item->Offers->SalePriceFormatted;
+            }
+        } elseif (isset($item->Offers->Offers[0]->Price) && $item->Offers->Offers[0]->Price != null) {
             if ($formatted === false) {
                 $result = $this->_formatPrice($item->Offers->Offers[0]->Price);
             } else {
@@ -2909,12 +2910,6 @@ class AmazonSimpleAdmin {
                 $result = $this->_formatPrice($item->Offers->LowestNewPrice);
             } else {
                 $result = $item->Offers->LowestNewPriceFormattedPrice;
-            }
-        } elseif (isset($item->Offers->SalePriceAmount) && $item->Offers->SalePriceAmount != null) {
-            if ($formatted === false) {
-                $result = $this->_formatPrice($item->Offers->SalePriceAmount);
-            } else {
-                $result = $item->Offers->SalePriceFormatted;
             }
         } elseif (isset($item->Offers->LowestUsedPrice) && !empty($item->Offers->LowestUsedPrice)) {
             if ($formatted === false) {
